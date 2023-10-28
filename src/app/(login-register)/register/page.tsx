@@ -49,7 +49,7 @@ export default function Register() {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5 w-80">
           {/* header starts */}
-          <div className="flex justify-center gap-1 text-emerald-700 mb-8">
+          <div className="flex justify-center items-center gap-1 text-emerald-700 mb-8">
             <h2 className="scroll-m-20 text-3xl font-semibold tracking-tight">
               Register
             </h2>
