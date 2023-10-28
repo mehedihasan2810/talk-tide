@@ -66,7 +66,7 @@ export default function Register() {
                   <Input
                     placeholder="Enter your email..."
                     {...field}
-                    className="h-11 text-base focus-visible:ring-emerald-500"
+                    className="h-11 text-base focus-visible:ring-emerald-500 border-gray-300"
                   />
                 </FormControl>
                 <FormMessage />
@@ -82,7 +82,7 @@ export default function Register() {
                   <Input
                     placeholder="Enter your username..."
                     {...field}
-                    className="h-11 text-base focus-visible:ring-emerald-500"
+                    className="h-11 text-base focus-visible:ring-emerald-500 border-gray-300"
                   />
                 </FormControl>
 
@@ -100,7 +100,7 @@ export default function Register() {
                     type="password"
                     placeholder="Enter your password..."
                     {...field}
-                    className="h-11 text-base focus-visible:ring-emerald-500"
+                    className="h-11 text-base focus-visible:ring-emerald-500 border-gray-300"
                   />
                 </FormControl>
 
