@@ -1,31 +1,29 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import Register, { formSchema } from "@/app/(login-register)/register/page";
-describe("<Register />", () => {
-  it("should render, have Register title and match snapshot", () => {
-    const { asFragment } = render(<Register />); // ARRANGE
+import Login from "@/app/(login-register)/login/page";
+import { formSchema } from "@/app/(login-register)/login/page";
+describe("<Login />", () => {
+  it("should render, have Login title and match snapshot", () => {
+    const { asFragment } = render(<Login />); // ARRANGE
 
     // ACT
-    const registerTextEl = screen.getByRole("heading", {
+    const loginTextEl = screen.getByRole("heading", {
       level: 2,
-      name: "Register",
+      name: "Login",
     });
 
     // ASSERT
-    expect(registerTextEl).toBeInTheDocument();
+    expect(loginTextEl).toBeInTheDocument();
     expect(asFragment()).toMatchSnapshot();
   });
 
   // -----------------------------------------------------------------
 
   it("Email, username, password input field should work", async () => {
-    render(<Register />); //ARRANGE
+    render(<Login />); //ARRANGE
 
     // ACT
     const user = userEvent.setup();
-    const emailInput = screen.getByPlaceholderText(
-      "Enter your email..."
-    ) as HTMLInputElement;
     const usernameInput = screen.getByPlaceholderText(
       "Enter your username..."
     ) as HTMLInputElement;
@@ -34,16 +32,13 @@ describe("<Register />", () => {
     ) as HTMLInputElement;
 
     // EVENT
-    await user.type(emailInput, "foo");
     await user.type(usernameInput, "foo");
     await user.type(passwordInput, "foo");
 
     // ASSERT
-    expect(emailInput).toBeInTheDocument();
     expect(usernameInput).toBeInTheDocument();
     expect(passwordInput).toBeInTheDocument();
     expect(passwordInput).toHaveAttribute("type", "password");
-    expect(emailInput.value).toEqual("foo");
     expect(usernameInput.value).toEqual("foo");
     expect(passwordInput.value).toEqual("foo");
   });
@@ -51,31 +46,24 @@ describe("<Register />", () => {
   // -----------------------------------------------------------
 
   it("form data validation should work", async () => {
-    render(<Register />); //ARRANGE
+    render(<Login />); //ARRANGE
 
     // ACT
     const user = userEvent.setup();
-    const formNode = screen.getByTestId("register-form") as HTMLFormElement;
-    const submitBtn = screen.getByRole("button", { name: "Register" });
-    const emailInput = screen.getByPlaceholderText(
-      "Enter your email..."
+    const formNode = screen.getByTestId("login-form") as HTMLFormElement;
+    const submitBtn = screen.getByRole("button", { name: "Login" });
+    const usernameInput = screen.getByTestId(
+      "login-username"
     ) as HTMLInputElement;
-    const usernameInput = screen.getByPlaceholderText(
-      "Enter your username..."
-    ) as HTMLInputElement;
-    const passwordInput = screen.getByPlaceholderText(
-      "Enter your password..."
+    const passwordInput = screen.getByTestId(
+      "login-password"
     ) as HTMLInputElement;
 
     // EVENT
-    await user.type(emailInput, "foo@gmail.com");
     await user.type(usernameInput, "Mehedi Hasan");
     await user.type(passwordInput, "123456");
 
-    await user.click(submitBtn);
-
     const formData = Object.fromEntries(new FormData(formNode));
-
     // ASSERT
     expect(formSchema.parse(formData)).toStrictEqual(formData);
     expect(formNode).toBeInTheDocument();

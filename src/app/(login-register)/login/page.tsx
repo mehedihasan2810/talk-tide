@@ -17,7 +17,7 @@ import Link from "next/link";
 import { LockClosedIcon } from "@heroicons/react/20/solid";
 
 // form schema starts -----------
-const formSchema = z.object({
+export const formSchema = z.object({
   username: z.string().min(2, {
     message: "Username must be at least 2 characters.",
   }),
@@ -27,7 +27,7 @@ const formSchema = z.object({
 });
 // form schema ends ------------
 
-export default function Register() {
+export default function Login() {
   // useForm starts ------------
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -40,7 +40,7 @@ export default function Register() {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
-    
+
     //reset form
     form.reset();
   }
@@ -48,7 +48,11 @@ export default function Register() {
   return (
     <div className="w-screen h-screen grid place-items-center">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5 w-80">
+        <form
+          data-testid="login-form"
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-5 w-80"
+        >
           {/* header starts */}
           <div className="flex justify-center items-center gap-1 text-emerald-700 mb-8">
             <h2 className="scroll-m-20 text-3xl font-semibold tracking-tight">
@@ -65,6 +69,7 @@ export default function Register() {
               <FormItem>
                 <FormControl>
                   <Input
+                    data-testid="login-username"
                     placeholder="Enter your username..."
                     {...field}
                     className="h-11 text-base focus-visible:ring-emerald-500 border-gray-300"
@@ -81,7 +86,8 @@ export default function Register() {
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Input
+                  <Input 
+                  data-testid="login-password"
                     type="password"
                     placeholder="Enter your password..."
                     {...field}
@@ -92,7 +98,8 @@ export default function Register() {
                 <FormMessage />
                 <FormDescription className="text-center">
                   Don&#39;t have an account?{" "}
-                  <Link
+                  <Link 
+                  data-testid="login-link"
                     href="register"
                     className="text-emerald-500 hover:text-emerald-400 underline"
                   >
