@@ -9,6 +9,7 @@
     "lint": "next lint",
     "test": "npx lint-staged && jest",
     "test:watch": "jest --watchAll",
+    "test:coverage": "jest --coverage",
     "lint-staged": "npx lint-staged",
     "prepare": "husky install"
   },
