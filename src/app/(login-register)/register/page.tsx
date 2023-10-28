@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -17,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { LockClosedIcon } from "@heroicons/react/20/solid";
 
+// form schema starts -----------
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
   username: z.string().min(2, {
@@ -26,8 +26,10 @@ const formSchema = z.object({
     message: "Password must be at least 6 characters.",
   }),
 });
+// form schema ends ------------
 
-export default function ProfileForm() {
+export default function Register() {
+  // useForm starts ------------
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -36,6 +38,7 @@ export default function ProfileForm() {
       password: "",
     },
   });
+  // useForm ends ----------
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
@@ -45,18 +48,14 @@ export default function ProfileForm() {
     <div className="w-screen h-screen grid place-items-center">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5 w-80">
-          {/*-------------------
-                header start 
-          ----------------------*/}
+          {/* header starts */}
           <div className="flex justify-center gap-1 text-emerald-700 mb-8">
             <h2 className="scroll-m-20 text-3xl font-semibold tracking-tight">
               Register
             </h2>
             <LockClosedIcon className="w-8 h-8" />
           </div>
-          {/*-------------------
-                header end 
-          ----------------------*/}
+          {/* header ends */}
 
           <FormField
             control={form.control}
