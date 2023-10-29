@@ -3,7 +3,7 @@ import { XMarkIcon } from "@heroicons/react/20/solid";
 import React from "react";
 
 interface Props {
-  user: string | null;
+  user: string;
 }
 
 const SelectItem = ({ user }: Props) => {
@@ -11,12 +11,12 @@ const SelectItem = ({ user }: Props) => {
     <div className="flex gap-1 items-center p-1 border w-fit rounded-full">
       <Avatar className="h-6 w-6">
         <AvatarImage src="https://github.com/shadcn.png" />
-        <AvatarFallback>CN</AvatarFallback>
+        <AvatarFallback>{user[0].toUpperCase()}</AvatarFallback>
       </Avatar>
 
       <div
-        title="Mehedi Hasan"
-        className="w-16 whitespace-nowrap overflow-hidden overflow-ellipsis"
+        title={user}
+        className="w-12 whitespace-nowrap overflow-hidden overflow-ellipsis"
       >
         {user}
       </div>
