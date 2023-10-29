@@ -7,7 +7,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import SearchSelect from "./SearchSelect";
+import SearchSelect from "./SelectUser";
 import { Switch } from "@/components/ui/switch";
 import React from "react";
 import { Input } from "@/components/ui/input";

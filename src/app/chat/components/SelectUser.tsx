@@ -44,7 +44,7 @@ const frameworks = [
   },
 ];
 
-export default function SearchSelect() {
+export default function SelectUser() {
   // STATE
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
