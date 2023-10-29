@@ -34,7 +34,7 @@ const MobileSidebar = () => {
           <SheetTitle>Talk Tide</SheetTitle>
         </SheetHeader>
 
-        {/* switch button start */}
+        {/* toggle if the chat is group chat or one to one chat*/}
         <div className="flex items-center space-x-2 mb-2">
           <Switch
             checked={isGroupChat}
@@ -43,9 +43,12 @@ const MobileSidebar = () => {
           />
           <Label htmlFor="group-chat">Is it a group chat?</Label>
         </div>
-        {/* switch button end */}
+        {/* ----------------------------------------------------------*/}
 
-        {/* todo */}
+        {/* 
+        map the selected group participants avatar or
+        show a single user avatar 
+        */}
         <div className="flex flex-wrap gap-1  mb-2">
           {isGroupChat
             ? groupParticipants.map((user, index) => (
@@ -53,7 +56,12 @@ const MobileSidebar = () => {
               ))
             : selectedUser && <SelectItem user={selectedUser} />}
         </div>
+        {/* --------------------------------------------------- */}
 
+        {/* 
+            if it is group chat then toggle the input field for
+            group name
+        */}
         {isGroupChat && (
           <Input
             value={groupName}
@@ -63,9 +71,11 @@ const MobileSidebar = () => {
             className="mb-2 border-gray-300"
           />
         )}
+        {/* -------------------------------------------------------- */}
 
-        {/* SearchSelect component */}
+        {/* select user for chat */}
         <SearchSelect />
+        {/* --------------------- */}
 
         {/* <SheetFooter>
           <SheetClose asChild>
