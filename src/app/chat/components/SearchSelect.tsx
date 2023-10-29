@@ -72,11 +72,11 @@ export default function SearchSelect() {
             <ChevronUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
-        {/* add button start */}
+        {/* add a user or users to start chat */}
         <Button variant="outline" className="p-2 border-gray-300">
           <PlusIcon className="w-8 h-8 bg-transparent" />
         </Button>
-        {/* add button end */}
+        {/* --------------------------------------- */}
       </div>
 
       <PopoverContent>
@@ -98,7 +98,7 @@ export default function SearchSelect() {
                     updateSelectedUser(currentValue);
                   }
                   //   ----------------------------------
-
+                 
                   setValue(currentValue === value ? "" : currentValue);
                   setOpen(false);
                 }}
