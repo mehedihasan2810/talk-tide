@@ -38,8 +38,8 @@ export default function Login() {
   });
   // useForm ends ----------
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+  function onSubmit(_values: z.infer<typeof formSchema>) {
+    // console.log(values);
 
     //reset form
     form.reset();

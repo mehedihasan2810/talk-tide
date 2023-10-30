@@ -40,8 +40,8 @@ export default function Register() {
   });
   // useForm ends ----------
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+  function onSubmit(_values: z.infer<typeof formSchema>) {
+    // console.log(values);
   }
 
   return (

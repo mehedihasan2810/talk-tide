@@ -29,7 +29,11 @@ const MobileSidebar = () => {
 
   return (
     <Sheet open={isMobileSidebarOpen}>
-      <SheetContent className="flex flex-col justify-between" side="right">
+      <SheetContent
+        data-testid="sidebar-dialog"
+        className="flex flex-col justify-between"
+        side="right"
+      >
         <div>
           <SheetHeader className="mb-4">
             <div className="flex justify-between items-center">
@@ -68,7 +72,9 @@ const MobileSidebar = () => {
               ? groupParticipants.map((user, index) => (
                   <SelectItem key={index} type="groupChat" user={user} />
                 ))
-              : selectedUser && <SelectItem type="oneToOne" user={selectedUser} />}
+              : selectedUser && (
+                  <SelectItem type="oneToOne" user={selectedUser} />
+                )}
           </div>
           {/* --------------------------------------------------- */}
 
