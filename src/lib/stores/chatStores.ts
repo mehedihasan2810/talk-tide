@@ -12,7 +12,9 @@ interface Action {
   updateIsGroupChat(_a: boolean): void;
   updateGroupName(_a: string): void;
   updateSelectedUser(_a: string): void;
+  removeSelectedUser(_a: string): void;
   updateGroupParticipants(_a: string): void;
+  removeGroupParticipants(_a: string): void;
   toggleIsMobileSidebarOpen(): void;
 }
 
@@ -29,6 +31,7 @@ export const useChatStore = create<State & Action>((set) => ({
   updateIsGroupChat: (isGroupChat) => set(() => ({ isGroupChat })),
   updateGroupName: (groupName) => set(() => ({ groupName })),
   updateSelectedUser: (selectedUser) => set(() => ({ selectedUser })),
+  removeSelectedUser: () => set(() => ({ selectedUser: null })),
   updateGroupParticipants: (groupParticipant) =>
     set(({ groupParticipants }) => {
       // avoid duplicating participants ----------
@@ -41,9 +44,13 @@ export const useChatStore = create<State & Action>((set) => ({
         groupParticipants: participants,
       };
     }),
+  removeGroupParticipants: (id) =>
+    set((state) => ({
+      groupParticipants: state.groupParticipants.filter((item) => item !== id),
+    })),
   toggleIsMobileSidebarOpen: () =>
     set(({ isMobileSidebarOpen }) => ({
       isMobileSidebarOpen: !isMobileSidebarOpen,
     })),
-    // ------------------------------------------
+  // ------------------------------------------
 }));

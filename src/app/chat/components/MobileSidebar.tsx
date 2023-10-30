@@ -66,9 +66,9 @@ const MobileSidebar = () => {
           <div className="flex flex-wrap gap-1  mb-2">
             {isGroupChat
               ? groupParticipants.map((user, index) => (
-                  <SelectItem key={index} user={user} />
+                  <SelectItem key={index} type="groupChat" user={user} />
                 ))
-              : selectedUser && <SelectItem user={selectedUser} />}
+              : selectedUser && <SelectItem type="oneToOne" user={selectedUser} />}
           </div>
           {/* --------------------------------------------------- */}
 
