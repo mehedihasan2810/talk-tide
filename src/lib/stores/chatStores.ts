@@ -5,6 +5,7 @@ interface State {
   groupName: string;
   selectedUser: string | null;
   groupParticipants: string[];
+  isMobileSidebarOpen: boolean;
 }
 
 interface Action {
@@ -12,6 +13,7 @@ interface Action {
   updateGroupName(_a: string): void;
   updateSelectedUser(_a: string): void;
   updateGroupParticipants(_a: string): void;
+  toggleIsMobileSidebarOpen(): void;
 }
 
 export const useChatStore = create<State & Action>((set) => ({
@@ -20,17 +22,28 @@ export const useChatStore = create<State & Action>((set) => ({
   groupName: "",
   selectedUser: null,
   groupParticipants: [],
+  isMobileSidebarOpen: false,
+  // --------------------------
 
   // ACTION
   updateIsGroupChat: (isGroupChat) => set(() => ({ isGroupChat })),
   updateGroupName: (groupName) => set(() => ({ groupName })),
   updateSelectedUser: (selectedUser) => set(() => ({ selectedUser })),
   updateGroupParticipants: (groupParticipant) =>
-    set((state: State) => {
-      const participants = state.groupParticipants.includes(groupParticipant)
-        ? state.groupParticipants
-        : [...state.groupParticipants, groupParticipant];
+    set(({ groupParticipants }) => {
+      // avoid duplicating participants ----------
+      const participants = groupParticipants.includes(groupParticipant)
+        ? groupParticipants
+        : [...groupParticipants, groupParticipant];
+      // -----------------------------------------
 
-      return { groupParticipants: participants };
+      return {
+        groupParticipants: participants,
+      };
     }),
+  toggleIsMobileSidebarOpen: () =>
+    set(({ isMobileSidebarOpen }) => ({
+      isMobileSidebarOpen: !isMobileSidebarOpen,
+    })),
+    // ------------------------------------------
 }));

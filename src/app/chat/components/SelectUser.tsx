@@ -14,11 +14,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-  CheckIcon,
-  ChevronUpDownIcon,
-  PlusIcon,
-} from "@heroicons/react/20/solid";
+import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { useChatStore } from "@/lib/stores/chatStores";
 
 const frameworks = [
@@ -73,9 +69,7 @@ export default function SelectUser() {
           </Button>
         </PopoverTrigger>
         {/* add a user or users to start chat */}
-        <Button variant="outline" className="p-2 border-gray-300">
-          <PlusIcon className="w-8 h-8 bg-transparent" />
-        </Button>
+        <Button className="px-3 border-gray-300">Start</Button>
         {/* --------------------------------------- */}
       </div>
 
@@ -98,7 +92,7 @@ export default function SelectUser() {
                     updateSelectedUser(currentValue);
                   }
                   //   ----------------------------------
-                 
+
                   setValue(currentValue === value ? "" : currentValue);
                   setOpen(false);
                 }}
