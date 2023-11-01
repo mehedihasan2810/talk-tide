@@ -1,9 +1,8 @@
-import { PrismaClient } from "@prisma/client";
 import { faker } from "@faker-js/faker";
-import { getRandomNumber } from "../src/utils/helpers/getRandomNumber";
-import { USER_COUNT, AvailableUserRoles } from "../src/socket/constants";
+import { AvailableUserRoles, USER_COUNT } from "./_constants";
+import { getRandomNumber } from "../../src/utils/helpers/getRandomNumber";
 import chalk from "chalk";
-const prisma = new PrismaClient();
+import prisma from "../../src/lib/prisma";
 
 const log = console.log;
 
@@ -56,22 +55,4 @@ const seedUsers = async () => {
   }
 };
 
-export async function main() {
-  try {
-    log(chalk.bold.green("Start Seeding..."));
-
-    // seed users ----
-    await seedUsers();
-    // ---------------
-
-    log(chalk.bold.green("Seeding finished"));
-  } catch (err) {
-    log(chalk.bold.red(err));
-    await prisma.$disconnect();
-    process.exit(1);
-  } finally {
-    await prisma.$disconnect();
-  }
-}
-
-main();
+export { seedUsers };

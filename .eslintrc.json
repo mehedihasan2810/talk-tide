@@ -2,6 +2,9 @@
   "env": {
     "jest": true
   },
+  "globals": {
+    "globalThis": false
+  },
   "extends": [
     "eslint:recommended",
     "next/core-web-vitals",
