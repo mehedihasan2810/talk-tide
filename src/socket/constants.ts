@@ -5,6 +5,10 @@ export enum UserRole {
   USER = "USER",
 }
 
+export const AvailableUserRoles: ["USER", "ADMIN"] = ["USER", "ADMIN"];
+
+export const USER_COUNT: number = 10;
+
 export enum ChatEventEnum {
   // ? once user is ready to go
   CONNECTION_EVENT = "connection",

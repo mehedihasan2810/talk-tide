@@ -26,6 +26,8 @@ model User {
   emailVerificationExpiry DateTime?
   createdAt               DateTime  @default(now())
   updatedAt               DateTime  @updatedAt
+
+  @@map("users")
 }
 
 enum LoginType {
