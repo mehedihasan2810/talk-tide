@@ -1,21 +1,47 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import Sidebar from "./components/Sidebar";
 import { useChatStore } from "@/lib/stores/chatStores";
 import { Button } from "@/components/ui/button";
 import { Bars3Icon } from "@heroicons/react/20/solid";
-
+import { io } from "socket.io-client";
+const socket = io("http://localhost:4000", {
+  autoConnect: false,
+  path: "/api/socket",
+  // transports: ['websocket']
+});
 const Chat = () => {
-  const {
-    selectedUser,
-    groupName,
-    groupParticipants,
-    toggleIsMobileSidebarOpen,
-  } = useChatStore((state) => state);
+  const { toggleIsMobileSidebarOpen } = useChatStore((state) => state);
 
-  console.log(groupParticipants);
-  console.log(selectedUser);
-  console.log(groupName);
+  useEffect(() => {
+    const onConnect = () => {
+      console.log("connectttt");
+      // socket.emit("hello", "fooooooooo");
+    };
+    const initializeServer = async () => {
+      await fetch("/api/socket");
+
+      socket.connect();
+      socket.on("connect", onConnect);
+      socket.on("connected", () => {
+        console.log("helloooooo connected");
+      });
+
+      socket.on("disconnect", () => {
+        console.log("disconnect");
+      });
+      socket.on("connect_error", (err: any) => {
+        console.log(`connect_error due to ${err.message}`);
+      });
+    };
+    initializeServer();
+
+    return () => {
+      socket.disconnect();
+      socket.off("connect", onConnect);
+    };
+  }, []);
+
   return (
     <div className="h-screen md:py-4">
       <div className="max-w-[800px] mx-auto flex border h-full">
