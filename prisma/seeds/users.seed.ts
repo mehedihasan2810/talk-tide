@@ -3,26 +3,28 @@ import { AvailableUserRoles, USER_COUNT } from "./_constants";
 import { getRandomNumber } from "../../src/utils/helpers/getRandomNumber";
 import chalk from "chalk";
 import prisma from "../../src/lib/prisma";
-
+import { Prisma } from "@prisma/client";
 const log = console.log;
 
 // list of fake users
-const users = Array.from({ length: USER_COUNT }).map(() => ({
-  avatar: {
-    url: faker.internet.avatar(),
-    localPath: "",
-  },
-  username: faker.internet.userName().toLowerCase(),
-  email: faker.internet.email().toLowerCase(),
-  password: faker.internet.password(),
-  isEmailVerified: true,
-  role: AvailableUserRoles[getRandomNumber(2)],
-}));
+const users: Prisma.UserCreateInput[] = Array.from({ length: USER_COUNT }).map(
+  () => ({
+    avatar: {
+      url: faker.internet.avatar(),
+      localPath: "",
+    },
+    username: faker.internet.userName().toLowerCase(),
+    email: faker.internet.email().toLowerCase(),
+    password: faker.internet.password(),
+    isEmailVerified: true,
+    role: AvailableUserRoles[getRandomNumber(2)],
+  })
+);
 // -------------------------------------------------
 
-const seedUsers = async () => {
+const seedUsers = async (): Promise<void> => {
   try {
-    const userCount = await prisma.user.count();
+    const userCount: number = await prisma.user.count();
 
     // Don't re-generate the users if we already have them in the database
     if (userCount >= USER_COUNT) {
@@ -37,7 +39,7 @@ const seedUsers = async () => {
     //   -------------------------------
 
     // create Promise list ---------
-    const userCreationPromise = users.map(async (user) => {
+    const userCreationPromise: Promise<void>[] = users.map(async (user) => {
       await prisma.user.create({
         data: user,
       });
