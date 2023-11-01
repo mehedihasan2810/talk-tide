@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,25 +7,70 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// User model --------------------------------------------------------
+
 model User {
-  id                      String    @id @default(auto()) @map("_id") @db.ObjectId
+  id                      String        @id @default(auto()) @map("_id") @db.ObjectId
   avatar                  Avatar
-  username                String    @unique
-  email                   String    @unique
+  username                String        @unique
+  email                   String        @unique
   password                String
-  role                    UserRole  @default(USER)
-  loginType               LoginType @default(EMAIL_PASSWORD)
-  isEmailVerified         Boolean   @default(false)
+  role                    UserRole      @default(USER)
+  loginType               LoginType     @default(EMAIL_PASSWORD)
+  isEmailVerified         Boolean       @default(false)
   refreshToken            String?
   forgotPasswordToken     String?
   forgotPasswordExpiry    DateTime?
   emailVerificationToken  String?
   emailVerificationExpiry DateTime?
-  createdAt               DateTime  @default(now())
-  updatedAt               DateTime  @updatedAt
+  chatMessages            ChatMessage[]
+  adminChats              Chat[]        @relation("AdminChat")
+  chatIds                 String[]      @db.ObjectId
+  chats                   Chat[]        @relation(fields: [chatIds], references: [id])
+  createdAt               DateTime      @default(now())
+  updatedAt               DateTime      @updatedAt
 
   @@map("users")
 }
+
+// ----------------------------------------------------------------------
+
+// Chat model -----------------------------------------------------------
+
+model Chat {
+  id             String      @id @default(auto()) @map("_id") @db.ObjectId
+  name           String
+  isGroupChat    Boolean     @default(false)
+  lastMessageId  String      @unique @db.ObjectId
+  lastMessage    ChatMessage @relation(fields: [lastMessageId], references: [id])
+  participantIds String[]    @db.ObjectId
+  participants   User[]      @relation(fields: [participantIds], references: [id])
+  adminId        String      @db.ObjectId()
+  admin          User        @relation("AdminChat", fields: [adminId], references: [id])
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  @@map("chats")
+}
+
+// ------------------------------------------------------------------------
+
+// ChatMessage model ------------------------------------------------------
+
+model ChatMessage {
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  senderId    String        @db.ObjectId
+  sender      User          @relation(fields: [senderId], references: [id])
+  content     String
+  attachments Attachments[]
+  chat        Chat?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@map("chatMessages")
+}
+
+// -------------------------------------------------------------------------
 
 enum LoginType {
   EMAIL_PASSWORD
@@ -42,5 +84,10 @@ enum UserRole {
 
 type Avatar {
   url       String @default("https://via.placeholder.com/200x200.png")
+  localPath String @default("")
+}
+
+type Attachments {
+  url       String
   localPath String @default("")
 }
