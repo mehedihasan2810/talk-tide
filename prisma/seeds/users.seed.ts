@@ -38,13 +38,13 @@ const seedUsers = async (): Promise<void> => {
     await prisma.user.deleteMany({});
     //   -------------------------------
 
-    // create Promise list ---------
+    // create Promise list -------------------------------------------------
     const userCreationPromise: Promise<void>[] = users.map(async (user) => {
       await prisma.user.create({
         data: user,
       });
     });
-    //   ----------------------------
+    //   ------------------------------------------------------------------
 
     // pass promises array to the Promise.all method
     await Promise.all(userCreationPromise);

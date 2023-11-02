@@ -1,8 +1,7 @@
-// import { PrismaClient } from "@prisma/client";
 import chalk from "chalk";
 import { seedUsers } from "./users.seed";
-import prisma from "../../src/lib/prisma"
-// export const prisma = new PrismaClient();
+import prisma from "../../src/lib/prisma";
+import { seedChatApp } from "./chatApp.seed";
 
 const log = console.log;
 
@@ -13,6 +12,10 @@ export async function main() {
     // seed users ----
     await seedUsers();
     // ---------------
+
+    // ----------------
+    await seedChatApp();
+    // -----------------
 
     log(chalk.bold.green("Seeding finished"));
   } catch (err) {
