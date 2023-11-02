@@ -38,17 +38,17 @@ model User {
 // Chat model -----------------------------------------------------------
 
 model Chat {
-  id             String      @id @default(auto()) @map("_id") @db.ObjectId
+  id             String       @id @default(auto()) @map("_id") @db.ObjectId
   name           String
-  isGroupChat    Boolean     @default(false)
-  lastMessageId  String      @unique @db.ObjectId
-  lastMessage    ChatMessage @relation(fields: [lastMessageId], references: [id])
-  participantIds String[]    @db.ObjectId
-  participants   User[]      @relation(fields: [participantIds], references: [id])
-  adminId        String      @db.ObjectId()
-  admin          User        @relation("AdminChat", fields: [adminId], references: [id])
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @updatedAt
+  isGroupChat    Boolean      @default(false)
+  lastMessageId  String?      @unique @db.ObjectId
+  lastMessage    ChatMessage? @relation(fields: [lastMessageId], references: [id])
+  participantIds String[]     @db.ObjectId
+  participants   User[]       @relation(fields: [participantIds], references: [id])
+  adminId        String       @db.ObjectId
+  admin          User         @relation("AdminChat", fields: [adminId], references: [id])
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 
   @@map("chats")
 }
