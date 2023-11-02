@@ -12,7 +12,9 @@
     "test:coverage": "jest --coverage",
     "lint-staged": "npx lint-staged",
     "prepare": "husky install",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "prisma:dbpush": "npx prisma db push",
+    "prisma:seed": "npx prisma db seed"
   },
   "prisma": {
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seeds/seed.ts"
