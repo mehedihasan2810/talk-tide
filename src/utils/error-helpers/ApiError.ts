@@ -1,7 +1,7 @@
 class ApiError extends Error {
   statusCode: number;
   message: string;
-  errors: string[];
+  errors: (Record<string, string> | string)[];
   success: boolean;
   data: any | null;
   stack?: string | undefined;
@@ -9,7 +9,7 @@ class ApiError extends Error {
   constructor(
     statusCode: number,
     message = "Something went wrong",
-    errors = [],
+    errors: (Record<string, string> | string)[] = [],
     stack = ""
   ) {
     super(message);
