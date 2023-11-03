@@ -25,8 +25,8 @@ model User {
   emailVerificationExpiry DateTime?
   chatMessages            ChatMessage[]
   adminChats              Chat[]        @relation("AdminChat")
-  chatIds                 String[]      @db.ObjectId
   chats                   Chat[]        @relation(fields: [chatIds], references: [id])
+  chatIds                 String[]      @db.ObjectId
   createdAt               DateTime      @default(now())
   updatedAt               DateTime      @updatedAt
 
@@ -38,17 +38,16 @@ model User {
 // Chat model -----------------------------------------------------------
 
 model Chat {
-  id             String       @id @default(auto()) @map("_id") @db.ObjectId
+  id             String        @id @default(auto()) @map("_id") @db.ObjectId
   name           String
-  isGroupChat    Boolean      @default(false)
-  lastMessageId  String?      @unique @db.ObjectId
-  lastMessage    ChatMessage? @relation(fields: [lastMessageId], references: [id])
-  participantIds String[]     @db.ObjectId
-  participants   User[]       @relation(fields: [participantIds], references: [id])
-  adminId        String       @db.ObjectId
-  admin          User         @relation("AdminChat", fields: [adminId], references: [id])
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+  isGroupChat    Boolean       @default(false)
+  chatMessages   ChatMessage[]
+  participants   User[]        @relation(fields: [participantIds], references: [id])
+  participantIds String[]      @db.ObjectId
+  admin          User          @relation("AdminChat", fields: [adminId], references: [id])
+  adminId        String        @db.ObjectId
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
 
   @@map("chats")
 }
@@ -59,18 +58,21 @@ model Chat {
 
 model ChatMessage {
   id          String        @id @default(auto()) @map("_id") @db.ObjectId
-  senderId    String        @db.ObjectId
   sender      User          @relation(fields: [senderId], references: [id])
+  senderId    String        @db.ObjectId
   content     String
   attachments Attachments[]
-  chat        Chat?
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
+  Chat        Chat          @relation(fields: [chatId], references: [id])
+  chatId      String        @db.ObjectId
 
   @@map("chatMessages")
 }
 
-// -------------------------------------------------------------------------
+// --------------------------------------------------------------------
+
+// enum, composite type ------------------------------------------------
 
 enum LoginType {
   EMAIL_PASSWORD
@@ -91,3 +93,5 @@ type Attachments {
   url       String
   localPath String @default("")
 }
+
+// -----------------------------------------------------------------------
