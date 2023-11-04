@@ -63,7 +63,7 @@ const getGroupChatDetails = async (
     throw new ApiError(404, "Group chat does not exist!");
   }
 
-  res
+  return res
     .status(200)
     .json(new ApiResponse(200, chat, "Group chat fetched successfully"));
 };
