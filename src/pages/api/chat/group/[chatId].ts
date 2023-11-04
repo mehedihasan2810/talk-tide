@@ -1,3 +1,4 @@
+import { deleteGroupChat } from "@/socket/controllers/chat-controllers/deleteGroupChat";
 import { getGroupChatDetails } from "@/socket/controllers/chat-controllers/getGroupChatDetails";
 import renameGroupChat from "@/socket/controllers/chat-controllers/renameGroupChat";
 import { startSocketServer } from "@/socket/startSocketServer";
@@ -26,6 +27,12 @@ export default async function handler(
     }
 
     // ----------------------------------
+
+    if (req.method === "DELETE") {
+      await deleteGroupChat(req, res);
+    }
+
+    //  ---------------------------------
   } catch (error) {
     const errorRes = errorResponse(error);
     res.status(errorRes.statusCode).json(errorRes);
