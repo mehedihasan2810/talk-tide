@@ -28,7 +28,7 @@ export const getAllMessages = async (
   }
 
   //   Only send messages if the logged in user is a part of the chat he is requesting messages of
-  if (!selectedChat.participantIds.includes(req.query.id as string)) {
+  if (!selectedChat.participantIds.includes(req.cookies.id as string)) {
     throw new ApiError(400, "User is not a part of this chat");
   }
 
