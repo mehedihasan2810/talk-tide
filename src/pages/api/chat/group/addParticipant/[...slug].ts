@@ -1,4 +1,5 @@
 import { addNewParticipantInGroupChat } from "@/socket/controllers/chat-controllers/addNewParticipantInGroupChat";
+import { removeParticipantFromGroupChat } from "@/socket/controllers/chat-controllers/removeParticipantFromGroupChat";
 import { startSocketServer } from "@/socket/startSocketServer";
 import { NextApiResponseServerIO } from "@/types/types";
 import { ApiError } from "@/utils/error-helpers/ApiError";
@@ -10,9 +11,16 @@ export default async function hanler(
   res: NextApiResponseServerIO
 ) {
   try {
+    startSocketServer(req, res);
+
     if (req.method === "POST") {
-      startSocketServer(req, res);
+      // ------------------------------------------
       await addNewParticipantInGroupChat(req, res);
+      // ------------------------------------------
+    } else if (req.method === "DELETE") {
+      // -------------------------------------------
+      await removeParticipantFromGroupChat(req, res);
+      // --------------------------------------------
     } else {
       // throw error if the method is not allowed
       throw new ApiError(405, "Method not allowed");
