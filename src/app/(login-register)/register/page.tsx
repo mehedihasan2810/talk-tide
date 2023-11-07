@@ -15,23 +15,20 @@ import {
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { LockClosedIcon } from "@heroicons/react/20/solid";
+import { signIn, useSession } from "next-auth/react";
+import { RegisterSchema } from "@/utils/zod-schema/registerSchema";
 
-// form schema starts -----------
-export const formSchema = z.object({
-  email: z.string().email({ message: "Invalid email address" }),
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
-  password: z.string().min(6, {
-    message: "Password must be at least 6 characters.",
-  }),
-});
-// form schema ends ------------
+interface Props {
+  updateIsLogin(): void;
+}
 
-export default function Register() {
+export default function Register({ updateIsLogin }: Props) {
+  const session = useSession();
+  console.log(session);
+
   // useForm starts ------------
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof RegisterSchema>>({
+    resolver: zodResolver(RegisterSchema),
     defaultValues: {
       email: "",
       username: "",
@@ -40,14 +37,25 @@ export default function Register() {
   });
   // useForm ends ----------
 
-  function onSubmit(_values: z.infer<typeof formSchema>) {
-    // console.log(values);
+  async function onSubmit(values: z.infer<typeof RegisterSchema>) {
+    console.log(values);
+    const data = await signIn("credentials", {
+      redirect: false,
+      // redirect: true,
+      // callbackUrl: "/",
+      authType: "register",
+      ...values,
+    });
+    console.log(data);
   }
-
   return (
     <div className="w-screen h-screen grid place-items-center">
       <Form {...form}>
-        <form data-testid="register-form" onSubmit={form.handleSubmit(onSubmit)} className="space-y-5 w-80">
+        <form
+          data-testid="register-form"
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-5 w-80"
+        >
           {/* header starts */}
           <div className="flex justify-center items-center gap-1 text-emerald-700 mb-8">
             <h2 className="scroll-m-20 text-3xl font-semibold tracking-tight">
@@ -56,7 +64,6 @@ export default function Register() {
             <LockClosedIcon className="w-8 h-8" />
           </div>
           {/* header ends */}
-
           <FormField
             control={form.control}
             name="email"
@@ -73,6 +80,7 @@ export default function Register() {
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="username"
@@ -106,9 +114,10 @@ export default function Register() {
 
                 <FormMessage />
                 <FormDescription className="text-center">
-                  Already have account?{" "}
+                  Already have an account?{" "}
                   <Link
-                    href="login"
+                    onClick={updateIsLogin}
+                    href="#"
                     className="text-emerald-500 hover:text-emerald-400 underline"
                   >
                     Login
