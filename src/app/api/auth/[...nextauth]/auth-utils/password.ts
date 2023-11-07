@@ -6,9 +6,11 @@ export const hashPassword = async (password: string): Promise<string> => {
     const hashedPassword = await bcrypt.hash(password, 10);
     return hashedPassword;
   } catch (error) {
-    throw new Error("Invalid password");
+    throw new Error("Server error! Try again");
   }
 };
+
+// --------------------------------------------------
 
 export const verifyPassword = async (
   password: string,
@@ -18,6 +20,6 @@ export const verifyPassword = async (
     const isValid = await bcrypt.compare(password, hashedPassword);
     return isValid;
   } catch (error) {
-    throw new Error("Invalid Password");
+    throw new Error("Server error! Try again");
   }
 };
