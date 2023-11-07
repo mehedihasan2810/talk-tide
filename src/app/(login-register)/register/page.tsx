@@ -13,16 +13,24 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import Link from "next/link";
-import { LockClosedIcon } from "@heroicons/react/20/solid";
+import {
+  ExclamationTriangleIcon,
+  LockClosedIcon,
+  XMarkIcon,
+} from "@heroicons/react/20/solid";
 import { signIn, useSession } from "next-auth/react";
 import { RegisterSchema } from "@/utils/zod-schema/registerSchema";
+import { useState } from "react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface Props {
   updateIsLogin(): void;
 }
 
 export default function Register({ updateIsLogin }: Props) {
+  const [error, setError] = useState<string | null | undefined>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const session = useSession();
   console.log(session);
 
@@ -39,14 +47,29 @@ export default function Register({ updateIsLogin }: Props) {
 
   async function onSubmit(values: z.infer<typeof RegisterSchema>) {
     console.log(values);
-    const data = await signIn("credentials", {
+
+    if (session.data) {
+      setError(
+        "You are already logged in! If you want to create new account then logout first"
+      );
+      return;
+    }
+    setIsLoading(true);
+    const res = await signIn("credentials", {
       redirect: false,
       // redirect: true,
       // callbackUrl: "/",
       authType: "register",
       ...values,
     });
-    console.log(data);
+    setIsLoading(false);
+
+    if (!res?.ok || res.error) {
+      setError(res?.error);
+    } else {
+      form.reset();
+    }
+    console.log(res);
   }
   return (
     <div className="w-screen h-screen grid place-items-center">
@@ -64,6 +87,23 @@ export default function Register({ updateIsLogin }: Props) {
             <LockClosedIcon className="w-8 h-8" />
           </div>
           {/* header ends */}
+
+          {/* Alert starts */}
+          {error && (
+            <Alert variant="destructive" className="relative">
+              <button
+                onClick={() => setError(null)}
+                className="absolute top-1 right-2 rounded-full p-1 bg-rose-50"
+                type="button"
+              >
+                <XMarkIcon className="w-5 h-5" />
+              </button>
+              <ExclamationTriangleIcon className="h-4 w-4" />
+              <AlertTitle>Error!</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+          {/* Alert ends */}
           <FormField
             control={form.control}
             name="email"
@@ -115,22 +155,24 @@ export default function Register({ updateIsLogin }: Props) {
                 <FormMessage />
                 <FormDescription className="text-center">
                   Already have an account?{" "}
-                  <Link
+                  <button
+                    type="button"
+                    disabled={isLoading}
                     onClick={updateIsLogin}
-                    href="#"
                     className="text-emerald-500 hover:text-emerald-400 underline"
                   >
                     Login
-                  </Link>
+                  </button>
                 </FormDescription>
               </FormItem>
             )}
           />
           <Button
+            disabled={isLoading || session.status === "loading"}
             type="submit"
             className="w-full h-11 text-base bg-emerald-700 hover:bg-emerald-800"
           >
-            Register
+            {isLoading ? "Register..." : "Register"}
           </Button>
         </form>
       </Form>
