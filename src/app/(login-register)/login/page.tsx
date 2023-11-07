@@ -4,6 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+
 import {
   Form,
   FormControl,
@@ -14,23 +16,28 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { LockClosedIcon } from "@heroicons/react/20/solid";
+import {
+  ExclamationTriangleIcon,
+  LockClosedIcon,
+} from "@heroicons/react/20/solid";
+import { signIn, signOut, useSession } from "next-auth/react";
+import { LoginSchema } from "@/utils/zod-schema/loginSchema";
+import { useState } from "react";
 
-// form schema starts -----------
-export const formSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
-  password: z.string().min(6, {
-    message: "Password must be at least 6 characters.",
-  }),
-});
-// form schema ends ------------
+interface Props {
+  updateIsLogin(): void;
+}
 
-export default function Login() {
+export default function Login({ updateIsLogin }: Props) {
+  const [error, setError] = useState<string | null | undefined>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const session = useSession();
+  console.log(session);
+
   // useForm starts ------------
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof LoginSchema>>({
+    resolver: zodResolver(LoginSchema),
     defaultValues: {
       username: "",
       password: "",
@@ -38,11 +45,23 @@ export default function Login() {
   });
   // useForm ends ----------
 
-  function onSubmit(_values: z.infer<typeof formSchema>) {
-    // console.log(values);
+  async function onSubmit(values: z.infer<typeof LoginSchema>) {
+    console.log(values);
+    setIsLoading(true);
+    const data = await signIn("credentials", {
+      redirect: false,
+      authType: "login",
+      ...values,
+    });
+    setIsLoading(false);
 
+    if (!data?.ok || data.error) {
+      setError(data?.error);
+    }
+
+    console.log("returned login result ", data);
     //reset form
-    form.reset();
+    // form.reset();
   }
 
   return (
@@ -61,6 +80,16 @@ export default function Login() {
             <LockClosedIcon className="w-7 h-7" />
           </div>
           {/* header ends */}
+
+          {/* Alert starts */}
+          {error && (
+            <Alert variant="destructive">
+              <ExclamationTriangleIcon className="h-4 w-4" />
+              <AlertTitle>Error!</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+          {/* Alert ends */}
 
           <FormField
             control={form.control}
@@ -86,8 +115,8 @@ export default function Login() {
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Input 
-                  data-testid="login-password"
+                  <Input
+                    data-testid="login-password"
                     type="password"
                     placeholder="Enter your password..."
                     {...field}
@@ -98,9 +127,10 @@ export default function Login() {
                 <FormMessage />
                 <FormDescription className="text-center">
                   Don&#39;t have an account?{" "}
-                  <Link 
-                  data-testid="login-link"
-                    href="register"
+                  <Link
+                    onClick={updateIsLogin}
+                    data-testid="login-link"
+                    href="#"
                     className="text-emerald-500 hover:text-emerald-400 underline"
                   >
                     Register
@@ -110,13 +140,15 @@ export default function Login() {
             )}
           />
           <Button
+            disabled={isLoading}
             type="submit"
             className="w-full h-11 text-base bg-emerald-700 hover:bg-emerald-800"
           >
-            Login
+            {isLoading ? "Login..." : "Login"}
           </Button>
         </form>
       </Form>
+      <button onClick={() => signOut()}>logout</button>
     </div>
   );
 }
