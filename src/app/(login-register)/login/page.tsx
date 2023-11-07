@@ -15,10 +15,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import Link from "next/link";
 import {
   ExclamationTriangleIcon,
   LockClosedIcon,
+  XMarkIcon,
 } from "@heroicons/react/20/solid";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { LoginSchema } from "@/utils/zod-schema/loginSchema";
@@ -47,21 +47,27 @@ export default function Login({ updateIsLogin }: Props) {
 
   async function onSubmit(values: z.infer<typeof LoginSchema>) {
     console.log(values);
+
+    if (session.data) {
+      setError("You are already logged in");
+      return;
+    }
+
     setIsLoading(true);
-    const data = await signIn("credentials", {
+    const res = await signIn("credentials", {
       redirect: false,
       authType: "login",
       ...values,
     });
     setIsLoading(false);
 
-    if (!data?.ok || data.error) {
-      setError(data?.error);
+    if (!res?.ok || res.error) {
+      setError(res?.error);
+    } else {
+      form.reset();
     }
 
-    console.log("returned login result ", data);
-    //reset form
-    // form.reset();
+    console.log("returned login result ", res);
   }
 
   return (
@@ -83,7 +89,14 @@ export default function Login({ updateIsLogin }: Props) {
 
           {/* Alert starts */}
           {error && (
-            <Alert variant="destructive">
+            <Alert variant="destructive" className="relative">
+              <button
+                onClick={() => setError(null)}
+                className="absolute top-1 right-2 rounded-full p-1 bg-rose-50"
+                type="button"
+              >
+                <XMarkIcon className="w-5 h-5" />
+              </button>
               <ExclamationTriangleIcon className="h-4 w-4" />
               <AlertTitle>Error!</AlertTitle>
               <AlertDescription>{error}</AlertDescription>
@@ -127,28 +140,31 @@ export default function Login({ updateIsLogin }: Props) {
                 <FormMessage />
                 <FormDescription className="text-center">
                   Don&#39;t have an account?{" "}
-                  <Link
+                  <button
+                    type="button"
+                    disabled={isLoading}
                     onClick={updateIsLogin}
                     data-testid="login-link"
-                    href="#"
                     className="text-emerald-500 hover:text-emerald-400 underline"
                   >
                     Register
-                  </Link>
+                  </button>
                 </FormDescription>
               </FormItem>
             )}
           />
           <Button
-            disabled={isLoading}
+            disabled={isLoading || session.status === "loading"}
             type="submit"
             className="w-full h-11 text-base bg-emerald-700 hover:bg-emerald-800"
           >
             {isLoading ? "Login..." : "Login"}
           </Button>
+          <button type="button" onClick={() => signOut()}>
+            logout
+          </button>
         </form>
       </Form>
-      <button onClick={() => signOut()}>logout</button>
     </div>
   );
 }

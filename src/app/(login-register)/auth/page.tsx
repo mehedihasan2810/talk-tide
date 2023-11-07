@@ -4,7 +4,8 @@ import Register from "../register/page";
 import Login from "../login/page";
 
 const Auth = () => {
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState<boolean>(true);
+
   return (
     <>
       {isLogin ? (
