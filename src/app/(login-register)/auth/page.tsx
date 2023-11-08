@@ -1,17 +1,49 @@
 "use client";
-import React, { useState } from "react";
-import Register from "../register/page";
-import Login from "../login/page";
+import React, { useCallback } from "react";
+
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import Login from "./components/Login";
+import Register from "./components/Register";
 
 const Auth = () => {
-  const [isLogin, setIsLogin] = useState<boolean>(true);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams()!;
+
+  // create a query string and then return it
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams);
+      params.set(name, value);
+      console.log(params.toString());
+      return params.toString();
+    },
+    [searchParams]
+  );
+  // ------------------------------------------
 
   return (
     <>
-      {isLogin ? (
-        <Login updateIsLogin={() => setIsLogin(false)} />
+      {searchParams.get("authPage") !== "register" ? (
+        <Login
+          updateIsLogin={() => {
+            // store authPage state in url so that we can
+            // persist our page on reloading
+            router.push(
+              pathname + "?" + createQueryString("authPage", "register")
+            );
+          }}
+        />
       ) : (
-        <Register updateIsLogin={() => setIsLogin(true)} />
+        <Register
+          updateIsLogin={() => {
+            // store authPage state in url so that we can
+            // persist our page on reloading
+            router.push(
+              pathname + "?" + createQueryString("authPage", "login")
+            );
+          }}
+        />
       )}
     </>
   );
