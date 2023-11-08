@@ -22,6 +22,7 @@ import { signIn, useSession } from "next-auth/react";
 import { RegisterSchema } from "@/utils/zod-schema/registerSchema";
 import { useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useRouter } from "next/navigation";
 
 interface Props {
   updateIsLogin(): void;
@@ -30,6 +31,8 @@ interface Props {
 export default function Register({ updateIsLogin }: Props) {
   const [error, setError] = useState<string | null | undefined>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const router = useRouter();
 
   const session = useSession();
   console.log(session);
@@ -68,6 +71,7 @@ export default function Register({ updateIsLogin }: Props) {
       setError(res?.error);
     } else {
       form.reset();
+      router.replace("/chat");
     }
     console.log(res);
   }

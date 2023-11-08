@@ -23,6 +23,7 @@ import {
 import { signIn, signOut, useSession } from "next-auth/react";
 import { LoginSchema } from "@/utils/zod-schema/loginSchema";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface Props {
   updateIsLogin(): void;
@@ -31,6 +32,8 @@ interface Props {
 export default function Login({ updateIsLogin }: Props) {
   const [error, setError] = useState<string | null | undefined>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const router = useRouter();
 
   const session = useSession();
   console.log(session);
@@ -65,6 +68,7 @@ export default function Login({ updateIsLogin }: Props) {
       setError(res?.error);
     } else {
       form.reset();
+      router.replace("/chat");
     }
 
     console.log("returned login result ", res);

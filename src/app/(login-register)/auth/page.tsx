@@ -15,7 +15,6 @@ const Auth = () => {
     (name: string, value: string) => {
       const params = new URLSearchParams(searchParams);
       params.set(name, value);
-      console.log(params.toString());
       return params.toString();
     },
     [searchParams]
