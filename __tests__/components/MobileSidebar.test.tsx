@@ -1,5 +1,5 @@
 import Sidebar from "@/app/chat/components/Sidebar";
-import { useChatStore } from "@/lib/stores/chatStores";
+import { useStore } from "@/lib/stores/useStore";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
@@ -15,8 +15,8 @@ describe("<MobileSidebar/>", () => {
     const user = userEvent.setup();
 
     const toggleSidebar = jest.spyOn(
-      useChatStore.getState(),
-      "toggleIsMobileSidebarOpen"
+      useStore.getState(),
+      "toggleIsMobileSidebarOpen",
     );
     // ---------------------------
 
@@ -34,7 +34,7 @@ describe("<MobileSidebar/>", () => {
     expect(toggleSidebar).toHaveBeenCalled();
     expect(screen.getByTestId("sidebar-dialog")).toHaveAttribute(
       "data-state",
-      "open"
+      "open",
     );
     expect(closeBtn).toBeInTheDocument();
   });

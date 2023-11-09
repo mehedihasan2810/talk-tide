@@ -1,10 +1,10 @@
-import { useChatStore } from "@/lib/stores/chatStores";
+import { useStore } from "@/lib/stores/useStore";
 import LargeSidebar from "./LargeSidebar";
 import MobileSidebar from "./MobileSidebar";
 
 const Sidebar = () => {
-  const toggleIsMobileSidebarOpen = useChatStore(
-    (state) => state.toggleIsMobileSidebarOpen
+  const toggleIsMobileSidebarOpen = useStore(
+    (state) => state.toggleIsMobileSidebarOpen,
   );
 
   return (

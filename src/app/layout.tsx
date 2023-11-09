@@ -3,7 +3,7 @@ import { Inter as FontSans } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import React from "react";
-import Provider from "@/providers/provider";
+import Provider from "@/contexts/providers";
 
 const fontSans = FontSans({ subsets: ["latin"], variable: "--font-sans" });
 
