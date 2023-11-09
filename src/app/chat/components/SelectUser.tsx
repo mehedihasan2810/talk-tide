@@ -15,7 +15,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
-import { useChatStore } from "@/lib/stores/chatStores";
+import { useStore } from "@/lib/stores/useStore";
 
 const frameworks = [
   {
@@ -44,12 +44,12 @@ export default function SelectUser() {
   // STATE
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
-  const isGroupChat = useChatStore((state) => state.isGroupChat);
+  const isGroupChat = useStore((state) => state.isGroupChat);
 
   // ACTION
-  const updateSelectedUser = useChatStore((state) => state.updateSelectedUser);
-  const updateGroupParticipants = useChatStore(
-    (state) => state.updateGroupParticipants
+  const updateSelectedUser = useStore((state) => state.updateSelectedUser);
+  const updateGroupParticipants = useStore(
+    (state) => state.updateGroupParticipants,
   );
 
   return (
@@ -69,7 +69,7 @@ export default function SelectUser() {
           </Button>
         </PopoverTrigger>
         {/* add a user or users to start chat */}
-        <Button className="px-3 border-gray-300">Start</Button>
+        <Button className="border-gray-300 px-3">Start</Button>
         {/* --------------------------------------- */}
       </div>
 
@@ -101,7 +101,7 @@ export default function SelectUser() {
                 <CheckIcon
                   className={cn(
                     "ml-auto h-4 w-4",
-                    value === framework.value ? "opacity-100" : "opacity-0"
+                    value === framework.value ? "opacity-100" : "opacity-0",
                   )}
                 />
               </CommandItem>

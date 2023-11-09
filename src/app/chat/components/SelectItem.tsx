@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { useChatStore } from "@/lib/stores/chatStores";
+import { useStore } from "@/lib/stores/useStore";
 import { XMarkIcon } from "@heroicons/react/20/solid";
 import React from "react";
 
@@ -10,11 +10,11 @@ interface Props {
 }
 
 const SelectItem = ({ type, user }: Props) => {
-  const { removeGroupParticipants, removeSelectedUser } = useChatStore(
-    (state) => state
+  const { removeGroupParticipants, removeSelectedUser } = useStore(
+    (state) => state,
   );
   return (
-    <div className="flex gap-1 items-center p-1 border w-fit rounded-full">
+    <div className="flex w-fit items-center gap-1 rounded-full border p-1">
       <Avatar title={user} className="h-6 w-6">
         <AvatarImage src="https://github.com/shadcn.png" />
         <AvatarFallback>{user[0].toUpperCase()}</AvatarFallback>
@@ -22,7 +22,7 @@ const SelectItem = ({ type, user }: Props) => {
 
       <div
         title={user}
-        className="w-12 whitespace-nowrap overflow-hidden overflow-ellipsis"
+        className="w-12 overflow-hidden overflow-ellipsis whitespace-nowrap"
       >
         {user}
       </div>
@@ -32,7 +32,7 @@ const SelectItem = ({ type, user }: Props) => {
             ? removeSelectedUser(user)
             : removeGroupParticipants(user)
         }
-        className="w-7 h-7 p-1 rounded-full"
+        className="h-7 w-7 rounded-full p-1"
         variant="outline"
       >
         <XMarkIcon className="h-full w-full" />

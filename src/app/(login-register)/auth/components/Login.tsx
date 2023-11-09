@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
+  ArrowPathIcon,
   ExclamationTriangleIcon,
   LockClosedIcon,
   XMarkIcon,
@@ -75,19 +76,19 @@ export default function Login({ updateIsLogin }: Props) {
   }
 
   return (
-    <div className="w-screen h-screen grid place-items-center">
+    <div className="grid h-screen w-screen place-items-center">
       <Form {...form}>
         <form
           data-testid="login-form"
           onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-5 w-80"
+          className="w-80 space-y-5"
         >
           {/* header starts */}
-          <div className="flex justify-center items-center gap-1 text-emerald-700 mb-8">
+          <div className="mb-8 flex items-center justify-center gap-1 text-emerald-700">
             <h2 className="scroll-m-20 text-3xl font-semibold tracking-tight">
               Login
             </h2>
-            <LockClosedIcon className="w-7 h-7" />
+            <LockClosedIcon className="h-7 w-7" />
           </div>
           {/* header ends */}
 
@@ -96,10 +97,10 @@ export default function Login({ updateIsLogin }: Props) {
             <Alert variant="destructive" className="relative">
               <button
                 onClick={() => setError(null)}
-                className="absolute top-1 right-2 rounded-full p-1 bg-rose-50"
+                className="absolute right-2 top-1 rounded-full bg-rose-50 p-1"
                 type="button"
               >
-                <XMarkIcon className="w-5 h-5" />
+                <XMarkIcon className="h-5 w-5" />
               </button>
               <ExclamationTriangleIcon className="h-4 w-4" />
               <AlertTitle>Error!</AlertTitle>
@@ -118,7 +119,7 @@ export default function Login({ updateIsLogin }: Props) {
                     data-testid="login-username"
                     placeholder="Enter your username..."
                     {...field}
-                    className="h-11 text-base focus-visible:ring-emerald-500 border-gray-300"
+                    className="h-11 border-gray-300 text-base focus-visible:ring-emerald-500"
                   />
                 </FormControl>
 
@@ -137,7 +138,7 @@ export default function Login({ updateIsLogin }: Props) {
                     type="password"
                     placeholder="Enter your password..."
                     {...field}
-                    className="h-11 text-base focus-visible:ring-emerald-500 border-gray-300"
+                    className="h-11 border-gray-300 text-base focus-visible:ring-emerald-500"
                   />
                 </FormControl>
 
@@ -149,7 +150,7 @@ export default function Login({ updateIsLogin }: Props) {
                     disabled={isLoading}
                     onClick={updateIsLogin}
                     data-testid="login-link"
-                    className="text-emerald-500 hover:text-emerald-400 underline"
+                    className="text-emerald-500 underline hover:text-emerald-400"
                   >
                     Register
                   </button>
@@ -160,9 +161,12 @@ export default function Login({ updateIsLogin }: Props) {
           <Button
             disabled={isLoading || session.status === "loading"}
             type="submit"
-            className="w-full h-11 text-base bg-emerald-700 hover:bg-emerald-800"
+            className="h-11 w-full bg-emerald-700 text-base hover:bg-emerald-800"
           >
-            {isLoading ? "Login..." : "Login"}
+            {isLoading && (
+              <ArrowPathIcon className="mr-2 h-4 w-4 animate-spin" />
+            )}{" "}
+            Login
           </Button>
           <button type="button" onClick={() => signOut()}>
             logout

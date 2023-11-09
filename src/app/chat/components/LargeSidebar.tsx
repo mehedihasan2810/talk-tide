@@ -1,6 +1,6 @@
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { useChatStore } from "@/lib/stores/chatStores";
+import { useStore } from "@/lib/stores/useStore";
 import SelectItem from "./SelectItem";
 import SelectUser from "./SelectUser";
 import { Input } from "@/components/ui/input";
@@ -15,21 +15,21 @@ const LargeSidebar = () => {
     groupParticipants,
     updateGroupName,
     updateIsGroupChat,
-  } = useChatStore((state) => state);
+  } = useStore((state) => state);
 
   return (
     <div>
       {/* todo */}
-      <div className="border-b mb-4 h-14 px-4 flex justify-between items-center">
+      <div className="mb-4 flex h-14 items-center justify-between border-b px-4">
         <p>hello my name is</p>
-        <Button className="w-8 h-8 rounded-full p-1" variant="outline">
-          <Cog6ToothIcon className="w-full h-full text-gray-700" />
+        <Button className="h-8 w-8 rounded-full p-1" variant="outline">
+          <Cog6ToothIcon className="h-full w-full text-gray-700" />
         </Button>
       </div>
 
       <div className="px-2">
         {/* toggle if the chat is group chat or one to one chat*/}
-        <div className="flex items-center space-x-2 mb-2">
+        <div className="mb-2 flex items-center space-x-2">
           <Switch
             checked={isGroupChat}
             onCheckedChange={updateIsGroupChat}
@@ -58,7 +58,7 @@ const LargeSidebar = () => {
         map the selected group participants avatar or
         show a single user avatar 
         */}
-        <div className="flex flex-wrap gap-1  mb-2">
+        <div className="mb-2 flex flex-wrap  gap-1">
           {isGroupChat
             ? groupParticipants.map((user, index) => (
                 <SelectItem key={index} type="groupChat" user={user} />

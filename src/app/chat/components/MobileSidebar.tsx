@@ -10,10 +10,10 @@ import SelectUser from "./SelectUser";
 import { Switch } from "@/components/ui/switch";
 import React from "react";
 import { Input } from "@/components/ui/input";
-import { useChatStore } from "@/lib/stores/chatStores";
 import SelectItem from "./SelectItem";
 import { XMarkIcon } from "@heroicons/react/20/solid";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useStore } from "@/lib/stores/useStore";
 
 const MobileSidebar = () => {
   const {
@@ -25,7 +25,7 @@ const MobileSidebar = () => {
     updateGroupName,
     updateIsGroupChat,
     toggleIsMobileSidebarOpen,
-  } = useChatStore((state) => state);
+  } = useStore((state) => state);
 
   return (
     <Sheet open={isMobileSidebarOpen}>
@@ -36,7 +36,7 @@ const MobileSidebar = () => {
       >
         <div>
           <SheetHeader className="mb-4">
-            <div className="flex justify-between items-center">
+            <div className="flex items-center justify-between">
               <Avatar className="h-10 w-10">
                 <AvatarImage src="https://github.com/shadcn.png" />
                 <AvatarFallback>M</AvatarFallback>
@@ -44,16 +44,16 @@ const MobileSidebar = () => {
 
               <Button
                 onClick={toggleIsMobileSidebarOpen}
-                className="w-9 h-9 p-1 rounded-full"
+                className="h-9 w-9 rounded-full p-1"
                 variant="outline"
               >
-                <XMarkIcon className="w-full h-full" />
+                <XMarkIcon className="h-full w-full" />
               </Button>
             </div>
           </SheetHeader>
 
           {/* toggle if the chat is group chat or one to one chat*/}
-          <div className="flex items-center space-x-2 mb-2">
+          <div className="mb-2 flex items-center space-x-2">
             <Switch
               checked={isGroupChat}
               onCheckedChange={updateIsGroupChat}
@@ -67,7 +67,7 @@ const MobileSidebar = () => {
         map the selected group participants avatar or
         show a single user avatar 
         */}
-          <div className="flex flex-wrap gap-1  mb-2">
+          <div className="mb-2 flex flex-wrap  gap-1">
             {isGroupChat
               ? groupParticipants.map((user, index) => (
                   <SelectItem key={index} type="groupChat" user={user} />
