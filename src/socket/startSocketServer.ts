@@ -4,6 +4,7 @@ import { Server as ServerIO } from "socket.io";
 import { Server as NetServer } from "http";
 import chalk from "chalk";
 import { NextApiRequest } from "next";
+import { ApiError } from "@/utils/error-helpers/ApiError";
 
 export const startSocketServer = (
   req: NextApiRequest,
@@ -19,7 +20,7 @@ export const startSocketServer = (
         pingTimeout: 60000,
         path: "/api/socket",
         cors: {
-          origin: "http://localhost:4000",
+          origin: process.env.CORS_ORIGIN,
           credentials: true,
         },
       });
@@ -34,6 +35,6 @@ export const startSocketServer = (
     console.log(
       `startSocketServer: ${chalk.bold.red((error as Error).message)}`
     );
-    throw new Error((error as Error).message);
+    throw new ApiError(500, "Internal server error");
   }
 };
