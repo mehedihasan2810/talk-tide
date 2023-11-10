@@ -64,7 +64,7 @@ model ChatMessage {
   attachments Attachments[]
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
-  Chat        Chat          @relation(fields: [chatId], references: [id])
+  chat        Chat          @relation(fields: [chatId], references: [id])
   chatId      String        @db.ObjectId
 
   @@map("chatMessages")
