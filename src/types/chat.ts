@@ -16,13 +16,14 @@ export interface ChatListItemInterface {
 export interface ChatMessageInterface {
   id: string;
   sender: Pick<UserInterface, "id" | "avatar" | "email" | "username">;
+  senderId: string;
   content: string;
-  chat: string;
+  chatId: string;
   attachments: {
+    id: string;
     url: string;
     localPath: string;
-    id: string;
   }[];
   createdAt: string;
-  updatedAt: string;
+  updatedAt: string
 }

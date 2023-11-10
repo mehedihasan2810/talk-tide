@@ -13,7 +13,7 @@ export type NextApiResponseServerIO = NextApiResponse & {
 
 type DefaultSessionUser = NonNullable<DefaultSession["user"]>;
 
-type SessionUser = DefaultSessionUser & {
+export type SessionUser = DefaultSessionUser & {
   id: string;
   role: string;
 };
