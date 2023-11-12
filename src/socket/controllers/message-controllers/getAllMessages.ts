@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { getUserFromToken } from "@/socket/getUserFromToken";
 import { NextApiResponseServerIO } from "@/types/types";
 import { ApiError } from "@/utils/error-helpers/ApiError";
 import { ApiResponse } from "@/utils/helpers/apiResponse";
@@ -6,8 +7,16 @@ import { NextApiRequest } from "next";
 
 export const getAllMessages = async (
   req: NextApiRequest,
-  res: NextApiResponseServerIO
+  res: NextApiResponseServerIO,
 ) => {
+  // get user from auth token
+  const tokenUser = await getUserFromToken(req);
+
+  if (!tokenUser) {
+    throw new ApiError(401, "Unauthorized request!");
+  }
+  // ----------------------------------------------
+
   const { chatId } = req.query as { chatId: string | undefined };
 
   if (!chatId || chatId === undefined) {
@@ -27,8 +36,8 @@ export const getAllMessages = async (
     throw new ApiError(404, "Chat does not exist");
   }
 
-  //   Only send messages if the logged in user is a part of the chat he is requesting messages of
-  if (!selectedChat.participantIds.includes(req.cookies.id as string)) {
+  // Only send messages if the logged in user is a part of the chat he is requesting messages of
+  if (!selectedChat.participantIds.includes(tokenUser.id)) {
     throw new ApiError(400, "User is not a part of this chat");
   }
 
@@ -53,6 +62,6 @@ export const getAllMessages = async (
   return res
     .status(200)
     .json(
-      new ApiResponse(200, messages || [], "Messages fetched successfully")
+      new ApiResponse(200, messages || [], "Messages fetched successfully"),
     );
 };
