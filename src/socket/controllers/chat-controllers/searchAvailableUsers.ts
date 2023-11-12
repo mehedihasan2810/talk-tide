@@ -1,16 +1,25 @@
 import prisma from "@/lib/prisma";
+import { getUserFromToken } from "@/socket/getUserFromToken";
 import { NextApiResponseServerIO } from "@/types/types";
+import { ApiError } from "@/utils/error-helpers/ApiError";
 import { ApiResponse } from "@/utils/helpers/apiResponse";
 import { NextApiRequest } from "next";
 
 const searchAvailableUsers = async (
   req: NextApiRequest,
-  res: NextApiResponseServerIO
+  res: NextApiResponseServerIO,
 ) => {
+  // get user from auth token
+  const tokenUser = await getUserFromToken(req);
+
+  if (!tokenUser) {
+    throw new ApiError(401, "Unauthorized request!");
+  }
+
   const users = await prisma.user.findMany({
     where: {
       id: {
-        not: req.cookies.id, // avoid logged in user
+        not: tokenUser.id, // avoid logged in user
       },
     },
 

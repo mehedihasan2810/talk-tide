@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { ChatEventEnum } from "@/socket/constants";
+import { getUserFromToken } from "@/socket/getUserFromToken";
 import { emitSocketEvent } from "@/socket/socket-events/emitSocketEvent";
 import { NextApiResponseServerIO } from "@/types/types";
 import { ApiError } from "@/utils/error-helpers/ApiError";
@@ -8,8 +9,16 @@ import { NextApiRequest } from "next";
 
 const createOrGetAOneOnOneChat = async (
   req: NextApiRequest,
-  res: NextApiResponseServerIO
+  res: NextApiResponseServerIO,
 ) => {
+  // get user from auth token
+  const tokenUser = await getUserFromToken(req);
+
+  if (!tokenUser) {
+    throw new ApiError(401, "Unauthorized request!");
+  }
+  // ----------------------------------------------
+
   const { receiverId } = req.query as { receiverId: string | undefined };
 
   if (!receiverId || receiverId === undefined) {
@@ -21,9 +30,10 @@ const createOrGetAOneOnOneChat = async (
     where: {
       id: receiverId,
     },
+    select: {
+      id: true,
+    },
   });
-
-  // ----------------------------------------
 
   // if not then throw error -------------------------
   if (!receiver) {
@@ -32,14 +42,11 @@ const createOrGetAOneOnOneChat = async (
   // --------------------------------------------------
 
   // check if receiver is not the user who is requesting a chat
-  if (receiver.id === req.cookies.id) {
+  if (receiver.id === tokenUser.id) {
     throw new ApiError(400, "You cannot chat with yourself");
   }
-  // ------------------------------------------------------------
 
-  // -----------------------------------------------------------
   const chat = await prisma.chat.findMany({
-    // -------------------------
     where: {
       isGroupChat: false, // avoid group chats. This controller is responsible for one on one chats
 
@@ -47,7 +54,7 @@ const createOrGetAOneOnOneChat = async (
       AND: [
         {
           participantIds: {
-            has: req.cookies.id,
+            has: tokenUser.id,
           },
         },
         {
@@ -94,10 +101,6 @@ const createOrGetAOneOnOneChat = async (
     },
   });
 
-  console.dir(chat, { depth: null });
-  // -----------------------------------------------------------
-
-  // -------------------------------------------------------------------
   if (chat.length) {
     // if we find the chat that means user already has created a chat
     type Chat = (typeof chat)[0];
@@ -105,22 +108,13 @@ const createOrGetAOneOnOneChat = async (
       .status(200)
       .json(new ApiResponse<Chat>(200, chat[0], "Chat retrieved successfully"));
   }
-  // ----------------------------------------------------------------------
 
   // if not we need to create a new one on one chat -----------------
-  const newChatInstance = await prisma.chat.create({
+  const createdChat = await prisma.chat.create({
     data: {
       name: "One on one chat",
-      participantIds: [req.cookies.id as string, receiverId], // add receiver and logged in user as participants
-      adminId: req.cookies.id as string,
-    },
-  });
-  // ------------------------------------------------------------------
-
-  // structure the chat as per the common aggregation to keep the consistency
-  const createdChat = await prisma.chat.findUnique({
-    where: {
-      id: newChatInstance.id,
+      participantIds: [tokenUser.id, receiverId], // add receiver and logged in user as participants
+      adminId: tokenUser.id,
     },
     include: {
       // --------------
@@ -157,33 +151,25 @@ const createOrGetAOneOnOneChat = async (
       // --------------------------
     },
   });
-  // ------------------------------------------------------------
-
-  // -----------------------------------------------
-  if (!createdChat) {
-    throw new ApiError(500, "Internal server error");
-  }
-  // ------------------------------------------------
 
   // logic to emit socket event about the new chat added to the participants
   createdChat.participants.forEach((participant) => {
-    if (participant.id === req.cookies.id) return; // don't emit the event for the logged in use as he is the one who is initiating the chat
+    if (participant.id === tokenUser.id) return; // don't emit the event for the logged in use as he is the one who is initiating the chat
 
     // emit event to other participants with new chat as a payload
     emitSocketEvent(
       res.socket.server.io,
       participant.id,
       ChatEventEnum.NEW_CHAT_EVENT,
-      createdChat
+      createdChat,
     );
   });
-  // ---------------------------------------------------------------------
 
   // ---------------------------------------------------------------------
+
   return res
     .status(201)
-    .json(new ApiResponse(201, createdChat, "Chat retrieved successfully"));
-  // ----------------------------------------------------------------------
+    .json(new ApiResponse(201, createdChat, "Chat created successfully"));
 };
 
 export { createOrGetAOneOnOneChat };

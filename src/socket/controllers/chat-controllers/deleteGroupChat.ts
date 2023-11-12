@@ -6,11 +6,20 @@ import { ApiError } from "@/utils/error-helpers/ApiError";
 import { ApiResponse } from "@/utils/helpers/apiResponse";
 import { NextApiRequest } from "next";
 import { deleteCascadeChatMessages } from "./deleteCascadeChatMessages";
+import { getUserFromToken } from "@/socket/getUserFromToken";
 
 const deleteGroupChat = async (
   req: NextApiRequest,
-  res: NextApiResponseServerIO
+  res: NextApiResponseServerIO,
 ) => {
+  // get user from auth token
+  const tokenUser = await getUserFromToken(req);
+
+  if (!tokenUser) {
+    throw new ApiError(401, "Unauthorized request!");
+  }
+  // ----------------------------------------------
+
   const { chatId } = req.query as { chatId: string | undefined };
 
   // throw error if theres no chat id ------------
@@ -24,6 +33,27 @@ const deleteGroupChat = async (
     where: {
       id: chatId as string,
       isGroupChat: true,
+    },
+    select: {
+      adminId: true,
+    },
+  });
+
+  //   ----------------------------------------------------
+
+  if (!groupChat) {
+    throw new ApiError(404, "Group chat does not exist");
+  }
+
+  // check if the user who is deleting is the group admin
+  if (groupChat.adminId !== tokenUser.id) {
+    throw new ApiError(404, "Only admin can delete the group");
+  }
+
+  // delete the chat ----------
+  const deletedChat = await prisma.chat.delete({
+    where: {
+      id: chatId as string,
     },
     include: {
       // --------------
@@ -60,37 +90,19 @@ const deleteGroupChat = async (
       // --------------------------
     },
   });
-
-  //   ----------------------------------------------------
-
-  if (!groupChat) {
-    throw new ApiError(404, "Group chat does not exist");
-  }
-
-  // check if the user who is deleting is the group admin
-  if (groupChat.adminId !== req.cookies.id) {
-    throw new ApiError(404, "Only admin can delete the group");
-  }
-
-  // delete the chat ----------
-  await prisma.chat.delete({
-    where: {
-      id: chatId as string,
-    },
-  });
   //   ------------------------
 
-  await deleteCascadeChatMessages(chatId); // remove all messages and attachments associated with the chat
+  await deleteCascadeChatMessages(deletedChat.id); // remove all messages and attachments associated with the chat
 
   // logic to emit socket event about the group chat deleted to the participants
-  groupChat.participants.forEach((participant) => {
-    if (participant.id === req.cookies.id) return; // don't emit the event for the logged in use as he is the one who is deleting
+  deletedChat.participants.forEach((participant) => {
+    if (participant.id === tokenUser.id) return; // don't emit the event for the logged in use as he is the one who is deleting
     // emit event to other participants with left chat as a payload
     emitSocketEvent(
       res.socket.server.io,
       participant.id,
       ChatEventEnum.LEAVE_CHAT_EVENT,
-      groupChat
+      deletedChat,
     );
   });
   //   --------------------------------------------------------------------

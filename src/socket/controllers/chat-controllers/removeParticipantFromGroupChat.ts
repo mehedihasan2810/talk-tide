@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { ChatEventEnum } from "@/socket/constants";
+import { getUserFromToken } from "@/socket/getUserFromToken";
 import { emitSocketEvent } from "@/socket/socket-events/emitSocketEvent";
 import { NextApiResponseServerIO } from "@/types/types";
 import { ApiError } from "@/utils/error-helpers/ApiError";
@@ -10,8 +11,16 @@ type Query = {
 };
 export const removeParticipantFromGroupChat = async (
   req: NextApiRequest,
-  res: NextApiResponseServerIO
+  res: NextApiResponseServerIO,
 ) => {
+  // get user from auth token
+  const tokenUser = await getUserFromToken(req);
+
+  if (!tokenUser) {
+    throw new ApiError(401, "Unauthorized request!");
+  }
+  // ----------------------------------------------
+
   const { slug } = req.query as Query;
 
   const chatId = slug[0];
@@ -42,7 +51,7 @@ export const removeParticipantFromGroupChat = async (
   }
 
   // check if user who is deleting is a group admin
-  if (groupChat.adminId !== req.cookies.id) {
+  if (groupChat.adminId !== tokenUser.id) {
     throw new ApiError(404, "You are not an admin");
   }
 
@@ -53,7 +62,7 @@ export const removeParticipantFromGroupChat = async (
 
   //   remove the participant
   const updatedParticipantIds = groupChat.participantIds.filter(
-    (id) => id !== participantId
+    (id) => id !== participantId,
   );
 
   const updatedChat = await prisma.chat.update({
@@ -101,21 +110,17 @@ export const removeParticipantFromGroupChat = async (
     },
   });
 
-  if (!updatedChat) {
-    throw new ApiError(500, "Internal server error");
-  }
-
   // emit leave chat event to the removed participant
   emitSocketEvent(
     res.socket.server.io,
     participantId,
     ChatEventEnum.LEAVE_CHAT_EVENT,
-    updatedChat
+    updatedChat,
   );
 
   return res
     .status(200)
     .json(
-      new ApiResponse(200, updatedChat, "Participant removed successfully")
+      new ApiResponse(200, updatedChat, "Participant removed successfully"),
     );
 };

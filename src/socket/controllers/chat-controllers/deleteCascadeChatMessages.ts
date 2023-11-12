@@ -20,17 +20,14 @@ export const deleteCascadeChatMessages = async (chatId: string) => {
   attachments = attachments.concat(
     ...messages.map((message) => {
       return message.attachments;
-    })
+    }),
   );
-
   //   ------------------------------------------
 
   attachments.forEach((attachment) => {
     // remove attachment files from the local storage
     removeLocalFile(attachment.localPath);
   });
-
-  //   --------------------------------------------
 
   // delete all the messages ------------
   await prisma.chatMessage.deleteMany({

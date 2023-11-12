@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { getUserFromToken } from "@/socket/getUserFromToken";
 import { NextApiResponseServerIO } from "@/types/types";
 import { ApiError } from "@/utils/error-helpers/ApiError";
 import { ApiResponse } from "@/utils/helpers/apiResponse";
@@ -6,10 +7,17 @@ import { NextApiRequest } from "next";
 
 const getGroupChatDetails = async (
   req: NextApiRequest,
-  res: NextApiResponseServerIO
+  res: NextApiResponseServerIO,
 ) => {
-  const { chatId } = req.query;
-  console.log(chatId);
+  // get user from auth token
+  const tokenUser = await getUserFromToken(req);
+
+  if (!tokenUser) {
+    throw new ApiError(401, "Unauthorized request!");
+  }
+  // ----------------------------------------------
+
+  const { chatId }: { chatId: string | undefined } = req.query as any;
 
   // throw error if theres no chat id ------------
   if (!chatId || chatId === undefined) {
@@ -20,7 +28,7 @@ const getGroupChatDetails = async (
   // find the chat -----------------------
   const chat = await prisma.chat.findUnique({
     where: {
-      id: chatId as string,
+      id: chatId,
     },
     include: {
       // --------------

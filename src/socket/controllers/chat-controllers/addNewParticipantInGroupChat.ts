@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { ChatEventEnum } from "@/socket/constants";
+import { getUserFromToken } from "@/socket/getUserFromToken";
 import { emitSocketEvent } from "@/socket/socket-events/emitSocketEvent";
 import { NextApiResponseServerIO } from "@/types/types";
 import { ApiError } from "@/utils/error-helpers/ApiError";
@@ -12,8 +13,16 @@ type Query = {
 
 export const addNewParticipantInGroupChat = async (
   req: NextApiRequest,
-  res: NextApiResponseServerIO
+  res: NextApiResponseServerIO,
 ) => {
+  // get user from auth token
+  const tokenUser = await getUserFromToken(req);
+
+  if (!tokenUser) {
+    throw new ApiError(401, "Unauthorized request!");
+  }
+  // ----------------------------------------------
+
   const { slug } = req.query as Query;
 
   const chatId = slug[0];
@@ -44,7 +53,7 @@ export const addNewParticipantInGroupChat = async (
   }
 
   // check if user who is adding is a group admin
-  if (groupChat.adminId !== req.cookies.id) {
+  if (groupChat.adminId !== tokenUser.id) {
     throw new ApiError(404, "You are not an admin");
   }
 
@@ -98,16 +107,12 @@ export const addNewParticipantInGroupChat = async (
     },
   });
 
-  if (!updatedChat) {
-    throw new ApiError(500, "Internal server error");
-  }
-
   // emit new chat event to the added participant
   emitSocketEvent(
     res.socket.server.io,
     participantId,
     ChatEventEnum.NEW_CHAT_EVENT,
-    updatedChat
+    updatedChat,
   );
 
   return res

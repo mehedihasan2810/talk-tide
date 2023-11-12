@@ -6,19 +6,28 @@ import { deleteCascadeChatMessages } from "./deleteCascadeChatMessages";
 import { emitSocketEvent } from "@/socket/socket-events/emitSocketEvent";
 import { ChatEventEnum } from "@/socket/constants";
 import { ApiResponse } from "@/utils/helpers/apiResponse";
+import { getUserFromToken } from "@/socket/getUserFromToken";
 
 export const deleteOneOnOneChat = async (
   req: NextApiRequest,
-  res: NextApiResponseServerIO
+  res: NextApiResponseServerIO,
 ) => {
+  // get user from auth token
+  const tokenUser = await getUserFromToken(req);
+
+  if (!tokenUser) {
+    throw new ApiError(401, "Unauthorized request!");
+  }
+  // -------------------------------------------
+
   const { chatId } = req.query as { chatId: string | undefined };
 
   if (!chatId || chatId === undefined) {
     throw new ApiError(400, "Chat id is missing");
   }
 
-  //  check for chat existence --------------
-  const chat = await prisma.chat.findUnique({
+  // delete the chat even if user is not admin because it's a personal chat
+  const chat = await prisma.chat.delete({
     where: {
       id: chatId,
     },
@@ -57,32 +66,20 @@ export const deleteOneOnOneChat = async (
       // --------------------------
     },
   });
-  // ------------------------------------------
-
-  if (!chat) {
-    throw new ApiError(404, "Chat does not exist");
-  }
-
-  // delete the chat even if user is not admin because it's a personal chat
-  await prisma.chat.delete({
-    where: {
-      id: chatId,
-    },
-  });
   // ----------------------------
 
   await deleteCascadeChatMessages(chatId); // delete all the messages and attachments associated with the chat
 
   chat.participants.forEach((participant) => {
     // no need for logged in user to be notified
-    if (participant.id === req.cookies.id) return;
+    if (participant.id === tokenUser.id) return;
 
     // emit event to other participant with left chat as a payload
     emitSocketEvent(
       res.socket.server.io,
       participant.id,
       ChatEventEnum.LEAVE_CHAT_EVENT,
-      chat
+      chat,
     );
     // --------------------------------
   });

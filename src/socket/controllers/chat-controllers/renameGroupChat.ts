@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { ChatEventEnum } from "@/socket/constants";
+import { getUserFromToken } from "@/socket/getUserFromToken";
 import { emitSocketEvent } from "@/socket/socket-events/emitSocketEvent";
 import { NextApiResponseServerIO } from "@/types/types";
 import { ApiError } from "@/utils/error-helpers/ApiError";
@@ -8,8 +9,16 @@ import { NextApiRequest } from "next";
 
 const renameGroupChat = async (
   req: NextApiRequest,
-  res: NextApiResponseServerIO
+  res: NextApiResponseServerIO,
 ) => {
+  // get user from auth token
+  const tokenUser = await getUserFromToken(req);
+
+  if (!tokenUser) {
+    throw new ApiError(401, "Unauthorized request!");
+  }
+  // ----------------------------------------------
+
   const { chatId } = req.query;
   const { name } = req.body;
 
@@ -21,7 +30,7 @@ const renameGroupChat = async (
 
   // throw error if theres no name ------------
   if (!name || name === undefined) {
-    throw new ApiError(400, "group name is missing is missing!");
+    throw new ApiError(400, "group name is missing!");
   }
   // ---------------------------------------------
 
@@ -39,7 +48,7 @@ const renameGroupChat = async (
   }
 
   // only admin can change the name
-  if (groupChat.adminId !== req.cookies.id) {
+  if (groupChat.adminId !== tokenUser.id) {
     throw new ApiError(404, "You are not an admin");
   }
 
@@ -86,11 +95,6 @@ const renameGroupChat = async (
       // --------------------------
     },
   });
-  //   ----------------------------------------------------
-
-  if (!updateGroupChat) {
-    throw new ApiError(500, "Internal server error");
-  }
 
   // logic to emit socket event about the updated chat name to the participants
   updateGroupChat.participants.forEach((participant) => {
@@ -99,7 +103,7 @@ const renameGroupChat = async (
       res.socket.server.io,
       participant.id,
       ChatEventEnum.UPDATE_GROUP_NAME_EVENT,
-      updateGroupChat
+      updateGroupChat,
     );
   });
   //   --------------------------------------------------------
@@ -110,8 +114,8 @@ const renameGroupChat = async (
       new ApiResponse(
         200,
         updateGroupChat,
-        "Group chat name updated successfully"
-      )
+        "Group chat name updated successfully",
+      ),
     );
   // ---------------------------------------
 };

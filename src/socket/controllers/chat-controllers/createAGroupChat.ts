@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { ChatEventEnum } from "@/socket/constants";
+import { getUserFromToken } from "@/socket/getUserFromToken";
 import { emitSocketEvent } from "@/socket/socket-events/emitSocketEvent";
 import { NextApiResponseServerIO } from "@/types/types";
 import { ApiError } from "@/utils/error-helpers/ApiError";
@@ -8,51 +9,43 @@ import { NextApiRequest } from "next";
 
 const createAGroupChat = async (
   req: NextApiRequest,
-  res: NextApiResponseServerIO
+  res: NextApiResponseServerIO,
 ) => {
-  // todo: remove the id
-  if (!req.cookies.id) {
-    req.cookies.id = "6544f41730a9d575de67d59d";
+  // get user from auth token
+  const tokenUser = await getUserFromToken(req);
+
+  if (!tokenUser) {
+    throw new ApiError(401, "Unauthorized request!");
   }
 
   const { name, participantIds } = req.body;
   // Check if user is not sending himself as a participant. This will be done manually
-  if (participantIds.includes(req.cookies.id)) {
+  if (participantIds.includes(tokenUser.id)) {
     throw new ApiError(
       400,
-      "Participants array should not contain the group creator"
+      "Participants array should not contain the group creator",
     );
   }
-  //   ------------------------------------------------------------
+  // --------------------------------------------------
 
-  // ---------------------------------------------------------------
-  const members = Array.from(new Set([...participantIds, req.cookies.id])); // check for duplicates
+  const members = Array.from(new Set([...participantIds, tokenUser.id])); // check for duplicates
 
   if (members.length < 3) {
     // check after removing the duplicate
     // We want group chat to have minimum 3 members including admin
     throw new ApiError(
       400,
-      "Seems like you have passed duplicate participants."
+      "Seems like you have passed duplicate participants.",
     );
   }
-  //   -------------------------------------------------------------
 
   // Create a group chat with provided members
-  const groupChat = await prisma.chat.create({
+  const chat = await prisma.chat.create({
     data: {
       name: name as string,
       isGroupChat: true,
       participantIds: members,
-      adminId: req.cookies.id as string,
-    },
-  });
-  // -------------------------------------------
-
-  // structure the chat -----------------------
-  const chat = await prisma.chat.findUnique({
-    where: {
-      id: groupChat.id,
+      adminId: tokenUser.id,
     },
     include: {
       // --------------
@@ -90,23 +83,15 @@ const createAGroupChat = async (
     },
   });
 
-  //   -------------------------------------------
-
-  if (!chat) {
-    throw new ApiError(500, "Internal server error");
-  }
-
-  // ----------------------------------------------
-
   // logic to emit socket event about the new group chat added to the participants
   chat.participants.forEach((participant) => {
-    if (participant.id === req.cookies.id) return; // don't emit the event for the logged in use as he is the one who is initiating the chat
+    if (participant.id === tokenUser.id) return; // don't emit the event for the logged in use as he is the one who is initiating the chat
     // emit event to other participants with new chat as a payload
     emitSocketEvent(
       res.socket.server.io,
       participant.id,
       ChatEventEnum.NEW_CHAT_EVENT,
-      chat
+      chat,
     );
   });
   // ------------------------------------------------------------------
