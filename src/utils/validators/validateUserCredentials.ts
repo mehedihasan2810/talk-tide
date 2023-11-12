@@ -17,13 +17,10 @@ export const validateUserCredentials = (data: Params) => {
     const extractedErrors = result.error.issues.map(
       (err: (typeof result.error.issues)[0]) => {
         return err.message;
-      }
+      },
     );
-    console.log(extractedErrors);
 
     throw new Error(extractedErrors.join(","));
     // ------------------------------------------
-  } else {
-    console.log(result.data);
   }
 };
