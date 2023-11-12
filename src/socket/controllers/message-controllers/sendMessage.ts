@@ -1,5 +1,8 @@
 import prisma from "@/lib/prisma";
 import { ChatEventEnum } from "@/socket/constants";
+import { getUserFromToken } from "@/socket/getUserFromToken";
+import { getLocalPath } from "@/socket/helpers/getLocalPath";
+import { getStaticFilePath } from "@/socket/helpers/getStaticFilePath";
 import { emitSocketEvent } from "@/socket/socket-events/emitSocketEvent";
 import { NextApiResponseServerIO } from "@/types/types";
 import { ApiError } from "@/utils/error-helpers/ApiError";
@@ -8,16 +11,26 @@ import { NextApiRequest } from "next";
 
 export const sendMessage = async (
   req: NextApiRequest,
-  res: NextApiResponseServerIO
+  res: NextApiResponseServerIO,
 ) => {
+  // get user from auth token
+  const tokenUser = await getUserFromToken(req);
+
+  if (!tokenUser) {
+    throw new ApiError(401, "Unauthorized request!");
+  }
+  // ----------------------------------------------
+
+  // get data from req
   const { chatId } = req.query as { chatId: string | undefined };
   const { content, files } = req.body as {
     content: string | undefined;
     files: any;
   };
+  // ----------
 
   if (!chatId) {
-    throw new ApiError(400, "Chat id is required");
+    throw new ApiError(400, "ChatId is required");
   }
 
   //   todo: fix the file later
@@ -38,27 +51,24 @@ export const sendMessage = async (
     throw new ApiError(404, "Chat does not exist");
   }
 
-  //   todo
-  //   const messageFiles = [];
+  const messageFiles: { url: string; localPath: string }[] = [];
 
-  //   if (req.files && req.files.attachments?.length > 0) {
-  //     req.files.attachments?.map((attachment) => {
-  //       messageFiles.push({
-  //         url: getStaticFilePath(req, attachment.filename),
-  //         localPath: getLocalPath(attachment.filename),
-  //       });
-  //     });
-  //   }
-  // ----------------------------------------------------
+  if (files && files.attachments?.length > 0) {
+    files.attachments?.map((attachment: any) => {
+      messageFiles.push({
+        url: getStaticFilePath(req, attachment.filename),
+        localPath: getLocalPath(attachment.filename),
+      });
+    });
+  }
 
   // Create a new message instance with appropriate metadata
   const message = await prisma.chatMessage.create({
     data: {
-      // todo
-      senderId: req.cookies.id as string,
+      senderId: tokenUser.id,
       content: content?.trim() || "",
       chatId,
-      //todo attachments: messageFiles
+      attachments: messageFiles,
     },
     include: {
       sender: {
@@ -71,24 +81,18 @@ export const sendMessage = async (
     },
   });
 
-  //   -------------------------------------------------
-
-  if (!message) {
-    throw new ApiError(500, "Internal server error");
-  }
-
   // logic to emit socket event about the new message created to the other participants
   chat.participantIds.forEach((participantId) => {
     // here the chat is the raw instance of the chat in which participants is the array of object ids of users
     // avoid emitting event to the user who is sending the message
-    if (participantId === req.cookies.id) return;
+    if (participantId === tokenUser.id) return;
 
     // emit the receive message event to the other participants with received message as the payload
     emitSocketEvent(
       res.socket.server.io,
       participantId,
       ChatEventEnum.MESSAGE_RECEIVED_EVENT,
-      message
+      message,
     );
   });
 
