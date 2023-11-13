@@ -3,6 +3,7 @@ import { ChatEventEnum } from "@/socket/constants";
 import { getUserFromToken } from "@/socket/getUserFromToken";
 import { getLocalPath } from "@/socket/helpers/getLocalPath";
 import { getStaticFilePath } from "@/socket/helpers/getStaticFilePath";
+import { handleFormData } from "@/socket/helpers/handleFormData";
 import { emitSocketEvent } from "@/socket/socket-events/emitSocketEvent";
 import { NextApiResponseServerIO } from "@/types/types";
 import { ApiError } from "@/utils/error-helpers/ApiError";
@@ -23,18 +24,25 @@ export const sendMessage = async (
 
   // get data from req
   const { chatId } = req.query as { chatId: string | undefined };
-  const { content, files } = req.body as {
-    content: string | undefined;
-    files: any;
-  };
+  // const { content, files } = req.body as {
+  //   content: string | undefined;
+  //   files: any;
+  // };
   // ----------
 
   if (!chatId) {
     throw new ApiError(400, "ChatId is required");
   }
 
+  const {
+    fields: { content },
+    files,
+  } = await handleFormData(req);
+
+  console.log(content, files);
+
   //   todo: fix the file later
-  if (!content && !files?.attachments?.length) {
+  if (!content[0] && !files?.attachments?.length) {
     throw new ApiError(400, "Message content or attachment is required");
   }
 
@@ -66,7 +74,7 @@ export const sendMessage = async (
   const message = await prisma.chatMessage.create({
     data: {
       senderId: tokenUser.id,
-      content: content?.trim() || "",
+      content: content[0].trim(),
       chatId,
       attachments: messageFiles,
     },
