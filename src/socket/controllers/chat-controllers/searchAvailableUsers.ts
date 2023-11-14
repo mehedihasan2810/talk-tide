@@ -24,6 +24,7 @@ const searchAvailableUsers = async (
     },
 
     select: {
+      id: true,
       avatar: true,
       username: true,
       email: true,
