@@ -1,6 +1,6 @@
 import { UserInterface } from "./user";
 
-export interface ChatListItemInterface {
+export interface ChatInterface {
   id: string;
   adminId: string;
   isGroupChat: true;
@@ -10,7 +10,6 @@ export interface ChatListItemInterface {
   participants: UserInterface[];
   createdAt: string;
   updatedAt: string;
-
 }
 
 export interface ChatMessageInterface {
@@ -20,10 +19,10 @@ export interface ChatMessageInterface {
   content: string;
   chatId: string;
   attachments: {
-    id: string;
+    // id: string;
     url: string;
     localPath: string;
   }[];
   createdAt: string;
-  updatedAt: string
+  updatedAt: string;
 }

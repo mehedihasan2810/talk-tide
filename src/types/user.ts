@@ -1,7 +1,7 @@
 export interface UserInterface {
   id: string;
   avatar: {
-    id: string;
+    // id: string;
     url: string;
     localPath: string;
   };

@@ -1,6 +1,6 @@
-export interface FreeAPISuccessResponseInterface {
-    data: any;
-    message: string;
-    statusCode: number;
-    success: boolean;
-  }
+export interface SuccessResponse<T = any> {
+  data: T;
+  message: string;
+  statusCode: number;
+  success: boolean;
+}
