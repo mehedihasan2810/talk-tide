@@ -1,23 +1,27 @@
 // This utility function generates metadata for chat objects.
 
-import { ChatListItemInterface } from "@/types/chat";
+import { ChatInterface } from "@/types/chat";
 import { SessionUser } from "@/types/types";
-// import { UserInterface } from "@/types/user";
 
 // It takes into consideration both group chats and individual chats.
 export const getChatObjectMetadata = (
-  chat: ChatListItemInterface, // The chat item for which metadata is being generated.
+  chat: ChatInterface, // The chat item for which metadata is being generated.
   loggedInUser: SessionUser, // The currently logged-in user details.
 ) => {
   // Determine the content of the last message, if any.
   // If the last message contains only attachments, indicate their count.
-  const lastMessage = chat.chatMessages[0]?.content
-    ? chat.chatMessages[0]?.content
-    : chat.chatMessages[0]
-    ? `${chat.chatMessages[0]?.attachments?.length} attachment${
-        chat.chatMessages[0].attachments.length > 1 ? "s" : ""
+  const chatMessages = chat.chatMessages[0];
+  const lastMessage = chatMessages?.content
+    ? `${
+        chatMessages?.senderId === loggedInUser?.id
+          ? "You"
+          : chatMessages?.sender?.username
+      }: ${chatMessages?.content}`
+    : chatMessages?.attachments?.length
+    ? `${chatMessages?.attachments?.length} attachment${
+        chatMessages?.attachments?.length > 1 ? "s" : ""
       }`
-    : "No messages yet"; // Placeholder text if there are no messages.
+    : "No messages yet";
 
   if (chat.isGroupChat) {
     // Case: Group chat
@@ -27,9 +31,7 @@ export const getChatObjectMetadata = (
       avatar: "https://via.placeholder.com/100x100.png",
       title: chat.name, // Group name serves as the title.
       description: `${chat.participants.length} members in the chat`, // Description indicates the number of members.
-      lastMessage: chat.chatMessages[0]
-        ? chat.chatMessages[0]?.sender?.username + ": " + lastMessage
-        : lastMessage,
+      lastMessage,
     };
   } else {
     // Case: Individual chat
