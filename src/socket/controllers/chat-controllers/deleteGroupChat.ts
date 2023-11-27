@@ -18,28 +18,25 @@ const deleteGroupChat = async (
   if (!tokenUser) {
     throw new ApiError(401, "Unauthorized request!");
   }
-  // ----------------------------------------------
 
   const { chatId } = req.query as { chatId: string | undefined };
 
-  // throw error if theres no chat id ------------
+  // throw error if theres no chat id
   if (!chatId || chatId === undefined) {
     throw new ApiError(400, "chat id is missing!");
   }
-  // ---------------------------------------------
 
-  // check for the group chat existence ---------------
+  // check for the group chat existence
   const groupChat = await prisma.chat.findUnique({
     where: {
       id: chatId as string,
       isGroupChat: true,
     },
     select: {
+      id: true,
       adminId: true,
     },
   });
-
-  //   ----------------------------------------------------
 
   if (!groupChat) {
     throw new ApiError(404, "Group chat does not exist");
@@ -50,49 +47,22 @@ const deleteGroupChat = async (
     throw new ApiError(404, "Only admin can delete the group");
   }
 
-  // delete the chat ----------
+  await deleteCascadeChatMessages(groupChat.id); // remove all messages and attachments associated with the chat
+
+  // delete the chat
   const deletedChat = await prisma.chat.delete({
     where: {
       id: chatId as string,
     },
     include: {
-      // --------------
       participants: {
         select: {
           id: true,
-          username: true,
-          email: true,
-          avatar: true,
-          role: true,
-          loginType: true,
-          isEmailVerified: true,
-          createdAt: true,
-          updatedAt: true,
         },
       },
-      // ---------------------
-      chatMessages: {
-        orderBy: {
-          createdAt: "desc",
-        },
-        take: 1,
-
-        include: {
-          sender: {
-            select: {
-              username: true,
-              avatar: true,
-              email: true,
-            },
-          },
-        },
-      },
-      // --------------------------
     },
   });
-  //   ------------------------
-
-  await deleteCascadeChatMessages(deletedChat.id); // remove all messages and attachments associated with the chat
+  //
 
   // logic to emit socket event about the group chat deleted to the participants
   deletedChat.participants.forEach((participant) => {
@@ -105,13 +75,10 @@ const deleteGroupChat = async (
       deletedChat,
     );
   });
-  //   --------------------------------------------------------------------
 
   return res
     .status(200)
     .json(new ApiResponse(200, {}, "Group chat deleted successfully"));
-
-  // -----------------------------------------------------------------------
 };
 
 export { deleteGroupChat };
