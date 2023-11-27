@@ -1,14 +1,21 @@
 import prisma from "@/lib/prisma";
 import { ChatEventEnum } from "@/socket/constants";
 import { getUserFromToken } from "@/socket/getUserFromToken";
-import { getLocalPath } from "@/socket/helpers/getLocalPath";
-import { getStaticFilePath } from "@/socket/helpers/getStaticFilePath";
 import { handleFormData } from "@/socket/helpers/handleFormData";
 import { emitSocketEvent } from "@/socket/socket-events/emitSocketEvent";
 import { NextApiResponseServerIO } from "@/types/types";
 import { ApiError } from "@/utils/error-helpers/ApiError";
 import { ApiResponse } from "@/utils/helpers/apiResponse";
+import fs from "fs";
 import { NextApiRequest } from "next";
+import { v2 as cloudinary } from "cloudinary";
+import { File } from "formidable";
+
+cloudinary.config({
+  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 export const sendMessage = async (
   req: NextApiRequest,
@@ -17,66 +24,67 @@ export const sendMessage = async (
   // get user from auth token
   const tokenUser = await getUserFromToken(req);
 
+  // if there is no user throw error
   if (!tokenUser) {
     throw new ApiError(401, "Unauthorized request!");
   }
   // ----------------------------------------------
 
-  // get data from req
+  // get data from req query
   const { chatId } = req.query as { chatId: string | undefined };
-  // const { content, files } = req.body as {
-  //   content: string | undefined;
-  //   files: any;
-  // };
-  // ----------
 
   if (!chatId) {
     throw new ApiError(400, "ChatId is required");
   }
 
-  const {
-    fields: { content },
-    files,
-  } = await handleFormData(req);
+  // this `handleFormData` function is responsible for extracting formdata
+  // from the req with the help of formidable and then validating the data
+  // if validation fails then throws error otherwise returns the extracted
+  // form data
+  const { content, attachments } = await handleFormData(req);
 
-  console.log(content, files);
+  // iterate over the `attachments` and create an array of promises of image
+  // upload request to cloudinary
+  const imageUploadRequests = attachments.map((file: File) => {
+    // get the raw buffer
+    var rawData = fs.readFileSync(file.filepath);
 
-  //   todo: fix the file later
-  if (!content[0] && !files?.attachments?.length) {
-    throw new ApiError(400, "Message content or attachment is required");
-  }
+    // transform it to `Uint8Array` buffer
+    const buffer = new Uint8Array(rawData);
 
-  const chat = await prisma.chat.findUnique({
-    where: {
-      id: chatId,
-    },
-    select: {
-      participantIds: true,
-    },
-  });
-
-  if (!chat) {
-    throw new ApiError(404, "Chat does not exist");
-  }
-
-  const messageFiles: { url: string; localPath: string }[] = [];
-
-  if (files && files.attachments?.length > 0) {
-    files.attachments?.map((attachment: any) => {
-      messageFiles.push({
-        url: getStaticFilePath(req, attachment.filename),
-        localPath: getLocalPath(attachment.filename),
-      });
+    // create the promise of upload request and return it
+    return new Promise((resolve, reject) => {
+      cloudinary.uploader
+        .upload_stream(
+          {
+            tags: ["talk-tide-images"],
+          },
+          function (error, result) {
+            if (error) {
+              reject(error);
+              return;
+            }
+            resolve({ url: result?.secure_url, localPath: "" });
+          },
+        )
+        .end(buffer);
     });
-  }
+  });
+  // ------------------------------------------
+
+  // pass the imageUploadRequests to `Promise.all` api in order that they resolves parallelly
+  const imageUploadResults = (await Promise.all(imageUploadRequests)) as {
+    url: string;
+    localPath: string;
+  }[];
 
   // Create a new message instance with appropriate metadata
   const message = await prisma.chatMessage.create({
     data: {
       senderId: tokenUser.id,
-      content: content[0].trim(),
+      content: content,
       chatId,
-      attachments: messageFiles,
+      attachments: imageUploadResults,
     },
     include: {
       sender: {
@@ -86,11 +94,16 @@ export const sendMessage = async (
           email: true,
         },
       },
+      chat: {
+        select: {
+          participantIds: true,
+        },
+      },
     },
   });
 
   // logic to emit socket event about the new message created to the other participants
-  chat.participantIds.forEach((participantId) => {
+  message.chat.participantIds.forEach((participantId) => {
     // here the chat is the raw instance of the chat in which participants is the array of object ids of users
     // avoid emitting event to the user who is sending the message
     if (participantId === tokenUser.id) return;
