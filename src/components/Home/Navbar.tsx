@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 const Navbar = () => {
   return (
     <div className="fixed left-0 top-0 z-10  w-full border-b border-b-primary/40">
-      <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-3 py-4">
+      <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-3 py-2 sm:py-4">
         <div className="relative text-2xl font-semibold text-primary-foreground">
           <svg
             className="absolute left-1/2 top-0 -z-10
@@ -29,6 +29,12 @@ const Navbar = () => {
         </div>
 
         <nav className="relative inline-flex items-center gap-6">
+          <Link
+            className="inline-flex items-center text-primary hover:underline"
+            href="/"
+          >
+            Home
+          </Link>
           <Link className="inline-flex items-center text-primary " href="#">
             Features <ChevronRightIcon className="h-6 w-6" />
           </Link>

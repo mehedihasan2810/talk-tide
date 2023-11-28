@@ -16,8 +16,6 @@ export const authOptions: AuthOptions = {
       name: "credentials",
       credentials: {},
       async authorize(credentials, _req): Promise<any> {
-        console.log("auth", credentials);
-
         try {
           const { authType, username, email, password } = credentials as Record<
             string,

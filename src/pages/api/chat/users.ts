@@ -10,6 +10,7 @@ export default async function handler(
 ) {
   try {
     if (req.method === "GET") {
+      // this `searchAvailableUsers` handler is responsible for retrieving all the users
       await searchAvailableUsers(req, res);
     } else {
       // throw error if the method is not allowed

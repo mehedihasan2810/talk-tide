@@ -36,9 +36,8 @@ export default function Register({ updateIsLogin }: Props) {
   const router = useRouter();
 
   const session = useSession();
-  console.log(session);
 
-  // useForm starts ------------
+  // useForm
   const form = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),
     defaultValues: {
@@ -47,18 +46,19 @@ export default function Register({ updateIsLogin }: Props) {
       password: "",
     },
   });
-  // useForm ends ----------
 
   async function onSubmit(values: z.infer<typeof RegisterSchema>) {
-    console.log(values);
-
+    // if user is already logged in then don't proceed. return with a message
     if (session.data) {
       setError(
         "You are already logged in! If you want to create new account then logout first",
       );
       return;
     }
+
     setIsLoading(true);
+
+    // log in the user with required credentials
     const res = await signIn("credentials", {
       redirect: false,
       // redirect: true,
@@ -66,15 +66,17 @@ export default function Register({ updateIsLogin }: Props) {
       authType: "register",
       ...values,
     });
+
     setIsLoading(false);
 
+    // if login is not successful then show a error message
     if (!res?.ok || res.error) {
       setError(res?.error);
     } else {
+      //  if the login successful then reset the form and redirect the user to chat page
       form.reset();
       router.replace("/chat");
     }
-    console.log(res);
   }
   return (
     <div className="grid h-screen w-screen place-items-center">
@@ -85,7 +87,7 @@ export default function Register({ updateIsLogin }: Props) {
           className="w-80 space-y-5"
         >
           {/* header starts */}
-          <div className="mb-8 flex items-center justify-center gap-1 text-emerald-700">
+          <div className="mb-8 flex items-center justify-center gap-1 text-primary">
             <h2 className="scroll-m-20 text-3xl font-semibold tracking-tight">
               Register
             </h2>
@@ -118,7 +120,7 @@ export default function Register({ updateIsLogin }: Props) {
                   <Input
                     placeholder="Enter your email..."
                     {...field}
-                    className="h-11 border-gray-300 text-base focus-visible:ring-emerald-500"
+                    className="h-11 border-primary/40 text-base focus-visible:ring-primary"
                   />
                 </FormControl>
                 <FormMessage />
@@ -135,7 +137,7 @@ export default function Register({ updateIsLogin }: Props) {
                   <Input
                     placeholder="Enter your username..."
                     {...field}
-                    className="h-11 border-gray-300 text-base focus-visible:ring-emerald-500"
+                    className="h-11 border-primary/40 text-base focus-visible:ring-primary"
                   />
                 </FormControl>
 
@@ -153,7 +155,7 @@ export default function Register({ updateIsLogin }: Props) {
                     type="password"
                     placeholder="Enter your password..."
                     {...field}
-                    className="h-11 border-gray-300 text-base focus-visible:ring-emerald-500"
+                    className="h-11 border-primary/40 text-base focus-visible:ring-primary"
                   />
                 </FormControl>
 
@@ -164,7 +166,7 @@ export default function Register({ updateIsLogin }: Props) {
                     type="button"
                     disabled={isLoading}
                     onClick={updateIsLogin}
-                    className="text-emerald-500 underline hover:text-emerald-400"
+                    className="text-primary underline hover:text-primary/70"
                   >
                     Login
                   </button>
@@ -175,7 +177,7 @@ export default function Register({ updateIsLogin }: Props) {
           <Button
             disabled={isLoading || session.status === "loading"}
             type="submit"
-            className="h-11 w-full bg-emerald-700 text-base hover:bg-emerald-800"
+            className="h-11 w-full text-base"
           >
             {isLoading && (
               <ArrowPathIcon className="mr-2 h-4 w-4 animate-spin" />

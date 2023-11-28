@@ -7,12 +7,15 @@ import { NextApiRequest } from "next";
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponseServerIO
+  res: NextApiResponseServerIO,
 ) {
   try {
+    console.log(req.method);
     if (req.method === "DELETE") {
+      // start the socket server first
       startSocketServer(req, res);
-
+      
+      // this `deleteOneOnOneChat` function is responsible for only deleting the one to one chat
       await deleteOneOnOneChat(req, res);
     } else {
       throw new ApiError(405, "Method not allowed");

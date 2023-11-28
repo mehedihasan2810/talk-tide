@@ -1,11 +1,10 @@
 import Link from "next/link";
 import React from "react";
 import { buttonVariants } from "../ui/button";
-import { cn } from "@/lib/utils";
 
 const Hero = () => {
   return (
-    <div className="space-y-8 px-1 text-center sm:space-y-12">
+    <div className="space-y-4 px-1 text-center sm:space-y-12">
       <div className="relative text-2xl font-semibold text-primary-foreground">
         <svg
           className="absolute left-1/2 top-0 -z-10
@@ -47,8 +46,11 @@ const Hero = () => {
         </span>{" "}
         With Your Favorite Ones
       </h1>
-      <Link href="/chat" className={cn(buttonVariants())}>
-        Start Chatting
+      <Link
+        href="/chat"
+        className={buttonVariants({ className: "text-[18px] ", size: "lg" })}
+      >
+        Connect Now
       </Link>
     </div>
   );

@@ -6,10 +6,12 @@ import { NextApiRequest } from "next";
 
 export default async function hanler(
   req: NextApiRequest,
-  res: NextApiResponseServerIO
+  res: NextApiResponseServerIO,
 ) {
   try {
     if (req.method === "GET") {
+
+      // this `getAllChats` function is responsible for retrieving all the chats 
       await getAllChats(req, res);
     } else {
       // throw error if the method is not allowed

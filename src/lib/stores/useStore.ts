@@ -1,18 +1,25 @@
-import { CreatChatSlice, createChatSlice } from "./storeSlices/createChatSlice";
-import {
-  CreateAsyncSlice,
-  createAsyncSlice,
-} from "./storeSlices/createAsyncSlice";
-import {
-  createSocketSlice,
-  type CreateSocketSlice,
-} from "./storeSlices/createSocketSlice";
 import { create } from "zustand";
 
-export const useStore = create<
-  CreatChatSlice & CreateAsyncSlice & CreateSocketSlice
->()((...a) => ({
-  ...createChatSlice(...a),
-  ...createAsyncSlice(...a),
-  ...createSocketSlice(...a),
+interface ChatStore {
+  isMobileSidebarOpen: boolean;
+  isGroupDetailsModalOpen: boolean;
+
+  toggleIsMobileSidebarOpen(): void;
+  toggleGroupDetailsModal(_isGroupDetailsModalOpen: boolean): void;
+}
+
+export const useStore = create<ChatStore>((set) => ({
+  // STATE
+  isMobileSidebarOpen: false,
+  isGroupDetailsModalOpen: false,
+  // --------------------------
+
+  // ACTION
+  toggleIsMobileSidebarOpen: () =>
+    set(({ isMobileSidebarOpen }) => ({
+      isMobileSidebarOpen: !isMobileSidebarOpen,
+    })),
+
+  toggleGroupDetailsModal: (isGroupDetailsModalOpen) =>
+    set({ isGroupDetailsModalOpen }),
 }));

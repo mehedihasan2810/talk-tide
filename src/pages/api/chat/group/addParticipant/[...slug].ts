@@ -14,13 +14,9 @@ export default async function hanler(
     startSocketServer(req, res);
 
     if (req.method === "POST") {
-      // ------------------------------------------
       await addNewParticipantInGroupChat(req, res);
-      // ------------------------------------------
     } else if (req.method === "DELETE") {
-      // -------------------------------------------
       await removeParticipantFromGroupChat(req, res);
-      // --------------------------------------------
     } else {
       // throw error if the method is not allowed
       throw new ApiError(405, "Method not allowed");

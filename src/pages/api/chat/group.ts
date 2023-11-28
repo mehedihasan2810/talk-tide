@@ -18,7 +18,7 @@ export default async function handler(
       // start socket server
       startSocketServer(req, res);
 
-      // create group chat ------------
+      // this `createAGroupChat` handler is responsible for creating a group chat
       await createAGroupChat(req, res);
       // ------------------------------
     } else {

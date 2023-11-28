@@ -6,7 +6,7 @@ import { NextApiRequest } from "next";
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponseServerIO
+  res: NextApiResponseServerIO,
 ) {
   try {
     if (req.method === "DELETE") {

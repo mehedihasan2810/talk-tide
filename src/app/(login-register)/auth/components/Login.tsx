@@ -21,7 +21,7 @@ import {
   LockClosedIcon,
   XMarkIcon,
 } from "@heroicons/react/20/solid";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { LoginSchema } from "@/utils/zod-schema/loginSchema";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -35,11 +35,9 @@ export default function Login({ updateIsLogin }: Props) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const router = useRouter();
-
   const session = useSession();
-  console.log(session);
 
-  // useForm starts ------------
+  // useForm
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
@@ -47,32 +45,33 @@ export default function Login({ updateIsLogin }: Props) {
       password: "",
     },
   });
-  // useForm ends ----------
 
   async function onSubmit(values: z.infer<typeof LoginSchema>) {
-    console.log(values);
 
+    // if user is already logged in then don't proceed. return with a message
     if (session.data) {
       setError("You are already logged in");
       return;
     }
 
-    setIsLoading(true);
+    setIsLoading(true); // track log in loading states
+
+    // log in the user with required credentials
     const res = await signIn("credentials", {
       redirect: false,
       authType: "login",
       ...values,
     });
-    setIsLoading(false);
+    setIsLoading(false); 
 
+    // if login is not successful then show a error message
     if (!res?.ok || res.error) {
       setError(res?.error);
     } else {
+      //  if the login successful then reset the form and redirect the user to chat page
       form.reset();
       router.replace("/chat");
     }
-
-    console.log("returned login result ", res);
   }
 
   return (
@@ -84,7 +83,7 @@ export default function Login({ updateIsLogin }: Props) {
           className="w-80 space-y-5"
         >
           {/* header starts */}
-          <div className="mb-8 flex items-center justify-center gap-1 text-emerald-700">
+          <div className="mb-8 flex items-center justify-center gap-1 text-primary">
             <h2 className="scroll-m-20 text-3xl font-semibold tracking-tight">
               Login
             </h2>
@@ -119,7 +118,7 @@ export default function Login({ updateIsLogin }: Props) {
                     data-testid="login-username"
                     placeholder="Enter your username..."
                     {...field}
-                    className="h-11 border-gray-300 text-base focus-visible:ring-emerald-500"
+                    className="h-11 border-primary/40 text-base focus-visible:ring-primary"
                   />
                 </FormControl>
 
@@ -138,7 +137,7 @@ export default function Login({ updateIsLogin }: Props) {
                     type="password"
                     placeholder="Enter your password..."
                     {...field}
-                    className="h-11 border-gray-300 text-base focus-visible:ring-emerald-500"
+                    className="h-11 border-primary/40 text-base focus-visible:ring-primary"
                   />
                 </FormControl>
 
@@ -150,7 +149,7 @@ export default function Login({ updateIsLogin }: Props) {
                     disabled={isLoading}
                     onClick={updateIsLogin}
                     data-testid="login-link"
-                    className="text-emerald-500 underline hover:text-emerald-400"
+                    className="text-primary underline hover:text-primary/70"
                   >
                     Register
                   </button>
@@ -161,16 +160,21 @@ export default function Login({ updateIsLogin }: Props) {
           <Button
             disabled={isLoading || session.status === "loading"}
             type="submit"
-            className="h-11 w-full bg-emerald-700 text-base hover:bg-emerald-800"
+            className="h-11 w-full text-base"
           >
             {isLoading && (
               <ArrowPathIcon className="mr-2 h-4 w-4 animate-spin" />
             )}{" "}
             Login
           </Button>
-          <button type="button" onClick={() => signOut()}>
+          {/* <button
+            type="button"
+            onClick={() => {
+              signOut();
+            }}
+          >
             logout
-          </button>
+          </button> */}
         </form>
       </Form>
     </div>

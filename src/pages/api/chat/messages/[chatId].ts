@@ -5,14 +5,24 @@ import { ApiError } from "@/utils/error-helpers/ApiError";
 import { errorResponse } from "@/utils/error-helpers/errorResponse";
 import { NextApiRequest } from "next";
 
-export default async function hanler(
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
+export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponseServerIO
+  res: NextApiResponseServerIO,
 ) {
   try {
     if (req.method === "GET") {
+      // this `getAllMessages` function is responsible for retrieving all the
+      // messages of a specific chat
       await getAllMessages(req, res);
     } else if (req.method === "POST") {
+      // this `sendMessage` is responsible for saving the sent message to db and
+      // emitting them to all the chat participant
       await sendMessage(req, res);
     } else {
       // throw error if the method is not allowed

@@ -34,7 +34,7 @@ export const registerUser = async ({
   // with the email is already logged in
   if (emailCredential) {
     throw new Error(
-      `User already exists with this email ${emailCredential.email}`
+      `User already exists with this email ${emailCredential.email}`,
     );
   }
   // --------------------------------------------------------------
@@ -53,7 +53,7 @@ export const registerUser = async ({
   // username should be unique per user
   if (usernameCredential) {
     throw new Error(
-      `User already exists with this username ${usernameCredential.username}. Select a unique username`
+      `User already exists with this username ${usernameCredential.username}. Select a unique username`,
     );
   }
   // -------------------------------------------------------------
@@ -68,6 +68,7 @@ export const registerUser = async ({
       username,
       email,
       password: hashedPassword,
+      avatar: {},
     },
     select: {
       id: true,

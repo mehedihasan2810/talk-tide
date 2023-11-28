@@ -16,10 +16,6 @@ export interface LoginUserReturn {
   role: string;
 }
 
-// interface LoginUserReturn {
-
-// }
-
 export const loginUser = async ({
   authType,
   username,
@@ -27,7 +23,8 @@ export const loginUser = async ({
 }: Params): Promise<LoginUserReturn> => {
   // validate the incoming user credentials---------------
   validateUserCredentials({ authType, username, password });
-  // -------------------------------------------------------
+
+  console.log(username)
 
   // check if the user is logged in with the provided
   // username
@@ -47,10 +44,9 @@ export const loginUser = async ({
   // if not then throw error
   if (!loggedInUser) {
     throw new Error(
-      `Wrong username! No user found with this ${username} username`
+      `Wrong username! No user found with this ${username} username`,
     );
   }
-  // -------------------------------------------------------
 
   // if the user exists with the username then
   // validate the existing password with the provided
@@ -60,7 +56,6 @@ export const loginUser = async ({
   if (!isValidPassword) {
     throw new Error("Wrong Password!");
   }
-  // -----------------------------------------------------
 
   // if everything ok then user is a logged in user
   // send the credentials
