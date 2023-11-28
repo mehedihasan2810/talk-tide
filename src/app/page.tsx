@@ -1,8 +1,15 @@
-export default function Home() {
+import BgGradients from "@/components/Home/BgGradients";
+import Hero from "@/components/Home/Hero";
+import MockMessageItems from "@/components/Home/MockMessageItems";
+
+export default async function Home() {
   return (
-    <div>
-      <h1>helloooooo</h1>
-      
-    </div>
+    <section className="relative isolate grid h-screen w-screen place-items-center overflow-hidden">
+      <Hero />
+
+      <BgGradients />
+
+      <MockMessageItems />
+    </section>
   );
 }
