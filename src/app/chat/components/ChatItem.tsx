@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { ChatListItemInterface } from "@/types/chat";
+import { ChatInterface } from "@/types/chat";
 import { SessionUser } from "@/types/types";
 import { getChatObjectMetadata } from "@/utils/getChatObjectMetadata";
 import {
@@ -9,13 +9,32 @@ import {
   TrashIcon,
 } from "@heroicons/react/20/solid";
 import Image from "next/image";
-import { FC, useState } from "react";
+import { FC } from "react";
 import moment from "moment";
 import { useStore } from "@/lib/stores/useStore";
+import { usePathname, useRouter } from "next/navigation";
+import { useDeleteChat } from "../hooks/mutations/useDeleteChat";
+import { useCreateQueryString } from "../hooks/useCreateQueryString";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { useToast } from "@/components/ui/use-toast";
 
 interface Props {
-  chat: ChatListItemInterface;
-  onClick: (_chat: ChatListItemInterface) => void;
+  chat: ChatInterface;
+  onClick: (_chat: ChatInterface) => void;
   isActive?: boolean;
   unreadCount?: number;
   onChatDelete: (_chatId: string) => void;
@@ -30,158 +49,177 @@ const ChatItem: FC<Props> = ({
   unreadCount = 0,
   onChatDelete,
 }) => {
-  const [openOptions, setOpenOptions] = useState(false);
-  const [openGroupInfo, setOpenGroupInfo] = useState(false);
-  console.log(openGroupInfo)
+  const { toggleGroupDetailsModal } = useStore();
 
-  const { deleteChat } = useStore((state) => state);
+  const { mutate: deleteChatMutation } = useDeleteChat();
 
+  const router = useRouter();
+  const pathname = usePathname();
+  const { toast } = useToast();
+
+  // delete a specific query then return the remaining
+  const createQueryString = useCreateQueryString();
+
+  // if there is no chat then we don't want to render anything
   if (!chat) return;
 
   return (
-    <>
-      {/* TODO: Create modal to show group chat details */}
-      {/* <GroupChatDetailsModal
-        open={openGroupInfo}
-        onClose={() => {
-          setOpenGroupInfo(false);
-        }}
-        chatId={chat._id}
-        onGroupDelete={onChatDelete}
-      /> */}
-
-      <div
-        role="button"
-        onClick={() => onClick(chat)}
-        className={cn(
-          "group my-2 flex cursor-pointer items-start justify-between gap-3 rounded-3xl p-4 hover:bg-secondary",
-          isActive ? "border-[1px] border-zinc-500 bg-secondary" : "",
-          unreadCount > 0
-            ? "border-success bg-success/20 border-[1px] font-bold"
-            : "",
+    <div
+      role="button"
+      onClick={() => onClick(chat)}
+      className={cn(
+        "group relative isolate my-2 flex cursor-pointer items-start justify-between gap-3 overflow-hidden rounded-3xl border p-4 hover:bg-primary/5",
+        isActive ? "border-primary  bg-primary/5" : "",
+        unreadCount > 0 ? "border-primary bg-primary/10 font-bold" : "",
+      )}
+    >
+      <div className="flex flex-shrink-0 items-center justify-center">
+        {chat.isGroupChat ? (
+          <div className="relative flex h-12 w-12 flex-shrink-0 flex-nowrap items-center justify-start">
+            {chat.participants.slice(0, 3).map((participant, i) => {
+              return (
+                <Image
+                  key={participant.id}
+                  src={participant.avatar.url}
+                  width={48}
+                  height={48}
+                  className={cn(
+                    "outline-dark absolute h-7 w-7 rounded-full border-[1px] border-white outline outline-4 group-hover:outline-secondary",
+                    i === 0
+                      ? "left-0 z-[3]"
+                      : i === 1
+                      ? "left-2.5 z-[2]"
+                      : i === 2
+                      ? "left-[18px] z-[1]"
+                      : "",
+                  )}
+                  alt="chat participant image"
+                />
+              );
+            })}
+          </div>
+        ) : (
+          <Image
+            src={getChatObjectMetadata(chat, user).avatar as string}
+            width={48}
+            height={48}
+            className="h-12 w-12 rounded-full"
+            alt="chat participant image"
+          />
         )}
-      >
-        <button
+      </div>
+
+      <div className="w-full">
+        <div className="flex gap-2">
+          <p className="max-w-[200px] truncate">
+            {" "}
+            {getChatObjectMetadata(chat, user).title}
+          </p>
+          {/* Unread count will be > 0 when user is on another chat and there is new message in a chat which is not currently active on user's screen */}
+          {unreadCount <= 0 ? null : (
+            <Badge className="bg-primary/90">
+              {unreadCount > 9 ? "9+" : unreadCount}
+            </Badge>
+          )}
+        </div>
+        <div className="inline-flex w-full items-center text-left">
+          {chat.chatMessages[0] &&
+          chat.chatMessages[0].attachments.length > 0 ? (
+            // If last message is an attachment show paperclip
+            <PaperClipIcon className="mr-2 flex h-3 w-3 flex-shrink-0 text-black/50" />
+          ) : null}
+          <small className="max-w-[150px] truncate text-sm text-zinc-500">
+            {getChatObjectMetadata(chat, user).lastMessage}
+          </small>
+
+          <small className="ml-2 w-max font-semibold">
+            {moment(chat.chatMessages[0]?.updatedAt || chat.updatedAt)
+              .add("TIME_ZONE", "hours")
+              .fromNow(true)}
+          </small>
+        </div>
+      </div>
+
+      <Popover>
+        <PopoverTrigger
           onClick={(e) => {
             e.stopPropagation();
-            setOpenOptions(!openOptions);
           }}
-          className="relative self-center p-1"
+          className="absolute right-4 top-1/2 z-20 h-9 w-9 -translate-y-1/2 rounded-full border border-primary/30  p-1 text-primary group-hover:opacity-100 md:opacity-0"
         >
-          <EllipsisVerticalIcon className="h-6 w-0 text-zinc-300 opacity-0 transition-all duration-100 ease-in-out group-hover:w-6 group-hover:opacity-100" />
+          <EllipsisVerticalIcon className=" h-6 w-6" />
+        </PopoverTrigger>
+        <PopoverContent
+          side="top"
+          className="w-fit border-none bg-none p-0 shadow-none"
+        >
+          {chat.isGroupChat ? (
+            <Button
+              onClick={(e) => {
+                e.stopPropagation();
 
-          <div
-            className={cn(
-              "absolute bottom-0 z-20 w-52 translate-y-full rounded-2xl border-[1px] border-secondary bg-gray-200 p-2 text-left text-sm shadow-md",
-              openOptions ? "block" : "hidden",
-            )}
-          >
-            {chat.isGroupChat ? (
-              <p
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setOpenGroupInfo(true);
-                }}
-                role="button"
-                className="inline-flex w-full items-center rounded-lg p-4 hover:bg-secondary"
-              >
-                <InformationCircleIcon className="mr-2 h-4 w-4" /> About group
-              </p>
-            ) : (
-              <p
-                onClick={async (e) => {
-                  e.stopPropagation();
-                  const ok = confirm(
-                    "Are you sure you want to delete this chat?",
-                  );
-                  if (ok) {
-                    await deleteChat(chat.id, onChatDelete);
-                  }
-                }}
-                role="button"
-                className="text-danger inline-flex w-full items-center rounded-lg p-4 hover:bg-secondary"
+                router.replace(pathname + createQueryString("cD", chat.id), {
+                  scroll: false,
+                });
+
+                toggleGroupDetailsModal(true);
+              }}
+              className="inline-flex items-center rounded-lg p-4"
+            >
+              <InformationCircleIcon className="mr-2 h-4 w-4" /> About group
+            </Button>
+          ) : (
+            <Dialog>
+              <DialogTrigger
+                className={buttonVariants({
+                  variant: "destructive",
+                  className: "inline-flex items-center",
+                  size: "sm",
+                })}
+                onClick={(e) => e.stopPropagation()}
               >
                 <TrashIcon className="mr-2 h-4 w-4" />
                 Delete chat
-              </p>
-            )}
-          </div>
-        </button>
+              </DialogTrigger>
+              <DialogContent onClick={(e) => e.stopPropagation()}>
+                <DialogHeader>
+                  <DialogTitle className="text-center">
+                    Are you sure you want to delete this chat?
+                  </DialogTitle>
+                </DialogHeader>
 
-        {/* ----------------------------------------- */}
-
-        <div className="flex flex-shrink-0 items-center justify-center">
-          {chat.isGroupChat ? (
-            <div className="relative flex h-12 w-12 flex-shrink-0 flex-nowrap items-center justify-start">
-              {chat.participants.slice(0, 3).map((participant, i) => {
-                return (
-                  <Image
-                    key={participant.id}
-                    src={participant.avatar.url}
-                    width={48}
-                    height={48}
-                    className={cn(
-                      "outline-dark absolute h-7 w-7 rounded-full border-[1px] border-white outline outline-4 group-hover:outline-secondary",
-                      i === 0
-                        ? "left-0 z-[3]"
-                        : i === 1
-                        ? "left-2.5 z-[2]"
-                        : i === 2
-                        ? "left-[18px] z-[1]"
-                        : "",
-                    )}
-                    alt="chat participant image"
-                  />
-                );
-              })}
-            </div>
-          ) : (
-            <Image
-              src={getChatObjectMetadata(chat, user).avatar as string}
-              width={48}
-              height={48}
-              className="h-12 w-12 rounded-full"
-              alt="chat participant image"
-            />
+                <DialogFooter className="mx-auto">
+                  <Button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteChatMutation(chat.id, {
+                        onError: () => {
+                          toast({
+                            description:
+                              "Something went wrong while deleting the chat. Try again",
+                            variant: "destructive",
+                          });
+                        },
+                      });
+                      onChatDelete(chat.id);
+                      toast({
+                        description: "Chat deleted successfully",
+                        variant: "success",
+                      });
+                    }}
+                    size="sm"
+                    variant="destructive"
+                  >
+                    <TrashIcon className="mr-2 h-4 w-4" />
+                    Delete
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           )}
-        </div>
-
-        {/* ----------------------------------------- */}
-
-        <div className="w-full">
-          <p className="truncate-1">
-            {getChatObjectMetadata(chat, user).title}
-          </p>
-          <div className="inline-flex w-full items-center text-left">
-            {chat.chatMessages[0] &&
-            chat.chatMessages[0].attachments.length > 0 ? (
-              // If last message is an attachment show paperclip
-              <PaperClipIcon className="mr-2 flex h-3 w-3 flex-shrink-0 text-white/50" />
-            ) : null}
-            <small className="truncate-1 inline-flex items-center text-ellipsis text-sm text-white/50">
-              {getChatObjectMetadata(chat, user).lastMessage}
-            </small>
-          </div>
-        </div>
-
-        {/* -------------------------------------------- */}
-
-        <div className="flex h-full flex-col items-end justify-between text-sm text-white/50">
-          <small className="mb-2 inline-flex w-max flex-shrink-0">
-            {moment(chat.updatedAt).add("TIME_ZONE", "hours").fromNow(true)}
-          </small>
-
-          {/* Unread count will be > 0 when user is on another chat and there is new message in a chat which is not currently active on user's screen */}
-          {unreadCount <= 0 ? null : (
-            <span className="bg-success inline-flex aspect-square h-2 w-2 flex-shrink-0 items-center justify-center rounded-full p-2 text-xs text-white">
-              {unreadCount > 9 ? "9+" : unreadCount}
-            </span>
-          )}
-        </div>
-
-        {/* --------------------------------------------- */}
-      </div>
-    </>
+        </PopoverContent>
+      </Popover>
+    </div>
   );
 };
 

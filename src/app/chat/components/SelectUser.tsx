@@ -1,5 +1,3 @@
-import * as React from "react";
-
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,101 +12,91 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
-import { useStore } from "@/lib/stores/useStore";
+import {
+  CheckIcon,
+  ChevronUpDownIcon,
+  XMarkIcon,
+} from "@heroicons/react/20/solid";
+import { FC, useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useUsers } from "../hooks/queries/useUsers";
 
-const frameworks = [
-  {
-    value: "next.js",
-    label: "Next.js",
-  },
-  {
-    value: "sveltekit",
-    label: "SvelteKit",
-  },
-  {
-    value: "nuxt.js",
-    label: "Nuxt.js",
-  },
-  {
-    value: "remix",
-    label: "Remix",
-  },
-  {
-    value: "astro",
-    label: "Astro",
-  },
-];
+type Props = {
+  isGroupChat?: boolean;
+  onHandleSelect(_participantId: string): void;
+};
 
-export default function SelectUser() {
-  // STATE
-  const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState("");
-  const isGroupChat = useStore((state) => state.isGroupChat);
-
-  // ACTION
-  const updateSelectedUser = useStore((state) => state.updateSelectedUser);
-  const updateGroupParticipants = useStore(
-    (state) => state.updateGroupParticipants,
-  );
+const SelectUser: FC<Props> = ({ isGroupChat, onHandleSelect }) => {
+  const [open, setOpen] = useState(false); // toggle state of the popover
+  const [value, setValue] = useState(""); // track the value of select element
+  const { data: users = { data: [] }, error, isPending } = useUsers(); // fetch a list of users
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <div className="flex gap-2">
-        <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            role="combobox"
-            aria-expanded={open}
-            className="w-full justify-between border-gray-300"
-          >
-            {value
-              ? frameworks.find((framework) => framework.value === value)?.label
-              : "Select User..."}
-            <ChevronUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-          </Button>
-        </PopoverTrigger>
-        {/* add a user or users to start chat */}
-        <Button className="border-gray-300 px-3">Start</Button>
-        {/* --------------------------------------- */}
-      </div>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className="w-full justify-between border-primary/40 text-gray-500 hover:border-primary hover:bg-transparent hover:text-gray-500"
+        >
+          {value
+            ? users.data.find((user) => user.username === value)?.username
+            : "Select Participant..."}
+          <ChevronUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
 
-      <PopoverContent>
+      <PopoverContent className="relative">
+        <button
+          onClick={() => setOpen(false)}
+          className="absolute right-2 top-2 rounded-full p-1 hover:bg-gray-100"
+        >
+          <XMarkIcon className="h-6 w-6" />
+        </button>
         <Command>
           <CommandInput placeholder="Search User..." className="h-9" />
           <CommandEmpty>No User Found</CommandEmpty>
           <CommandGroup className="max-h-96 overflow-y-auto">
-            {frameworks.map((framework) => (
-              <CommandItem
-                key={framework.value}
-                value={framework.value}
-                onSelect={(currentValue) => {
-                  // -------------------------------
-                  if (isGroupChat) {
-                    // if it is group chat then track the users in an array
-                    updateGroupParticipants(currentValue);
-                  } else {
-                    // if it is one to one chat then set the user
-                    updateSelectedUser(currentValue);
-                  }
-                  //   ----------------------------------
+            {error ? (
+              <div>Something went wrong! Try again by refreshing the page</div>
+            ) : isPending ? (
+              <div>Loading...</div>
+            ) : (
+              users.data.map((user) => (
+                <CommandItem
+                  className="cursor-pointer"
+                  key={user.id}
+                  value={user.username}
+                  onSelect={(currentValue) => {
+                    // -------------------------------
+                    onHandleSelect(user.id);
 
-                  setValue(currentValue === value ? "" : currentValue);
-                  setOpen(false);
-                }}
-              >
-                {framework.label}
-                <CheckIcon
-                  className={cn(
-                    "ml-auto h-4 w-4",
-                    value === framework.value ? "opacity-100" : "opacity-0",
-                  )}
-                />
-              </CommandItem>
-            ))}
+                    setValue(currentValue === value ? "" : currentValue);
+                    !isGroupChat && setOpen(false);
+                  }}
+                >
+                  <Avatar className="mr-2 h-6 w-6">
+                    <AvatarImage src={user.avatar.url} />
+                    <AvatarFallback>
+                      {user.username[0].toLocaleUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  {user.username}
+                  <CheckIcon
+                    className={cn(
+                      "ml-auto h-4 w-4",
+                      value === user.username ? "opacity-100" : "opacity-0",
+                    )}
+                  />
+                </CommandItem>
+              ))
+            )}
           </CommandGroup>
         </Command>
       </PopoverContent>
     </Popover>
   );
-}
+};
+
+export default SelectUser;
