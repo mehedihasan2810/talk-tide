@@ -23,7 +23,7 @@ export const leaveGroupChat = async (
     throw new ApiError(400, "chat id is missing");
   }
 
-  //  check it is a group chat --------------------
+  //  check if it is a group chat --------------------
   const groupChat = await prisma.chat.findUnique({
     where: {
       id: chatId,

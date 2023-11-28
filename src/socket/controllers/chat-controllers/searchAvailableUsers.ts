@@ -16,6 +16,7 @@ const searchAvailableUsers = async (
     throw new ApiError(401, "Unauthorized request!");
   }
 
+  // retrieve all the users instead logged in user
   const users = await prisma.user.findMany({
     where: {
       id: {

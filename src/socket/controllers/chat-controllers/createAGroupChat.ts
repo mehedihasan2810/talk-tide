@@ -18,7 +18,8 @@ const createAGroupChat = async (
     throw new ApiError(401, "Unauthorized request!");
   }
 
-  const { name, participantIds } = req.body;
+  const { name, participantIds } = req.body; // get `name` and `participantIds` from request body
+
   // Check if user is not sending himself as a participant. This will be done manually
   if (participantIds.includes(tokenUser.id)) {
     throw new ApiError(

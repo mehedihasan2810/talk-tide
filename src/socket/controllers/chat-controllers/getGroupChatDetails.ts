@@ -31,7 +31,6 @@ const getGroupChatDetails = async (
       id: chatId,
     },
     include: {
-      // --------------
       participants: {
         select: {
           id: true,
@@ -45,7 +44,6 @@ const getGroupChatDetails = async (
           updatedAt: true,
         },
       },
-      // ---------------------
       chatMessages: {
         orderBy: {
           createdAt: "desc",
@@ -62,7 +60,6 @@ const getGroupChatDetails = async (
           },
         },
       },
-      // --------------------------
     },
   });
   //   -------------------------------------------

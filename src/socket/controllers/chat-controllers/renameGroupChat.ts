@@ -17,22 +17,19 @@ const renameGroupChat = async (
   if (!tokenUser) {
     throw new ApiError(401, "Unauthorized request!");
   }
-  // ----------------------------------------------
 
   const { chatId } = req.query;
   const { name } = req.body;
 
-  // throw error if theres no chat id ------------
+  // throw error if theres no chat id
   if (!chatId || chatId === undefined) {
     throw new ApiError(400, "chat id is missing!");
   }
-  // ---------------------------------------------
 
-  // throw error if theres no name ------------
+  // throw error if theres no name
   if (!name || name === undefined) {
     throw new ApiError(400, "group name is missing!");
   }
-  // ---------------------------------------------
 
   // check for chat existence
   const groupChat = await prisma.chat.findUnique({
@@ -41,7 +38,6 @@ const renameGroupChat = async (
       isGroupChat: true,
     },
   });
-  //   --------------------------------------------
 
   if (!groupChat) {
     throw new ApiError(404, "Group chat does not exist");
@@ -61,7 +57,6 @@ const renameGroupChat = async (
       name,
     },
     include: {
-      // --------------
       participants: {
         select: {
           id: true,
@@ -75,7 +70,6 @@ const renameGroupChat = async (
           updatedAt: true,
         },
       },
-      // ---------------------
       chatMessages: {
         orderBy: {
           createdAt: "desc",
@@ -92,7 +86,6 @@ const renameGroupChat = async (
           },
         },
       },
-      // --------------------------
     },
   });
 
@@ -106,7 +99,6 @@ const renameGroupChat = async (
       updateGroupChat,
     );
   });
-  //   --------------------------------------------------------
 
   return res
     .status(200)
@@ -117,7 +109,6 @@ const renameGroupChat = async (
         "Group chat name updated successfully",
       ),
     );
-  // ---------------------------------------
 };
 
 export default renameGroupChat;

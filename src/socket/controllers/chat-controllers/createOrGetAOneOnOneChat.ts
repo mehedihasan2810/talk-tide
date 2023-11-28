@@ -17,7 +17,6 @@ const createOrGetAOneOnOneChat = async (
   if (!tokenUser) {
     throw new ApiError(401, "Unauthorized request!");
   }
-  // ----------------------------------------------
 
   const { receiverId } = req.query as { receiverId: string | undefined };
 
@@ -35,11 +34,10 @@ const createOrGetAOneOnOneChat = async (
     },
   });
 
-  // if not then throw error -------------------------
+  // if not then throw error -
   if (!receiver) {
     throw new ApiError(404, "Receiver does not exist");
   }
-  // --------------------------------------------------
 
   // check if receiver is not the user who is requesting a chat
   if (receiver.id === tokenUser.id) {
@@ -64,9 +62,7 @@ const createOrGetAOneOnOneChat = async (
         },
       ],
     },
-    // ---------------------------------------------
     include: {
-      // --------------
       participants: {
         select: {
           id: true,
@@ -80,7 +76,6 @@ const createOrGetAOneOnOneChat = async (
           updatedAt: true,
         },
       },
-      // ---------------------
       chatMessages: {
         orderBy: {
           createdAt: "desc",
@@ -97,19 +92,20 @@ const createOrGetAOneOnOneChat = async (
           },
         },
       },
-      // --------------------------
     },
   });
 
   if (chat.length) {
+    throw new ApiError(400, "Chat already exist");
+
     // if we find the chat that means user already has created a chat
-    type Chat = (typeof chat)[0];
-    return res
-      .status(200)
-      .json(new ApiResponse<Chat>(200, chat[0], "Chat retrieved successfully"));
+    // type Chat = (typeof chat)[0];
+    // return res
+    //   .status(200)
+    //   .json(new ApiResponse<Chat>(200, chat[0], "Chat retrieved successfully"));
   }
 
-  // if not we need to create a new one on one chat -----------------
+  // if not we need to create a new one on one chat
   const createdChat = await prisma.chat.create({
     data: {
       name: "One on one chat",
@@ -117,7 +113,6 @@ const createOrGetAOneOnOneChat = async (
       adminId: tokenUser.id,
     },
     include: {
-      // --------------
       participants: {
         select: {
           id: true,
@@ -131,7 +126,6 @@ const createOrGetAOneOnOneChat = async (
           updatedAt: true,
         },
       },
-      // ---------------------
       chatMessages: {
         orderBy: {
           createdAt: "desc",
@@ -148,7 +142,6 @@ const createOrGetAOneOnOneChat = async (
           },
         },
       },
-      // --------------------------
     },
   });
 
@@ -164,8 +157,6 @@ const createOrGetAOneOnOneChat = async (
       createdChat,
     );
   });
-
-  // ---------------------------------------------------------------------
 
   return res
     .status(201)

@@ -24,8 +24,11 @@ const createAGroupChatValidator = (data: Record<string, unknown>) => {
   });
   //   ---------------------------------------------------------------------
 
+
+  // we are safe parsing in order to handle error manually
   const result = schema.safeParse(data);
 
+  // if validation fails then extract the error message
   if (!result.success) {
     const extractedErrors = result.error.issues.map(
       (err: (typeof result.error.issues)[0]) => {

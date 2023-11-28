@@ -19,7 +19,6 @@ export const removeParticipantFromGroupChat = async (
   if (!tokenUser) {
     throw new ApiError(401, "Unauthorized request!");
   }
-  // ----------------------------------------------
 
   const { slug } = req.query as Query;
 
@@ -33,6 +32,9 @@ export const removeParticipantFromGroupChat = async (
   if (!participantId) {
     throw new ApiError(400, "Participant id is required");
   }
+
+  console.log(chatId);
+  console.log(participantId);
 
   // check if chat is a group
   const groupChat = await prisma.chat.findUnique({
@@ -55,6 +57,10 @@ export const removeParticipantFromGroupChat = async (
     throw new ApiError(404, "You are not an admin");
   }
 
+  if (participantId === tokenUser.id) {
+    throw new ApiError(400, "Admin can not be removed.");
+  }
+
   // check if the participant that is being removed in a part of the group
   if (!groupChat.participantIds.includes(participantId)) {
     throw new ApiError(400, "Participant does not exist in the group chat");
@@ -75,7 +81,6 @@ export const removeParticipantFromGroupChat = async (
       },
     },
     include: {
-      // --------------
       participants: {
         select: {
           id: true,
@@ -89,7 +94,6 @@ export const removeParticipantFromGroupChat = async (
           updatedAt: true,
         },
       },
-      // ---------------------
       chatMessages: {
         orderBy: {
           createdAt: "desc",
@@ -106,7 +110,6 @@ export const removeParticipantFromGroupChat = async (
           },
         },
       },
-      // --------------------------
     },
   });
 

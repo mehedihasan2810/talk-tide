@@ -8,19 +8,20 @@ import { ApiError } from "@/utils/error-helpers/ApiError";
 
 export const startSocketServer = (
   req: NextApiRequest,
-  res: NextApiResponseServerIO
+  res: NextApiResponseServerIO,
 ) => {
-  //   if there is no server running
   try {
+    //   if there is no server running
     if (!res.socket.server.io) {
+      console.log("Initializing socket server...");
+
       const httpServer: NetServer = res.socket.server as any;
 
       // then create one otherwise don't
       const io = new ServerIO(httpServer, {
         pingTimeout: 60000,
-        path: "/api/socket",
         cors: {
-          origin: process.env.CORS_ORIGIN,
+          origin: process.env.CORS_ORIGIN as string,
           credentials: true,
         },
       });
@@ -29,11 +30,11 @@ export const startSocketServer = (
 
       initializeSocketIO(req, res); // handle the connection event and others
     } else {
-      console.log("socket already running");
+      console.log("Socket server already running");
     }
   } catch (error) {
     console.log(
-      `startSocketServer: ${chalk.bold.red((error as Error).message)}`
+      `startSocketServer: ${chalk.bold.red((error as Error).message)}`,
     );
     throw new ApiError(500, "Internal server error");
   }

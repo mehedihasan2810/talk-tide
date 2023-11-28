@@ -21,7 +21,6 @@ export const addNewParticipantInGroupChat = async (
   if (!tokenUser) {
     throw new ApiError(401, "Unauthorized request!");
   }
-  // ----------------------------------------------
 
   const { slug } = req.query as Query;
 
@@ -72,7 +71,6 @@ export const addNewParticipantInGroupChat = async (
       },
     },
     include: {
-      // --------------
       participants: {
         select: {
           id: true,
@@ -86,7 +84,6 @@ export const addNewParticipantInGroupChat = async (
           updatedAt: true,
         },
       },
-      // ---------------------
       chatMessages: {
         orderBy: {
           createdAt: "desc",
@@ -103,7 +100,6 @@ export const addNewParticipantInGroupChat = async (
           },
         },
       },
-      // --------------------------
     },
   });
 

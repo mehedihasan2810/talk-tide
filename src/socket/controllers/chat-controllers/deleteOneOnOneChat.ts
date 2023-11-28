@@ -22,9 +22,13 @@ export const deleteOneOnOneChat = async (
 
   const { chatId } = req.query as { chatId: string | undefined };
 
+
+  //  chat id is required to proceed
   if (!chatId || chatId === undefined) {
     throw new ApiError(400, "Chat id is missing");
   }
+
+  await deleteCascadeChatMessages(chatId); // first delete all the messages and attachments associated with the chat
 
   // delete the chat even if user is not admin because it's a personal chat
   const chat = await prisma.chat.delete({
@@ -67,8 +71,6 @@ export const deleteOneOnOneChat = async (
     },
   });
   // ----------------------------
-
-  await deleteCascadeChatMessages(chatId); // delete all the messages and attachments associated with the chat
 
   chat.participants.forEach((participant) => {
     // no need for logged in user to be notified

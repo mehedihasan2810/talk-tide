@@ -21,6 +21,5 @@ export const validateUserCredentials = (data: Params) => {
     );
 
     throw new Error(extractedErrors.join(","));
-    // ------------------------------------------
   }
 };
