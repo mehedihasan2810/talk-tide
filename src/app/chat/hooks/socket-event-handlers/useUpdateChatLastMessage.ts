@@ -8,7 +8,7 @@ type UseUpdateChatLastMessage = (
     | {
         data: never[];
       },
-) => Function;
+) => (_chatToUpdateId: string, _message: ChatMessageInterface) => void;
 
 export const useUpdateChatLastMessage: UseUpdateChatLastMessage = (chats) => {
   const updateChatLastMessage = (

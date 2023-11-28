@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 
 export const useGetGroupInfo = (chatId: string | null) => {
   return useQuery({
-    queryKey: ["groupInfo"],
+    queryKey: ["groupInfo", chatId],
     queryFn: requestHandler<ChatInterface>(() =>
       apiClient.get(`/chat/group/${chatId}`),
     ),
