@@ -5,8 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start -H 0.0.0.0",
-    "start-localhost": "next start",
+    "start": "next start",
     "lint": "next lint",
     "test": "npx lint-staged",
     "test:watch": "jest --watchAll",
