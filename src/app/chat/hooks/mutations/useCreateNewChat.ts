@@ -7,7 +7,7 @@ export const useCreateNewChat = () => {
   return useMutation({
     mutationFn: (selectedUserId: string) =>
       requestHandler<ChatInterface>(() =>
-        apiClient.post(`/chat/c/${selectedUserId}`),
+        apiClient.post(`/chatApp/chat/create/${selectedUserId}`),
       )(),
   });
 };

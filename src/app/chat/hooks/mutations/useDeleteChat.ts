@@ -9,7 +9,7 @@ export const useDeleteChat = () => {
   return useMutation({
     mutationFn: (chatId: string) =>
       requestHandler<ChatInterface>(() =>
-        apiClient.delete(`/chat/remove/${chatId}`),
+        apiClient.delete(`/chatApp/chat/delete/${chatId}`),
       )(),
 
     onMutate: async (chatId: string) => {

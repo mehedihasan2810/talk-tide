@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { ChatInterface } from "@/types/chat";
-import { SessionUser } from "@/types/types";
+import { SessionUser } from "@/types/session";
 import { getChatObjectMetadata } from "@/utils/getChatObjectMetadata";
 import {
   EllipsisVerticalIcon,
@@ -193,10 +193,9 @@ const ChatItem: FC<Props> = ({
                     onClick={(e) => {
                       e.stopPropagation();
                       deleteChatMutation(chat.id, {
-                        onError: () => {
+                        onError: (error) => {
                           toast({
-                            description:
-                              "Something went wrong while deleting the chat. Try again",
+                           title: error.message,
                             variant: "destructive",
                           });
                         },

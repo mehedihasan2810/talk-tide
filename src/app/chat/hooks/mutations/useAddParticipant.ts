@@ -14,7 +14,7 @@ export const useAddParticipant = () => {
     }) =>
       requestHandler<ChatInterface>(() =>
         apiClient.post(
-          `/chat/group/addParticipant/${chatId}/${participantToBeAdded}`,
+          `/chatApp/group/participant/add/${chatId}/${participantToBeAdded}`,
         ),
       )(),
   });

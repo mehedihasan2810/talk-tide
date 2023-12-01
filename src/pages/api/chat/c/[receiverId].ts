@@ -1,13 +1,13 @@
 import { createOrGetAOneOnOneChat } from "@/socket/controllers/chat-controllers/createOrGetAOneOnOneChat";
 import { startSocketServer } from "@/socket/startSocketServer";
-import { NextApiResponseServerIO } from "@/types/types";
+import { NextApiResponseServerIO } from "@/types/session";
 import { ApiError } from "@/utils/error-helpers/ApiError";
 import { errorResponse } from "@/utils/error-helpers/errorResponse";
 import { NextApiRequest } from "next";
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponseServerIO
+  res: NextApiResponseServerIO,
 ) {
   try {
     if (req.method === "POST") {

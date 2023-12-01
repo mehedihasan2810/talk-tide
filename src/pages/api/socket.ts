@@ -1,5 +1,5 @@
 import { NextApiRequest } from "next";
-import { NextApiResponseServerIO } from "@/types/types";
+import { NextApiResponseServerIO } from "@/types/session";
 import { startSocketServer } from "@/socket/startSocketServer";
 import { errorResponse } from "@/utils/error-helpers/errorResponse";
 import { ApiResponse } from "@/utils/helpers/apiResponse";
@@ -9,7 +9,6 @@ export default async function handler(
   res: NextApiResponseServerIO,
 ) {
   try {
-
     // start the socket server if any request hits this endpoint
     startSocketServer(req, res);
 

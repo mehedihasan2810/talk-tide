@@ -13,7 +13,7 @@ export const useSendMessage = () => {
       formData: FormData
     }) =>
       requestHandler<ChatMessageInterface>(() =>
-        apiClient.post(`/chat/messages/${chatId}`, formData),
+        apiClient.post(`/chatApp/messages/send/${chatId}`, formData),
       )(),
   });
 };

@@ -1,5 +1,5 @@
 import { leaveGroupChat } from "@/socket/controllers/chat-controllers/leaveGroupChat";
-import { NextApiResponseServerIO } from "@/types/types";
+import { NextApiResponseServerIO } from "@/types/session";
 import { ApiError } from "@/utils/error-helpers/ApiError";
 import { errorResponse } from "@/utils/error-helpers/errorResponse";
 import { NextApiRequest } from "next";

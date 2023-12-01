@@ -4,7 +4,7 @@ import { mountJoinChatEvent } from "./socket-events/mountJoinChatEvent";
 import { mountParticipantTypingEvent } from "./socket-events/mountParticipantTypingEvent";
 import { mountParticipantStoppedTypingEvent } from "./socket-events/mountParticipantStoppedTypingEvent";
 import { NextApiRequest } from "next";
-import { NextApiResponseServerIO } from "@/types/types";
+import { NextApiResponseServerIO } from "@/types/session";
 import { ApiError } from "@/utils/error-helpers/ApiError";
 import prisma from "@/lib/prisma";
 

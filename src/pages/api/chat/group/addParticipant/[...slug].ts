@@ -1,14 +1,14 @@
 import { addNewParticipantInGroupChat } from "@/socket/controllers/chat-controllers/addNewParticipantInGroupChat";
 import { removeParticipantFromGroupChat } from "@/socket/controllers/chat-controllers/removeParticipantFromGroupChat";
 import { startSocketServer } from "@/socket/startSocketServer";
-import { NextApiResponseServerIO } from "@/types/types";
+import { NextApiResponseServerIO } from "@/types/session";
 import { ApiError } from "@/utils/error-helpers/ApiError";
 import { errorResponse } from "@/utils/error-helpers/errorResponse";
 import { NextApiRequest } from "next";
 
 export default async function hanler(
   req: NextApiRequest,
-  res: NextApiResponseServerIO
+  res: NextApiResponseServerIO,
 ) {
   try {
     startSocketServer(req, res);

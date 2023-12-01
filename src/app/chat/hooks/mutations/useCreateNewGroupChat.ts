@@ -13,7 +13,7 @@ export const useCreateNewGroupChat = () => {
       participantIds: string[];
     }) =>
       requestHandler<ChatInterface>(() =>
-        apiClient.post("/chat/group", {
+        apiClient.post("/chatApp/group/create", {
           name: groupName,
           participantIds,
         }),

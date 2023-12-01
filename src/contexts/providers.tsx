@@ -3,7 +3,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactNode } from "react";
 import { SessionProvider } from "next-auth/react";
-import { SocketProvider } from "./SocketContext";
+// import { SocketProvider } from "./SocketContext";
 import { usePathname } from "next/navigation";
 import Navbar from "@/components/Home/Navbar";
 import Footer from "@/components/Home/Footer";
@@ -29,7 +29,9 @@ const Provider = ({ children }: { children: ReactNode }) => {
   return (
     <SessionProvider>
       <QueryClientProvider client={queryClient}>
-        <SocketProvider>{renderNavFooter}</SocketProvider>
+        {/* <SocketProvider> */}
+          {renderNavFooter}
+          {/* </SocketProvider> */}
       </QueryClientProvider>
     </SessionProvider>
   );

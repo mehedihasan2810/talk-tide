@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import { getUserFromToken } from "@/socket/getUserFromToken";
-import { NextApiResponseServerIO } from "@/types/types";
+import { NextApiResponseServerIO } from "@/types/session";
 import { ApiError } from "@/utils/error-helpers/ApiError";
 import { ApiResponse } from "@/utils/helpers/apiResponse";
 import { NextApiRequest } from "next";
@@ -45,7 +45,7 @@ export const leaveGroupChat = async (
     throw new ApiError(400, "You are not a part of this group chat");
   }
 
-  // leave the chat 
+  // leave the chat
   const updatedParticipantIds = groupChat.participantIds.filter(
     (id) => id !== tokenUser.id,
   );

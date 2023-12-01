@@ -1,6 +1,6 @@
 import { deleteOneOnOneChat } from "@/socket/controllers/chat-controllers/deleteOneOnOneChat";
 import { startSocketServer } from "@/socket/startSocketServer";
-import { NextApiResponseServerIO } from "@/types/types";
+import { NextApiResponseServerIO } from "@/types/session";
 import { ApiError } from "@/utils/error-helpers/ApiError";
 import { errorResponse } from "@/utils/error-helpers/errorResponse";
 import { NextApiRequest } from "next";
@@ -14,7 +14,7 @@ export default async function handler(
     if (req.method === "DELETE") {
       // start the socket server first
       startSocketServer(req, res);
-      
+
       // this `deleteOneOnOneChat` function is responsible for only deleting the one to one chat
       await deleteOneOnOneChat(req, res);
     } else {

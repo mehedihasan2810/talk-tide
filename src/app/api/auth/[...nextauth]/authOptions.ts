@@ -1,4 +1,4 @@
-import type { Session } from "@/types/types";
+import type { Session } from "@/types/session";
 import type { AuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { loginUser } from "./auth-utils/loginUser";

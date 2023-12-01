@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import { getUserFromToken } from "@/socket/getUserFromToken";
-import { NextApiResponseServerIO } from "@/types/types";
+import { NextApiResponseServerIO } from "@/types/session";
 import { ApiError } from "@/utils/error-helpers/ApiError";
 import { ApiResponse } from "@/utils/helpers/apiResponse";
 import { NextApiRequest } from "next";

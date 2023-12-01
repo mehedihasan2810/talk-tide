@@ -2,7 +2,7 @@ import prisma from "@/lib/prisma";
 import { ChatEventEnum } from "@/socket/constants";
 import { getUserFromToken } from "@/socket/getUserFromToken";
 import { emitSocketEvent } from "@/socket/socket-events/emitSocketEvent";
-import { NextApiResponseServerIO } from "@/types/types";
+import { NextApiResponseServerIO } from "@/types/session";
 import { ApiError } from "@/utils/error-helpers/ApiError";
 import { ApiResponse } from "@/utils/helpers/apiResponse";
 import { NextApiRequest } from "next";

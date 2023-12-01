@@ -74,7 +74,7 @@ const useOnHandleClickCreateChat = () => {
             });
           },
           onError: (error) => {
-            toast({ description: error.message, variant: "destructive" });
+            toast({ title: error.message, variant: "destructive" });
           },
         },
       );
@@ -112,7 +112,7 @@ const useOnHandleClickCreateChat = () => {
           queryClient.invalidateQueries({ queryKey: ["chats"] });
         },
         onError: (error) => {
-          toast({ description: error.message, variant: "destructive" });
+          toast({ title: error.message, variant: "destructive" });
         },
       });
     }

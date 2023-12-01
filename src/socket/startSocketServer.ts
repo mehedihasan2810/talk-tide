@@ -1,5 +1,5 @@
 import { initializeSocketIO } from "./initializeSocketIO";
-import { NextApiResponseServerIO } from "@/types/types";
+import { NextApiResponseServerIO } from "@/types/session";
 import { Server as ServerIO } from "socket.io";
 import { Server as NetServer } from "http";
 import chalk from "chalk";

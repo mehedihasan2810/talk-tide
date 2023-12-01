@@ -1,4 +1,4 @@
-import { type NextApiRequest } from "next";
+import { NextApiRequest } from "next";
 import { DefaultJWT, getToken } from "next-auth/jwt";
 
 type TokenUser = DefaultJWT & {

@@ -3,7 +3,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { useStore } from "@/lib/stores/useStore";
-import { SessionUser } from "@/types/types";
+import { SessionUser } from "@/types/session";
 
 import {
   ArrowPathIcon,
@@ -16,7 +16,7 @@ import {
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import SelectUser from "./SelectUser";
 import SelectItem from "./SelectItem";
 import { cn } from "@/lib/utils";
@@ -40,6 +40,7 @@ import {
   DialogTrigger,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { useLeaveGroupChat } from "../hooks/mutations/useLeaveGroupChat";
 
 interface Props {
   onGroupDelete(_chatId: string): void;
@@ -81,23 +82,108 @@ const GroupChatDetailsModal: FC<Props> = ({ onGroupDelete }) => {
   // get the chat id from search params
   const chatId = searchParams.get("cD");
 
-  const { mutate: addParticipantMutate, isPending: isAddPartPending } =
+  const { mutate: addParticipantMutation, isPending: isAddPartPending } =
     useAddParticipant();
 
-  const { mutate: removeParticipantMutate, isPending: isRemovePartPending } =
+  const { mutate: removeParticipantMutation, isPending: isRemovePartPending } =
     useRemoveParticipant();
 
-  const { mutate: deleteGroupChat, isPending: isDeletingGroupChat } =
+  const { mutate: deleteGroupChatMutation, isPending: isDeletingGroupChat } =
     useDeleteGroupChat();
 
-  const { mutate: renameGroupMutate, isPending: isRenamePending } =
+  const { mutate: renameGroupMutation, isPending: isRenamePending } =
     useRenameGroup();
+
+  const { mutate: leaveGroupChatMutation, isPending: isLeaveChatPending } =
+    useLeaveGroupChat();
 
   // fetch the information of a specific group
   const { data: groupInfo, error } = useGetGroupInfo(chatId);
 
   // delete a specific query then return the remaining
   const deleteQueryString = useDeleteQueryString();
+
+  const handleRemoveGroupParticipant = (
+    participantId: string,
+    groupChatId: string,
+  ) => {
+    // e.stopPropagation();
+
+    setParticipantToBeRemoved(participantId);
+
+    removeParticipantMutation(
+      {
+        chatId: groupChatId,
+        participantToBeRemoved: participantId,
+      },
+      {
+        onSuccess(newGroupInfo) {
+          toast({
+            description: "Participant removed successfully",
+            variant: "success",
+          });
+          queryClient.setQueryData(["groupInfo"], newGroupInfo);
+          queryClient.invalidateQueries({
+            queryKey: ["groupInfo"],
+          });
+        },
+        onError: (error) => {
+          toast({
+            title: error.message,
+            variant: "destructive",
+          });
+        },
+      },
+    );
+  };
+
+  const handleLeaveGroupChat = (groupChatId: string) => {
+    console.log("hello");
+    onGroupDelete(groupChatId);
+
+    toggleGroupDetailsModal(false);
+
+    leaveGroupChatMutation(groupChatId, {
+      onSuccess() {
+        onGroupDelete(groupChatId);
+
+        toggleGroupDetailsModal(false);
+
+        queryClient.setQueryData(
+          ["chats"],
+          (oldChats: SuccessResponse<ChatInterface[]>) => {
+            return {
+              ...oldChats,
+              data: oldChats.data.filter((chat) => chat.id !== chatId),
+            };
+          },
+        );
+        queryClient.invalidateQueries({
+          queryKey: ["chats"],
+        });
+
+        toast({
+          description: "You left the group successfully",
+          variant: "success",
+        });
+      },
+      onError: (error) => {
+        toast({
+          title: error.message,
+          variant: "destructive",
+        });
+      },
+    });
+  };
+
+  useEffect(() => {
+    if (!isGroupDetailsModalOpen && searchParams.get("cD")) {
+      router.replace(pathname + deleteQueryString("cD"), {
+        scroll: false,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Sheet open={isGroupDetailsModalOpen}>
@@ -166,24 +252,27 @@ const GroupChatDetailsModal: FC<Props> = ({ onGroupDelete }) => {
                           return;
                         }
 
-                        renameGroupMutate(
+                        renameGroupMutation(
                           { newGroupName, chatId },
                           {
                             onSuccess: (newGroupInfo) => {
                               setNewGroupName("");
                               setRenamingGroup(false);
                               queryClient.setQueryData(
-                                ["groupInfo"],
+                                ["groupInfo", chatId],
                                 newGroupInfo,
                               );
                               queryClient.invalidateQueries({
-                                queryKey: ["groupInfo"],
+                                queryKey: ["groupInfo", chatId],
                               });
                             },
 
-                            onError: () => {
-                              toast({description: "Something went wrong while renaming the group! Try again", variant: 'destructive'})
-                            }
+                            onError: (error) => {
+                              toast({
+                                title: error.message,
+                                variant: "destructive",
+                              });
+                            },
                           },
                         );
                       }}
@@ -225,7 +314,7 @@ const GroupChatDetailsModal: FC<Props> = ({ onGroupDelete }) => {
                   {groupInfo.data.participants.length} Participants
                 </p>
                 <div className="w-full">
-                  <div className="max-h-[40vh] overflow-y-auto">
+                  <div className="max-h-[40vh] overflow-y-auto pr-2">
                     {groupInfo.data.participants?.map((part) => {
                       return (
                         <React.Fragment key={part.id}>
@@ -255,32 +344,56 @@ const GroupChatDetailsModal: FC<Props> = ({ onGroupDelete }) => {
                                 </small>
                               </div>
                             </div>
-                            {groupInfo.data.adminId ===
-                            (session?.user as SessionUser)?.id ? (
-                              <div>
-                                <Dialog>
-                                  <DialogTrigger
-                                    className={buttonVariants({
-                                      className:
-                                        "border border-red-200 bg-transparent text-red-500 hover:bg-transparent hover:text-red-500 hover:opacity-70",
-                                      size: "sm",
-                                      variant: "destructive",
-                                    })}
-                                    onClick={(e) => e.stopPropagation()}
-                                  >
-                                    Remove
-                                  </DialogTrigger>
-                                  <DialogContent
-                                    onClick={(e) => e.stopPropagation()}
-                                  >
-                                    <DialogHeader>
-                                      <DialogTitle className="text-center">
-                                        Are you sure you want to delete this
-                                        chat?
-                                      </DialogTitle>
-                                    </DialogHeader>
+                            {/* {groupInfo.data.adminId ===
+                            (session?.user as SessionUser)?.id ? ( */}
+                            <div>
+                              <Dialog>
+                                {groupInfo.data.adminId ===
+                                (session?.user as SessionUser)?.id
+                                  ? (session?.user as SessionUser)?.id !==
+                                      part.id && (
+                                      <DialogTrigger
+                                        className={buttonVariants({
+                                          className:
+                                            "border border-red-200 bg-transparent text-red-500 hover:bg-transparent hover:text-red-500 hover:opacity-70",
+                                          size: "sm",
+                                          variant: "destructive",
+                                        })}
+                                        onClick={(e) => e.stopPropagation()}
+                                      >
+                                        Remove
+                                      </DialogTrigger>
+                                    )
+                                  : (session?.user as SessionUser)?.id ===
+                                      part.id && (
+                                      <DialogTrigger
+                                        className={buttonVariants({
+                                          className:
+                                            "border border-red-200 bg-transparent text-red-500 hover:bg-transparent hover:text-red-500 hover:opacity-70",
+                                          size: "sm",
+                                          variant: "destructive",
+                                        })}
+                                        onClick={(e) => e.stopPropagation()}
+                                      >
+                                        Leave
+                                      </DialogTrigger>
+                                    )}
 
-                                    <DialogFooter className="mx-auto">
+                                <DialogContent
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <DialogHeader>
+                                    <DialogTitle className="text-center">
+                                      {groupInfo.data.adminId ===
+                                      (session?.user as SessionUser)?.id
+                                        ? "Are you sure you want to remove this participant?"
+                                        : "Are you sure you want to leave?"}
+                                    </DialogTitle>
+                                  </DialogHeader>
+
+                                  <DialogFooter className="mx-auto">
+                                    {groupInfo.data.adminId ===
+                                    (session?.user as SessionUser)?.id ? (
                                       <Button
                                         disabled={
                                           participantToBeRemoved === part.id
@@ -290,36 +403,9 @@ const GroupChatDetailsModal: FC<Props> = ({ onGroupDelete }) => {
                                         onClick={(e) => {
                                           e.stopPropagation();
 
-                                          setParticipantToBeRemoved(part.id);
-
-                                          removeParticipantMutate(
-                                            {
-                                              chatId,
-                                              participantToBeRemoved: part.id,
-                                            },
-                                            {
-                                              onSuccess(newGroupInfo) {
-                                                toast({
-                                                  description:
-                                                    "Participant removed successfully",
-                                                  variant: "success",
-                                                });
-                                                queryClient.setQueryData(
-                                                  ["groupInfo"],
-                                                  newGroupInfo,
-                                                );
-                                                queryClient.invalidateQueries({
-                                                  queryKey: ["groupInfo"],
-                                                });
-                                              },
-                                              onError: () => {
-                                                toast({
-                                                  description:
-                                                    "Something went wrong! Try again",
-                                                  variant: "destructive",
-                                                });
-                                              }
-                                            },
+                                          handleRemoveGroupParticipant(
+                                            part.id,
+                                            chatId,
                                           );
                                         }}
                                         size="sm"
@@ -331,11 +417,34 @@ const GroupChatDetailsModal: FC<Props> = ({ onGroupDelete }) => {
                                           )}
                                         Remove
                                       </Button>
-                                    </DialogFooter>
-                                  </DialogContent>
-                                </Dialog>
-                              </div>
-                            ) : null}
+                                    ) : (
+                                      <Button
+                                        disabled={
+                                          (session?.user as SessionUser)?.id ===
+                                          part.id
+                                            ? isLeaveChatPending
+                                            : false
+                                        }
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+
+                                          handleLeaveGroupChat(chatId);
+                                        }}
+                                        size="sm"
+                                        variant="destructive"
+                                      >
+                                        {(session?.user as SessionUser)?.id ===
+                                          part.id &&
+                                          isLeaveChatPending && (
+                                            <ArrowPathIcon className="mr-2 h-4 w-4 animate-spin" />
+                                          )}
+                                        Leave
+                                      </Button>
+                                    )}
+                                  </DialogFooter>
+                                </DialogContent>
+                              </Dialog>
+                            </div>
                           </div>
 
                           <Separator />
@@ -391,7 +500,7 @@ const GroupChatDetailsModal: FC<Props> = ({ onGroupDelete }) => {
                                   return;
                                 }
 
-                                addParticipantMutate(
+                                addParticipantMutation(
                                   {
                                     chatId,
                                     participantToBeAdded,
@@ -410,9 +519,7 @@ const GroupChatDetailsModal: FC<Props> = ({ onGroupDelete }) => {
                                     },
                                     onError: (error) => {
                                       toast({
-                                        title:
-                                          "Something went wrong! Try again",
-                                        description: error.message,
+                                        title: error.message,
                                         variant: "destructive",
                                       });
                                     },
@@ -473,7 +580,7 @@ const GroupChatDetailsModal: FC<Props> = ({ onGroupDelete }) => {
                                   return;
                                 }
 
-                                deleteGroupChat(chatId, {
+                                deleteGroupChatMutation(chatId, {
                                   onSuccess: () => {
                                     onGroupDelete(chatId);
                                     toggleGroupDetailsModal(false);
@@ -502,10 +609,9 @@ const GroupChatDetailsModal: FC<Props> = ({ onGroupDelete }) => {
                                     });
                                   },
 
-                                  onError: () => {
+                                  onError: (error) => {
                                     toast({
-                                      description:
-                                        "Something went wrong! Try again",
+                                      title: error.message,
                                       variant: "destructive",
                                     });
                                   },

@@ -1,3 +1,5 @@
 export { default } from "next-auth/middleware";
 
-export const config = { matcher: ["/chat", "/api/:function*"] };
+export const config = { matcher: ["/chat",
+//  "/api/:function*"
+] };

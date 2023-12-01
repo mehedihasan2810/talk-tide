@@ -3,28 +3,40 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { apiClient } from "@/lib/api";
 import { pusherClient } from "@/lib/pusher";
+import { SessionUser } from "@/types/session";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 const Pusher = () => {
+  const router = useRouter();
+
+  const { data: session, status } = useSession({
+    required: true,
+    onUnauthenticated() {
+      router.replace("/auth");
+    },
+  });
   const [msg, setMsg] = useState("");
   const [messages, setMessages] = useState<string[]>([]);
 
-  useEffect(() => {
-    const myEvent = pusherClient.subscribe("my-event");
+  const msgHandler = (msg: string) => {
+    console.log(msg);
+    setMessages((m) => [msg, ...m]);
+  };
 
-    const msgHandler = (msg: string) => {
-      console.log(msg);
-      setMessages((m) => [msg, ...m]);
-    };
+  useEffect(() => {
+    if (status === "loading") return;
+    const myEvent = pusherClient.subscribe((session.user as SessionUser).id);
 
     myEvent.bind("msg", msgHandler);
 
     return () => {
-      pusherClient.unsubscribe("my-event");
+      pusherClient.unsubscribe((session.user as SessionUser).id);
 
       myEvent.unbind("msg", msgHandler);
     };
-  }, []);
+  }, [status]);
 
   return (
     <div className="fixed z-50 grid h-full w-full place-items-center">
@@ -34,13 +46,16 @@ const Pusher = () => {
         ))}
         <Input
           value={msg}
-          onChange={(e) => setMsg(e.target.value)}
+          onChange={(e) => {
+            setMsg(e.target.value);
+          }}
           type="text"
           placeholder="type a message"
         />
         <Button
           onClick={async () => {
-            await apiClient.post("/chat-app", { message: msg });
+            const res = await apiClient.post("/chatApp", { message: msg });
+            console.log(res);
             setMsg("");
           }}
         >

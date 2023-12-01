@@ -12,10 +12,10 @@ export const requestHandler = <T>(api: ApiCallback<T>) => {
     } catch (error: any) {
       // Handle error cases, including unauthorized and forbidden cases
       if ([401, 403].includes(error?.response.data?.statusCode)) {
-        localStorage.clear(); // Clear local storage on authentication issues
+        // localStorage.clear(); // Clear local storage on authentication issues
         //   if (isBrowser) window.location.href = "/login"; // Redirect to login page
       }
-
+        console.log(error?.response?.data?.message)
       throw new Error(error?.response?.data?.message || "Something went wrong");
     }
   };

@@ -7,7 +7,7 @@ export const useUsers = () => {
   return useQuery({
     queryKey: ["users"],
     queryFn: requestHandler<UserInterface[]>(() =>
-      apiClient.get("/chat/users"),
+      apiClient.get("/chatApp/users"),
     ),
   });
 };

@@ -15,7 +15,7 @@ import { ChatInterface, ChatMessageInterface } from "@/types/chat";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { getChatObjectMetadata } from "@/utils/getChatObjectMetadata";
-import { SessionUser } from "@/types/types";
+import { SessionUser } from "@/types/session";
 import ChatItem from "./ChatItem";
 import ChatSidebarSkeleton from "../skeletons/ChatSidebarSkeleton";
 import { Skeleton } from "@/components/ui/skeleton";

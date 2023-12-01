@@ -13,8 +13,8 @@ export const useRemoveParticipant = () => {
       participantToBeRemoved: string;
     }) =>
       requestHandler<ChatInterface>(() =>
-        apiClient.delete(
-          `/chat/group/addParticipant/${chatId}/${participantToBeRemoved}`,
+        apiClient.patch(
+          `/chatApp/group/participant/remove/${chatId}/${participantToBeRemoved}`,
         ),
       )(),
   });

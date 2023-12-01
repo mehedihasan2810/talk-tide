@@ -7,7 +7,7 @@ export const useMessages = (id: string | null) => {
   return useQuery({
     queryKey: ["messages", id],
     queryFn: requestHandler<ChatMessageInterface[]>(() =>
-      apiClient.get(`/chat/messages/${id}`),
+      apiClient.get(`/chatApp/messages/get/${id}`),
     ),
     enabled: !!id,
   });

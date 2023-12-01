@@ -20,7 +20,11 @@ export const errorResponse = (err: any) => {
     const statusCode: number = error.statusCode || isClientError ? 400 : 500;
 
     // set a message from native Error instance or a custom one
-    const message = error.message || "Something went wrong";
+    const message = error.message || "Something went wrong!";
+    // const message =
+    //   process.env.NODE_ENV === "development"
+    //     ? error.message || "Something went wrong!"
+    //     : "Something went wrong!";
     error = new ApiError(statusCode, message, error?.errors || [], err.stack);
   }
 

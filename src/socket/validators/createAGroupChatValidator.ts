@@ -24,7 +24,6 @@ const createAGroupChatValidator = (data: Record<string, unknown>) => {
   });
   //   ---------------------------------------------------------------------
 
-
   // we are safe parsing in order to handle error manually
   const result = schema.safeParse(data);
 
@@ -33,14 +32,26 @@ const createAGroupChatValidator = (data: Record<string, unknown>) => {
     const extractedErrors = result.error.issues.map(
       (err: (typeof result.error.issues)[0]) => {
         const path = err.path[0];
-        return { [path]: err.message };
+        return `${[path]}: ${err.message}`;
       },
     );
 
-    // 422: Unprocessable Entity
-    throw new ApiError(422, "Received data is not valid", extractedErrors);
-    // ------------------------------------------
+    // throw the error along with the validation error
+    throw new ApiError(422, extractedErrors.join(", "));
+    // -----
+
+    // const extractedErrors = result.error.issues.map(
+    //   (err: (typeof result.error.issues)[0]) => {
+    //     const path = err.path[0];
+    //     return { [path]: err.message };
+    //   },
+    // );
+
+    // // 422: Unprocessable Entity
+    // throw new ApiError(422, "Received data is not valid", extractedErrors);
+    // // ------------------------------------------
   }
+  return result.data;
 };
 
 export { createAGroupChatValidator };

@@ -1,7 +1,7 @@
 // This utility function generates metadata for chat objects.
 
 import { ChatInterface } from "@/types/chat";
-import { SessionUser } from "@/types/types";
+import { SessionUser } from "@/types/session";
 
 // It takes into consideration both group chats and individual chats.
 export const getChatObjectMetadata = (

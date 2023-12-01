@@ -9,14 +9,14 @@ import {
   XMarkIcon,
 } from "@heroicons/react/20/solid";
 import {
-  CONNECTED_EVENT,
-  DISCONNECT_EVENT,
-  JOIN_CHAT_EVENT,
+  // CONNECTED_EVENT,
+  // DISCONNECT_EVENT,
+  // JOIN_CHAT_EVENT,
   LEAVE_CHAT_EVENT,
   MESSAGE_RECEIVED_EVENT,
   NEW_CHAT_EVENT,
-  STOP_TYPING_EVENT,
-  TYPING_EVENT,
+  // STOP_TYPING_EVENT,
+  // TYPING_EVENT,
   UPDATE_GROUP_NAME_EVENT,
 } from "./constants";
 import { ChatInterface, ChatMessageInterface } from "@/types/chat";
@@ -27,7 +27,7 @@ import { getChatObjectMetadata } from "@/utils/getChatObjectMetadata";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { SessionUser } from "@/types/types";
+import { SessionUser } from "@/types/session";
 import MessageItem from "./components/MessageItem";
 import GroupChatDetailsModal from "./components/GroupChatDetailsModal";
 import { useMessages } from "./hooks/queries/useMessages";
@@ -35,9 +35,9 @@ import { useCreateQueryString } from "./hooks/useCreateQueryString";
 import { useChats } from "./hooks/queries/useChats";
 import { useDeleteQueryString } from "./hooks/useDeleteQueryString";
 import MobileSidebar from "./components/MobileSidebar";
-import { useSocket } from "@/contexts/SocketContext";
+// import { useSocket } from "@/contexts/SocketContext";
 import { useSendChatMessage } from "./hooks/event-handlers/useSendChatMessage";
-import { useOnMessageChange } from "./hooks/event-handlers/useOnMessageChange";
+// import { useOnMessageChange } from "./hooks/event-handlers/useOnMessageChange";
 import { useOnMessageReceive } from "./hooks/socket-event-handlers/useOnMessageReceive";
 import { useOnNewChat } from "./hooks/socket-event-handlers/useOnNewChat";
 import { useOnChatLeave } from "./hooks/socket-event-handlers/useOnChatLeave";
@@ -47,6 +47,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
 import useOnHandleClickCreateChat from "./hooks/event-handlers/useOnHandleClickCreateChat";
+import { pusherClient } from "@/lib/pusher";
 
 const Chat = () => {
   const router = useRouter();
@@ -54,15 +55,15 @@ const Chat = () => {
   const searchParams = useSearchParams()!;
   const { toast } = useToast();
 
-  const { toggleIsMobileSidebarOpen } = useStore((state) => state); //  get the `toggleIsMobileSidebarOpen` action from the global store
+  const { toggleIsMobileSidebarOpen } = useStore(); //  get the `toggleIsMobileSidebarOpen` action from the global store
 
-  const { socket: socketClient } = useSocket(); // get the socket instance from the context
+  // const { socket: socketClient } = useSocket(); // get the socket instance from the context
 
   /**
    * access the auth session and
    * if user is not authenticated then redirect him to the `auth` page
    */
-  const { data: session } = useSession({
+  const { data: session, status } = useSession({
     required: true,
     onUnauthenticated() {
       router.replace("/auth");
@@ -96,16 +97,16 @@ returned values from the hook into variables `data`, `isPending`, and `error`. *
 
   const chatMsgContainerRef = useRef<HTMLDivElement | null>(null); // for holding the ref of `chat message container`
 
-  const [isConnected, setIsConnected] = useState(false); // For tracking socket connection
+  // const [isConnected, setIsConnected] = useState(false); // For tracking socket connection
 
-  const [isTyping, setIsTyping] = useState(false); // To track if someone is currently typing
-  const [isSelfTyping, setIsSelfTyping] = useState(false); // To track if the current user is typing
+  // const [isTyping, setIsTyping] = useState(false); // To track if someone is currently typing
+  // const [isSelfTyping, setIsSelfTyping] = useState(false); // To track if the current user is typing
 
   const [message, setMessage] = useState(""); // To store the currently typed message
   const [unreadMessages, setUnreadMessages] = useState<ChatMessageInterface[]>(
     [],
   ); // To track unread messages
-  const [attachedFiles, setAttachedFiles] = useState<File[]>([]); // To store files attached to messages
+  const [attachedFiles, setAttachedFiles] = useState<any[]>([]); // To store files attached to messages
 
   /* The below code is using the `useSendChatMessage` hook to initialize the `sendChatMessage` and
  `isMessageSendPending` variables. These variables are used to send chat messages, track if a
@@ -114,7 +115,7 @@ returned values from the hook into variables `data`, `isPending`, and `error`. *
  session, message, attached files, and functions to update the message and attached files. */
   const { sendChatMessage, isMessageSendPending } = useSendChatMessage(
     currentChatIdRef,
-    socketClient,
+    // socketClient,
     session,
     message,
     attachedFiles,
@@ -129,44 +130,44 @@ returned values from the hook into variables `data`, `isPending`, and `error`. *
  to handle changes in the message input field in a chat application. It updates the `message` state
  with the new value, and also updates the `isSelfTyping` state to indicate whether the user is
  currently typing a message. */
-  const handleOnMessageChange = useOnMessageChange(
-    currentChatIdRef,
-    socketClient,
-    isConnected,
-    isSelfTyping,
-    setMessage,
-    setIsSelfTyping,
-  );
+  // const handleOnMessageChange = useOnMessageChange(
+  //   currentChatIdRef,
+  //   // socketClient,
+  //   // isConnected,
+  //   isSelfTyping,
+  //   setMessage,
+  //   setIsSelfTyping,
+  // );
 
-  const onConnect = () => {
-    setIsConnected(true);
-  };
+  // const onConnect = () => {
+  //   setIsConnected(true);
+  // };
 
-  const onDisconnect = () => {
-    setIsConnected(false);
-  };
+  // const onDisconnect = () => {
+  //   setIsConnected(false);
+  // };
 
   /**
    * Handles the "typing" event on the socket.
    */
-  const onSocketTyping = (chatId: string) => {
-    // Check if the typing event is for the currently active chat.
-    if (chatId !== currentChatIdRef.current) return;
+  // const onSocketTyping = (chatId: string) => {
+  //   // Check if the typing event is for the currently active chat.
+  //   if (chatId !== currentChatIdRef.current) return;
 
-    // Set the typing state to true for the current chat.
-    setIsTyping(true);
-  };
+  //   // Set the typing state to true for the current chat.
+  //   setIsTyping(true);
+  // };
 
-  /**
-   * Handles the "stop typing" event on the socket.
-   */
-  const onSocketStopTyping = (chatId: string) => {
-    // Check if the stop typing event is for the currently active chat.
-    if (chatId !== currentChatIdRef.current) return;
+  // /**
+  //  * Handles the "stop typing" event on the socket.
+  //  */
+  // const onSocketStopTyping = (chatId: string) => {
+  //   // Check if the stop typing event is for the currently active chat.
+  //   if (chatId !== currentChatIdRef.current) return;
 
-    // Set the typing state to false for the current chat.
-    setIsTyping(false);
-  };
+  //   // Set the typing state to false for the current chat.
+  //   setIsTyping(false);
+  // };
 
   /* The below code is using the `useOnMessageReceive` hook to handle the event of receiving a message
  in a chat. It takes the `currentChatIdRef`, `setUnreadMessages`, and `chats` as parameters. The
@@ -190,12 +191,17 @@ returned values from the hook into variables `data`, `isPending`, and `error`. *
   which handles deleting the chat from cache and invalidating the chats list 
   from which the user left
   */
-  const onChatLeave = useOnChatLeave(currentChatIdRef);
+  const onChatLeave = useOnChatLeave(
+    currentChatIdRef,
+    pathname,
+    router,
+    deleteQueryString,
+  );
 
   /*
   this `useOnGroupNameChange` hook takes the current chat id and returns a handler which handles updating or changing the group name
   */
-  const onGroupNameChange = useOnGroupNameChange(currentChatIdRef);
+  const onGroupNameChange = useOnGroupNameChange();
 
   // find the current active chats
   const currentChat = chats.data.find(
@@ -214,13 +220,13 @@ returned values from the hook into variables `data`, `isPending`, and `error`. *
     sidebarType?: "mobile" | "desktop",
   ) => {
     // Check if socket is available, if not, show an alert
-    if (!socketClient) {
-      toast({
-        description: "Socket not available! Try again by refreshing the page",
-        variant: "warning",
-      });
-      return;
-    }
+    // if (!socketClient) {
+    //   toast({
+    //     description: "Socket not available! Try again by refreshing the page",
+    //     variant: "warning",
+    //   });
+    //   return;
+    // }
 
     if (sidebarType === "mobile") {
       toast({
@@ -235,7 +241,7 @@ returned values from the hook into variables `data`, `isPending`, and `error`. *
     setMessage("");
 
     // Emit an event to join the current chat
-    socketClient.emit(JOIN_CHAT_EVENT, chat.id);
+    // socketClient.emit(JOIN_CHAT_EVENT, chat.id);
 
     // Filter out unread messages from the current chat as those will be read
     setUnreadMessages((prevMsg) =>
@@ -264,66 +270,92 @@ returned values from the hook into variables `data`, `isPending`, and `error`. *
   // ----------------------------------------------------------------
 
   useEffect(() => {
-    if (!socketClient) return;
-
     // If there's a current chat saved in local storage:
     if (searchParams.get("c")) {
       // Set the current chat reference to the one from local storage.
       currentChatIdRef.current = searchParams.get("c");
-
-      // If the socket connection exists, emit an event to join the specific chat using its ID.
-      socketClient.emit(JOIN_CHAT_EVENT, searchParams.get("c"));
 
       // Filter out unread messages from the current chat as those will be read
       setUnreadMessages((prevMsg) =>
         prevMsg.filter((msg) => msg.chatId !== searchParams.get("c")),
       );
     }
-  }, [socketClient, searchParams]);
+  }, [searchParams]);
 
   // ----------------------------------------------------------------------
 
-  useEffect(() => {
-    // If the socket isn't initialized, we don't set up listeners.
-    if (!socketClient) return;
+  // useEffect(() => {
+  //   // If the socket isn't initialized, we don't set up listeners.
+  //   if (!socketClient) return;
 
-    // Listener for when the socket connects.
-    socketClient.on(CONNECTED_EVENT, onConnect);
-    // Listener for when the socket disconnects.
-    socketClient.on(DISCONNECT_EVENT, onDisconnect);
-    // Listener for when a user is typing.
-    socketClient.on(TYPING_EVENT, onSocketTyping);
-    // Listener for when a user stops typing.
-    socketClient.on(STOP_TYPING_EVENT, onSocketStopTyping);
-    // Listener for when a new message is received.
-    socketClient.on(MESSAGE_RECEIVED_EVENT, onMessageReceive);
-    // Listener for the initiation of a new chat.
-    socketClient.on(NEW_CHAT_EVENT, onNewChat);
-    // Listener for when a user leaves a chat.
-    socketClient.on(LEAVE_CHAT_EVENT, onChatLeave);
-    // Listener for when a group's name is updated.
-    socketClient.on(UPDATE_GROUP_NAME_EVENT, onGroupNameChange);
+  //   // Listener for when the socket connects.
+  //   socketClient.on(CONNECTED_EVENT, onConnect);
+  //   // Listener for when the socket disconnects.
+  //   socketClient.on(DISCONNECT_EVENT, onDisconnect);
+  //   // Listener for when a user is typing.
+  //   socketClient.on(TYPING_EVENT, onSocketTyping);
+  //   // Listener for when a user stops typing.
+  //   socketClient.on(STOP_TYPING_EVENT, onSocketStopTyping);
+  //   // Listener for when a new message is received.
+  //   // socketClient.on(MESSAGE_RECEIVED_EVENT, onMessageReceive);
+  //   // Listener for the initiation of a new chat.
+  //   // socketClient.on(NEW_CHAT_EVENT, onNewChat);
+  //   // Listener for when a user leaves a chat.
+  //   // socketClient.on(LEAVE_CHAT_EVENT, onChatLeave);
+  //   // Listener for when a group's name is updated.
+  //   // socketClient.on(UPDATE_GROUP_NAME_EVENT, onGroupNameChange);
 
-    return () => {
-      // Remove all the event listeners we set up to avoid memory leaks and unintended behaviors.
-      socketClient.off(CONNECTED_EVENT, onConnect);
-      socketClient.off(DISCONNECT_EVENT, onDisconnect);
-      socketClient.off(TYPING_EVENT, onSocketTyping);
-      socketClient.off(STOP_TYPING_EVENT, onSocketStopTyping);
-      socketClient.off(MESSAGE_RECEIVED_EVENT, onMessageReceive);
-      socketClient.off(NEW_CHAT_EVENT, onNewChat);
-      socketClient.off(LEAVE_CHAT_EVENT, onChatLeave);
-      socketClient.off(UPDATE_GROUP_NAME_EVENT, onGroupNameChange);
-    };
-  }, [socketClient, messages, chats]);
+  //   return () => {
+  //     // Remove all the event listeners we set up to avoid memory leaks and unintended behaviors.
+  //     socketClient.off(CONNECTED_EVENT, onConnect);
+  //     socketClient.off(DISCONNECT_EVENT, onDisconnect);
+  //     socketClient.off(TYPING_EVENT, onSocketTyping);
+  //     socketClient.off(STOP_TYPING_EVENT, onSocketStopTyping);
+  //     // socketClient.off(MESSAGE_RECEIVED_EVENT, onMessageReceive);
+  //     // socketClient.off(NEW_CHAT_EVENT, onNewChat);
+  //     // socketClient.off(LEAVE_CHAT_EVENT, onChatLeave);
+  //     // socketClient.off(UPDATE_GROUP_NAME_EVENT, onGroupNameChange);
+  //   };
+  // }, [socketClient, messages, chats]);
 
   // ---------------------------------------------------------------------
+
+  useEffect(() => {
+    if (status === "loading") return;
+    pusherClient.subscribe((session.user as SessionUser).id);
+    pusherClient.bind(MESSAGE_RECEIVED_EVENT, onMessageReceive);
+    pusherClient.bind(NEW_CHAT_EVENT, onNewChat);
+    pusherClient.bind(LEAVE_CHAT_EVENT, onChatLeave);
+    pusherClient.bind(UPDATE_GROUP_NAME_EVENT, onGroupNameChange);
+
+    return () => {
+      pusherClient.unsubscribe((session.user as SessionUser).id);
+      pusherClient.unbind(MESSAGE_RECEIVED_EVENT, onMessageReceive);
+      pusherClient.unbind(NEW_CHAT_EVENT, onNewChat);
+      pusherClient.unbind(LEAVE_CHAT_EVENT, onChatLeave);
+      pusherClient.unbind(UPDATE_GROUP_NAME_EVENT, onGroupNameChange);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status, messages, chats]);
+
+  // useEffect(() => {
+  //   if (status === "loading") return;
+  //   const chatChannel = pusherClient.subscribe(
+  //     (session.user as SessionUser).id,
+  //   );
+  //   chatChannel.bind(MESSAGE_RECEIVED_EVENT, onMessageReceive);
+
+  //   return () => {
+  //     pusherClient.unsubscribe((session.user as SessionUser).id);
+  //     chatChannel.unbind(MESSAGE_RECEIVED_EVENT, onMessageReceive);
+  //   };
+  // }, [status, messages, chats, unreadMessages, currentChatIdRef]);
 
   return (
     <>
       <GroupChatDetailsModal
         onGroupDelete={(chatId) => {
-          router.replace(pathname + deleteQueryString("c", "cD"), {
+          router.push(pathname + deleteQueryString("c", "cD"), {
             scroll: false,
           });
           if (currentChatIdRef.current === chatId) {
@@ -331,6 +363,7 @@ returned values from the hook into variables `data`, `isPending`, and `error`. *
           }
         }}
       />
+
       <div className="md:hidden">
         <MobileSidebar
           chats={chats.data}
@@ -379,6 +412,11 @@ returned values from the hook into variables `data`, `isPending`, and `error`. *
                     currentChatIdRef.current = null;
                     router.replace(pathname + deleteQueryString("c"));
                   }
+
+                  toast({
+                    description: "Chat deleted successfully",
+                    variant: "success",
+                  });
                 }}
               />
             </>
@@ -504,11 +542,11 @@ returned values from the hook into variables `data`, `isPending`, and `error`. *
                     ))
                   ) : (
                     <>
-                      {isTyping ? (
+                      {/* {isTyping ? (
                         <div className="ml-8 text-sm text-zinc-500">
                           Typing...
                         </div>
-                      ) : null}
+                      ) : null} */}
                       {messages.data.map((msg: ChatMessageInterface, index) => (
                         <MessageItem
                           key={msg.id}
@@ -543,7 +581,7 @@ returned values from the hook into variables `data`, `isPending`, and `error`. *
                           className="group relative isolate aspect-square h-32 w-32 cursor-pointer rounded-xl"
                         >
                           <Image
-                            className="  rounded-xl object-cover"
+                            className="rounded-xl object-cover"
                             src={URL.createObjectURL(file)}
                             alt="attachment"
                             fill
@@ -591,7 +629,8 @@ returned values from the hook into variables `data`, `isPending`, and `error`. *
 
                   <Input
                     value={message}
-                    onChange={handleOnMessageChange}
+                    // onChange={handleOnMessageChange}
+                    onChange={(e) => setMessage(e.target.value)}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
                         sendChatMessage();

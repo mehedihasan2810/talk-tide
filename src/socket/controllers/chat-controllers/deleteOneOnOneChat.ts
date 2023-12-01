@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { NextApiResponseServerIO } from "@/types/types";
+import { NextApiResponseServerIO } from "@/types/session";
 import { ApiError } from "@/utils/error-helpers/ApiError";
 import { NextApiRequest } from "next";
 import { deleteCascadeChatMessages } from "./deleteCascadeChatMessages";
@@ -21,7 +21,6 @@ export const deleteOneOnOneChat = async (
   // -------------------------------------------
 
   const { chatId } = req.query as { chatId: string | undefined };
-
 
   //  chat id is required to proceed
   if (!chatId || chatId === undefined) {

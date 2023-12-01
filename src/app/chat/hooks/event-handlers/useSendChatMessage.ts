@@ -1,23 +1,23 @@
 import { SuccessResponse } from "@/types/api";
 import { ChatInterface, ChatMessageInterface } from "@/types/chat";
-import { SessionUser } from "@/types/types";
-import { STOP_TYPING_EVENT } from "../../constants";
+import { SessionUser } from "@/types/session";
+// import { STOP_TYPING_EVENT } from "../../constants";
 import { queryClient } from "@/contexts/providers";
 import { useSendMessage } from "../mutations/useSendMessage";
 import { MutableRefObject } from "react";
-import { Socket } from "socket.io-client";
+// import { Socket } from "socket.io-client";
 import { Session } from "next-auth";
 import { useUpdateChatLastMessage } from "../socket-event-handlers/useUpdateChatLastMessage";
 import { useToast } from "@/components/ui/use-toast";
 
 type UseSendChatMessage = (
   _currentChatIdRef: MutableRefObject<string | null>,
-  _socketClient: Socket | null,
+  // _socketClient: Socket | null,
   _session: Session | null,
   _message: string,
-  _attachedFiles: File[],
+  _attachedFiles: any[],
   _setMessage: (_message: string) => void,
-  _setAttachedFiles: (_file: File[]) => void,
+  _setAttachedFiles: (_file: any[]) => void,
   _chats:
     | SuccessResponse<ChatInterface[]>
     | {
@@ -30,7 +30,7 @@ type UseSendChatMessage = (
 
 export const useSendChatMessage: UseSendChatMessage = (
   currentChatIdRef,
-  socketClient,
+  // socketClient,
   session,
   message,
   attachedFiles,
@@ -46,13 +46,22 @@ export const useSendChatMessage: UseSendChatMessage = (
 
   // Function to send a chat message
   const sendChatMessage = async () => {
+    if (message.trim() === "" && attachedFiles.length === 0) {
+      toast({
+        title: "Either message or attachment file is required",
+        variant: "warning",
+      });
+      return;
+    }
+
     // If no current chat ID exists or there's no socket connection, exit the function
-    if (!currentChatIdRef.current || !socketClient || !session) return;
+    if (!currentChatIdRef.current || !session) return;
 
     const { email, name } = session.user as SessionUser;
 
-    const tempAttachments = attachedFiles.map((file) => ({
-      url: URL.createObjectURL(file),
+    const tempAttachments = attachedFiles.map((_file) => ({
+      // url: URL.createObjectURL(file),
+      url: "https://via.placeholder.com/200x200.png",
       localPath: "",
     }));
 
@@ -86,16 +95,21 @@ export const useSendChatMessage: UseSendChatMessage = (
     );
 
     // Emit a STOP_TYPING_EVENT to inform other users/participants that typing has stopped
-    socketClient.emit(STOP_TYPING_EVENT, currentChatIdRef.current);
+    // socketClient.emit(STOP_TYPING_EVENT, currentChatIdRef.current);
 
     const formData = new FormData();
-
+     
     if (message) {
       formData.append("content", message);
     }
+   
+    console.log(attachedFiles)
+    
     attachedFiles.map((file) => {
       formData.append("attachments", file);
     });
+
+    console.log(formData.getAll("attachments"))
 
     setMessage(""); // Clear the message input
     setAttachedFiles([]); // Clear the list of attached files
@@ -107,13 +121,20 @@ export const useSendChatMessage: UseSendChatMessage = (
       { chatId: currentChatIdRef.current, formData },
 
       {
-        onError: () => {
+        onSuccess: () => {
+          queryClient.invalidateQueries({
+            queryKey: ["messages", currentChatIdRef.current],
+          });
+        },
+        onError: (error) => {
+          console.log(error);
           toast({
-            description:
-              "Something went wrong! Try again by refreshing the page",
+            title: error.message,
             variant: "destructive",
           });
-          queryClient.invalidateQueries({ queryKey: ["messages"] });
+          queryClient.invalidateQueries({
+            queryKey: ["messages", currentChatIdRef.current],
+          });
         },
       },
     );

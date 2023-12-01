@@ -21,3 +21,7 @@ export type SessionUser = DefaultSessionUser & {
 export type Session = DefaultSession & {
   user?: SessionUser;
 };
+
+export interface ServerSession {
+  user: SessionUser;
+}

@@ -1,19 +1,11 @@
 import { queryClient } from "@/contexts/providers";
 import { SuccessResponse } from "@/types/api";
 import { ChatInterface } from "@/types/chat";
-import { MutableRefObject } from "react";
 
 export const useOnGroupNameChange = (
-  currentChatIdRef: MutableRefObject<string | null>,
 ) => {
   // Function to handle changes in group name
   const onGroupNameChange = (chat: ChatInterface) => {
-    // Check if the chat being changed is the currently active chat
-    if (chat.id === currentChatIdRef.current) {
-      // Update the current chat with the new details
-      currentChatIdRef.current = chat.id;
-    }
-
     // Update the list of chats with the new chat details
     queryClient.setQueryData(
       ["chats"],

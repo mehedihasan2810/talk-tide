@@ -13,7 +13,7 @@ export const useRenameGroup = () => {
       chatId: string;
     }) =>
       requestHandler<ChatInterface>(() =>
-        apiClient.patch(`/chat/group/${chatId}`, {
+        apiClient.patch(`/chatApp/group/rename/${chatId}`, {
           name: newGroupName,
         }),
       )(),

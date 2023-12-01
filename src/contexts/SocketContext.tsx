@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { io, Socket } from "socket.io-client";
+import { Socket, io } from "socket.io-client";
 import { apiClient } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import { requestHandler } from "@/utils/requestHandler";
@@ -50,6 +50,7 @@ const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
     return () => {
       socketClient.disconnect();
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, status]);
 
   return (

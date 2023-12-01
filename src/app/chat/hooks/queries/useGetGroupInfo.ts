@@ -7,7 +7,7 @@ export const useGetGroupInfo = (chatId: string | null) => {
   return useQuery({
     queryKey: ["groupInfo", chatId],
     queryFn: requestHandler<ChatInterface>(() =>
-      apiClient.get(`/chat/group/${chatId}`),
+      apiClient.get(`/chatApp/group/getDetails/${chatId}`),
     ),
     enabled: !!chatId,
   });
