@@ -110,27 +110,27 @@ export const useSendChatMessage: UseSendChatMessage = (
 
     console.log(formData.getAll("attachments"));
 
-    const file: File = attachedFiles[0];
-    // if (file) {
-    const reader = new FileReader();
+    // const file: File = attachedFiles[0];
+    // // if (file) {
+    // const reader = new FileReader();
 
-    reader.readAsDataURL(file);
-    // reader.readAsArrayBuffer(file)
-    console.log("hey");
-    const imageUrl = await new Promise((resolve) => {
-      reader.onload = (event) => {
-        const dataUrl = `${event.target?.result}`;
-        // setSelectedImage(dataUrl);
-        // console.log(dataUrl)
+    // reader.readAsDataURL(file);
+    // // reader.readAsArrayBuffer(file)
+    // console.log("hey");
+    // const imageUrl = await new Promise((resolve) => {
+    //   reader.onload = (event) => {
+    //     const dataUrl = `${event.target?.result}`;
+    //     // setSelectedImage(dataUrl);
+    //     // console.log(dataUrl)
 
-        resolve(dataUrl);
-        //  console.log(dataUrl.split(",")[1])
-        // console.log(dataUrl);
-        console.log("foo");
-      };
-    });
+    //     resolve(dataUrl);
+    //     //  console.log(dataUrl.split(",")[1])
+    //     // console.log(dataUrl);
+    //     console.log("foo");
+    //   };
+    // });
 
-    console.log(imageUrl);
+    // console.log(imageUrl);
 
     // } else {
     //     console.log("NO FILE");
@@ -145,8 +145,7 @@ export const useSendChatMessage: UseSendChatMessage = (
     sendMessageMutation(
       {
         chatId: currentChatIdRef.current,
-        content: message,
-        image: imageUrl as string,
+      formData
       },
 
       {

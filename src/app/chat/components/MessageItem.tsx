@@ -131,7 +131,7 @@ const MessageItem: FC<Props> = ({
                       </div>
                       <Image
                         className="h-[200px] w-[200px] object-cover"
-                        src={file.url}
+                        src={file.url || file.localPath}
                         alt="msg_img"
                         width={200}
                         height={200}
