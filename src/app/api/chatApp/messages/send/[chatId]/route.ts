@@ -15,8 +15,9 @@ import { SessionUser } from "@/types/session";
 import { pusherServer } from "@/lib/pusher";
 // import { emitSocketEvent } from "@/socket/socket-events/emitSocketEvent";
 import { ChatEventEnum } from "@/socket/constants";
-import { z } from "zod";
-import { File } from "buffer";
+// import { z } from "zod";
+// import { File } from "buffer";
+// import fs from "fs";
 
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
@@ -36,6 +37,7 @@ interface Session {
 //   },
 // };
 
+
 export async function POST(
   req: NextRequest,
   { params }: { params: { chatId: string } },
@@ -53,6 +55,18 @@ export async function POST(
     if (!chatId) {
       throw new ApiError(400, "Chat id is required");
     }
+
+
+
+    const {content, image} = await req.json();
+   
+
+
+
+    
+
+
+/*
 
     const formData = await req.formData();
 
@@ -87,6 +101,17 @@ export async function POST(
     // if validation completes successfully then extract the data
     const { content, attachments } = fordResult.data;
 
+    const f = attachments[0];
+    console.log(f.name);
+
+    let writeStream = fs.createWriteStream(`/tmp/${f.name}`);
+    writeStream.write(new Uint8Array(await attachments[0].arrayBuffer()));
+
+    writeStream.on("finish", function () {
+      const fileContent = fs.readFileSync(`/tmp/${f.name}`);
+      console.log(fileContent);
+    });
+
     // iterate over the `attachments` and create an array of promises of image
     // upload request to cloudinary
     // const imageUploadRequests = attachments.map(async (file) => {
@@ -96,6 +121,16 @@ export async function POST(
     // transform it to `Uint8Array` buffer
     const buffer = new Uint8Array(arrayBuffer);
     // create the promise of upload request and return it
+
+    */
+
+
+    const imageParts = image.split(",")[1];
+
+    console.log(imageParts)
+
+    const buffer = Buffer.from(imageParts, "base64")
+
     const imageUploadResults = await new Promise((resolve, reject) => {
       // const imageUploadResults: any = [];
 
@@ -158,6 +193,8 @@ export async function POST(
       },
     });
 
+    
+
     // logic to emit event about the new message created to the other participants
     for (const participantId of message.chat.participantIds) {
       // ignore the sender
@@ -171,8 +208,10 @@ export async function POST(
       );
     }
 
+    
+
     return NextResponse.json(
-      new ApiResponse(201, message, "Message saved successfully"),
+      new ApiResponse(201, "message", "Message saved successfully"),
       { status: 201 },
     );
   } catch (error) {

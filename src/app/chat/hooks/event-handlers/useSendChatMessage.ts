@@ -10,6 +10,7 @@ import { Session } from "next-auth";
 import { useUpdateChatLastMessage } from "../socket-event-handlers/useUpdateChatLastMessage";
 import { useToast } from "@/components/ui/use-toast";
 
+
 type UseSendChatMessage = (
   _currentChatIdRef: MutableRefObject<string | null>,
   // _socketClient: Socket | null,
@@ -59,9 +60,9 @@ export const useSendChatMessage: UseSendChatMessage = (
 
     const { email, name } = session.user as SessionUser;
 
-    const tempAttachments = attachedFiles.map((_file) => ({
-      // url: URL.createObjectURL(file),
-      url: "https://via.placeholder.com/200x200.png",
+    const tempAttachments = attachedFiles.map((file) => ({
+      url: URL.createObjectURL(file),
+      // url: "https://via.placeholder.com/200x200.png",
       localPath: "",
     }));
 
@@ -98,18 +99,42 @@ export const useSendChatMessage: UseSendChatMessage = (
     // socketClient.emit(STOP_TYPING_EVENT, currentChatIdRef.current);
 
     const formData = new FormData();
-     
+
     if (message) {
       formData.append("content", message);
     }
-   
-    console.log(attachedFiles)
-    
+
     attachedFiles.map((file) => {
       formData.append("attachments", file);
     });
 
-    console.log(formData.getAll("attachments"))
+    console.log(formData.getAll("attachments"));
+
+    const file: File = attachedFiles[0];
+    // if (file) {
+    const reader = new FileReader();
+
+    reader.readAsDataURL(file);
+    // reader.readAsArrayBuffer(file)
+    console.log("hey");
+    const imageUrl = await new Promise((resolve) => {
+      reader.onload = (event) => {
+        const dataUrl = `${event.target?.result}`;
+        // setSelectedImage(dataUrl);
+        // console.log(dataUrl)
+
+        resolve(dataUrl);
+        //  console.log(dataUrl.split(",")[1])
+        // console.log(dataUrl);
+        console.log("foo");
+      };
+    });
+
+    console.log(imageUrl);
+
+    // } else {
+    //     console.log("NO FILE");
+    // }
 
     setMessage(""); // Clear the message input
     setAttachedFiles([]); // Clear the list of attached files
@@ -118,7 +143,11 @@ export const useSendChatMessage: UseSendChatMessage = (
     updateChatLastMessage(currentChatIdRef.current || "", newMessage);
 
     sendMessageMutation(
-      { chatId: currentChatIdRef.current, formData },
+      {
+        chatId: currentChatIdRef.current,
+        content: message,
+        image: imageUrl as string,
+      },
 
       {
         onSuccess: () => {

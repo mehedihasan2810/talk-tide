@@ -7,13 +7,17 @@ export const useSendMessage = () => {
   return useMutation({
     mutationFn: ({
       chatId,
-      formData
+      // formData
+      content,
+      image
     }: {
       chatId: string;
-      formData: FormData
+      // formData: FormData
+      content: string,
+      image: string
     }) =>
       requestHandler<ChatMessageInterface>(() =>
-        apiClient.post(`/chatApp/messages/send/${chatId}`, formData),
+        apiClient.post(`/chatApp/messages/send/${chatId}`, {content, image}),
       )(),
   });
 };
