@@ -23,8 +23,10 @@ import { signIn, useSession } from "next-auth/react";
 import { RegisterSchema } from "@/utils/zod-schema/registerSchema";
 import { useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import Link from "next/link";
-import { Separator } from "@/components/ui/separator";
+// import Link from "next/link";
+// import { Separator } from "@/components/ui/separator";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/use-toast";
 
 interface Props {
   updateIsLogin(): void;
@@ -33,9 +35,11 @@ interface Props {
 export default function Register({ updateIsLogin }: Props) {
   const [error, setError] = useState<string | null | undefined>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [isRegisterSuccess, setIsRegisterSuccess] = useState(false);
+  // const [isRegisterSuccess, setIsRegisterSuccess] = useState(false);
 
   const session = useSession();
+  const router = useRouter();
+  const { toast } = useToast();
 
   // useForm
   const form = useForm<z.infer<typeof RegisterSchema>>({
@@ -72,7 +76,10 @@ export default function Register({ updateIsLogin }: Props) {
       setError(res?.error);
     } else {
       form.reset();
-      setIsRegisterSuccess(true);
+      toast({ title: "Registered successfully", variant: "success" });
+      router.refresh();
+      router.replace("/chat");
+      // setIsRegisterSuccess(true);
     }
   }
   return (
@@ -184,7 +191,7 @@ export default function Register({ updateIsLogin }: Props) {
 
           {/* register success alert start */}
 
-          {isRegisterSuccess && (
+          {/* {isRegisterSuccess && (
             <Alert
               variant="default"
               className="relative border border-teal-400 text-teal-500"
@@ -223,7 +230,7 @@ export default function Register({ updateIsLogin }: Props) {
                 </div>
               </AlertDescription>
             </Alert>
-          )}
+          )} */}
 
           {/* register success alert start */}
         </form>

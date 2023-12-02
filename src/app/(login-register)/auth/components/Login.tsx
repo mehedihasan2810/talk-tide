@@ -24,8 +24,10 @@ import {
 import { signIn, useSession } from "next-auth/react";
 import { LoginSchema } from "@/utils/zod-schema/loginSchema";
 import { useState } from "react";
-import Link from "next/link";
-import { Separator } from "@/components/ui/separator";
+// import Link from "next/link";
+// import { Separator } from "@/components/ui/separator";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/use-toast";
 
 interface Props {
   updateIsLogin(): void;
@@ -34,9 +36,11 @@ interface Props {
 export default function Login({ updateIsLogin }: Props) {
   const [error, setError] = useState<string | null | undefined>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isLoginSuccess, setIsLoginSuccess] = useState(false);
+  // const [isLoginSuccess, setIsLoginSuccess] = useState(false);
 
   const session = useSession();
+  const router = useRouter();
+  const {toast} = useToast()
 
   // useForm
   const form = useForm<z.infer<typeof LoginSchema>>({
@@ -69,7 +73,11 @@ export default function Login({ updateIsLogin }: Props) {
       setError(res?.error);
     } else {
       form.reset();
-      setIsLoginSuccess(true);
+      toast({title:"Logged in successfully", variant: "success" })
+      router.refresh()
+      router.replace("/chat");
+      // setIsLoginSuccess(true);
+      
     }
   }
 
@@ -169,7 +177,7 @@ export default function Login({ updateIsLogin }: Props) {
 
           {/* Login success alert start */}
 
-          {isLoginSuccess && (
+          {/* {isLoginSuccess && (
             <Alert
               variant="default"
               className="relative border border-teal-400 text-teal-500"
@@ -208,7 +216,7 @@ export default function Login({ updateIsLogin }: Props) {
                 </div>
               </AlertDescription>
             </Alert>
-          )}
+          )} */}
 
           {/* Login success alert start */}
         </form>
