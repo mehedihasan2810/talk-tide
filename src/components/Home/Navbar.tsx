@@ -1,3 +1,5 @@
+"use client";
+
 import { ChevronRightIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 import React from "react";
@@ -5,7 +7,6 @@ import { Button, buttonVariants } from "../ui/button";
 import { cn } from "@/lib/utils";
 import { signOut, useSession } from "next-auth/react";
 import { useToast } from "../ui/use-toast";
-
 const Navbar = () => {
   const { data: session } = useSession();
   const { toast } = useToast();

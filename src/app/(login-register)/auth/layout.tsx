@@ -1,3 +1,5 @@
+import Footer from "@/components/Home/Footer";
+import Navbar from "@/components/Home/Navbar";
 import { Metadata } from "next";
 import { ReactNode } from "react";
 
@@ -8,7 +10,13 @@ export const metadata: Metadata = {
 };
 
 const AuthLayout = ({ children }: { children: ReactNode }) => {
-  return children;
+  return (
+    <>
+    <Navbar/>
+    {children}
+    <Footer/>
+    </>
+  );
 };
 
 export default AuthLayout;

@@ -13,7 +13,6 @@ import {
 import { FC, useState } from "react";
 import { ChatInterface, ChatMessageInterface } from "@/types/chat";
 import { signOut, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { getChatObjectMetadata } from "@/utils/getChatObjectMetadata";
 import { SessionUser } from "@/types/session";
 import ChatItem from "./ChatItem";
@@ -47,7 +46,6 @@ const Sidebar: FC<Readonly<Props>> = ({
   unreadMessages,
   onChatDelete,
 }) => {
-  const router = useRouter();
   const { toast } = useToast();
 
   const [chatSearchTerm, setChatSearchTerm] = useState<string>("");
@@ -60,12 +58,7 @@ const Sidebar: FC<Readonly<Props>> = ({
     get the current user session or if the user is not authenticated then
     redirect him to auth page
     */
-  const { data: session, status } = useSession({
-    required: true,
-    onUnauthenticated() {
-      router.replace("/auth");
-    },
-  });
+  const { data: session, status } = useSession();
 
   /**
    * The function `onHandleSelectUser` handles the selection of a user in a chat, either by updating
@@ -245,7 +238,7 @@ const Sidebar: FC<Readonly<Props>> = ({
                 chats
                   .filter((chat) =>
                     chatSearchTerm.trim() !== ""
-                      ? getChatObjectMetadata(chat, session.user as SessionUser)
+                      ? getChatObjectMetadata(chat, session?.user as SessionUser)
                           .title?.toLocaleLowerCase()
                           ?.includes(chatSearchTerm.toLocaleLowerCase())
                       : true,
@@ -265,7 +258,7 @@ const Sidebar: FC<Readonly<Props>> = ({
                         if (currentChatId === chat.id) return;
                         setCurrentChat(chat);
                       }}
-                      user={session.user as SessionUser}
+                      user={session?.user as SessionUser}
                       isActive={chat.id === currentChatId}
                       unreadCount={
                         unreadMessages.filter((n) => n.chatId === chat.id)

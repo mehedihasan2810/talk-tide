@@ -54,12 +54,7 @@ const Chat = () => {
    * access the auth session and
    * if user is not authenticated then redirect him to the `auth` page
    */
-  const { data: session, status } = useSession({
-    required: true,
-    onUnauthenticated() {
-      router.replace("/auth");
-    },
-  });
+  const { data: session, status } = useSession();
 
   const createQueryString = useCreateQueryString(); // this `useCreateQueryString` hook returns a function which creates a query string based on provided key value and returns the string
 
@@ -199,7 +194,7 @@ returned values from the hook into variables `data`, `isPending`, and `error`. *
   }, [searchParams]);
 
   useEffect(() => {
-    if (status === "loading") return;
+    if (status !== "authenticated") return;
     pusherClient.subscribe((session.user as SessionUser).id);
     pusherClient.bind(MESSAGE_RECEIVED_EVENT, onMessageReceive);
     pusherClient.bind(NEW_CHAT_EVENT, onNewChat);
@@ -535,7 +530,7 @@ returned values from the hook into variables `data`, `isPending`, and `error`. *
               </>
             ) : (
               <div className="flex h-full w-full flex-col items-center justify-center">
-                <div className="text-lg font-semibold text-primary mb-2">
+                <div className="mb-2 text-lg font-semibold text-primary">
                   No chat selected
                 </div>
                 <p className="text-primary">

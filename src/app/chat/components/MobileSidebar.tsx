@@ -18,7 +18,6 @@ import ChatItem from "./ChatItem";
 import { getChatObjectMetadata } from "@/utils/getChatObjectMetadata";
 import { SessionUser } from "@/types/session";
 import { signOut, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import ChatSidebarSkeleton from "../skeletons/ChatSidebarSkeleton";
 import { Skeleton } from "@/components/ui/skeleton";
 import { OnHandleClickCreateChatType } from "../types";
@@ -53,19 +52,13 @@ const MobileSidebar: FC<Props> = ({
   const [groupParticipants, setGroupParticipants] = useState<string[]>([]);
   const [isGroupChat, setIsGroupChat] = useState(false);
 
-  const router = useRouter();
   const { toast } = useToast();
 
   /**
    * get the user session or if the user is not authenticated
    * then redirect him to auth page
    */
-  const { data: session, status } = useSession({
-    required: true,
-    onUnauthenticated() {
-      router.replace("/auth");
-    },
-  });
+  const { data: session, status } = useSession();
 
   const { isMobileSidebarOpen, toggleIsMobileSidebarOpen } = useStore(
     (state) => state,
@@ -219,7 +212,7 @@ const MobileSidebar: FC<Props> = ({
               chats
                 .filter((chat) =>
                   chatSearchTerm.trim() !== ""
-                    ? getChatObjectMetadata(chat, session.user as SessionUser)
+                    ? getChatObjectMetadata(chat, session?.user as SessionUser)
                         .title?.toLocaleLowerCase()
                         ?.includes(chatSearchTerm.toLocaleLowerCase())
                     : true,
@@ -239,7 +232,7 @@ const MobileSidebar: FC<Props> = ({
                       if (currentChatId && currentChatId === chat.id) return;
                       setCurrentChat(chat);
                     }}
-                    user={session.user as SessionUser}
+                    user={session?.user as SessionUser}
                     isActive={chat.id === currentChatId}
                     unreadCount={
                       unreadMessages.filter((n) => n.chatId === chat.id).length

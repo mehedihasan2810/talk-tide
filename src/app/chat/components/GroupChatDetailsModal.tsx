@@ -58,12 +58,7 @@ const GroupChatDetailsModal: FC<Props> = ({ onGroupDelete }) => {
    * get the user session or if the user is not authenticated
    * then redirect him to auth page
    */
-  const { data: session } = useSession({
-    required: true,
-    onUnauthenticated() {
-      router.replace("/auth");
-    },
-  });
+  const { data: session } = useSession();
 
   // State to manage the UI flag for adding a participant
   const [addingParticipant, setAddingParticipant] = useState(false);
