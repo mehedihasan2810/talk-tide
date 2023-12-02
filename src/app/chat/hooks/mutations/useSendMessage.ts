@@ -8,13 +8,9 @@ export const useSendMessage = () => {
     mutationFn: ({
       chatId,
       formData,
-    } // content,
-    // image
-    : {
+    }: {
       chatId: string;
       formData: FormData;
-      // content: string,
-      // image: string
     }) =>
       requestHandler<ChatMessageInterface>(() =>
         apiClient.post(`/chatApp/messages/send/${chatId}`, formData),

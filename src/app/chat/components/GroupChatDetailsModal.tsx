@@ -138,7 +138,6 @@ const GroupChatDetailsModal: FC<Props> = ({ onGroupDelete }) => {
   };
 
   const handleLeaveGroupChat = (groupChatId: string) => {
-    console.log("hello");
     onGroupDelete(groupChatId);
 
     toggleGroupDetailsModal(false);
@@ -482,7 +481,6 @@ const GroupChatDetailsModal: FC<Props> = ({ onGroupDelete }) => {
                           <div className="flex w-full items-center justify-start gap-1">
                             <SelectUser
                               onHandleSelect={(participantId) => {
-                                console.log(participantId);
                                 setParticipantToBeAdded(participantId);
                               }}
                             />
@@ -507,7 +505,6 @@ const GroupChatDetailsModal: FC<Props> = ({ onGroupDelete }) => {
                                   },
                                   {
                                     onSuccess: (newGroupInfo) => {
-                                      console.log(newGroupInfo);
                                       setParticipantToBeAdded("");
                                       queryClient.setQueryData(
                                         ["groupInfo"],

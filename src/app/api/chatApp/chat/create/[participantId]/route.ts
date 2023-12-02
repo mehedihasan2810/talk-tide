@@ -1,7 +1,7 @@
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import prisma from "@/lib/prisma";
 import { pusherServer } from "@/lib/pusher";
-import { ChatEventEnum } from "@/socket/constants";
+import { ChatEventEnum } from "@/utils/constants";
 import { ServerSession } from "@/types/session";
 import { ApiError } from "@/utils/error-helpers/ApiError";
 import { errorResponse } from "@/utils/error-helpers/errorResponse";
@@ -114,8 +114,8 @@ export async function POST(
     });
 
     // logic to emit socket event about the new chat added to the participants
-    createdChat.participants.forEach(async (participant) => {
-      if (participant.id === session.user.id) return; // don't emit the event for the logged in use as he is the one who is initiating the chat
+    for (const participant of createdChat.participants) {
+      if (participant.id === session.user.id) continue; // don't emit the event for the logged in use as he is the one who is initiating the chat
 
       // emit event to other participants with new chat as a payload
       await pusherServer.trigger(
@@ -123,7 +123,7 @@ export async function POST(
         ChatEventEnum.NEW_CHAT_EVENT,
         createdChat,
       );
-    });
+    }
 
     return NextResponse.json(
       new ApiResponse(201, createdChat, "Chat created successfully"),

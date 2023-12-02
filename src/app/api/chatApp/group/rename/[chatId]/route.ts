@@ -1,7 +1,7 @@
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import prisma from "@/lib/prisma";
 import { pusherServer } from "@/lib/pusher";
-import { ChatEventEnum } from "@/socket/constants";
+import { ChatEventEnum } from "@/utils/constants";
 import { ServerSession } from "@/types/session";
 import { ApiError } from "@/utils/error-helpers/ApiError";
 import { errorResponse } from "@/utils/error-helpers/errorResponse";
@@ -92,15 +92,14 @@ export async function PATCH(
     });
 
     // logic to emit socket event about the updated chat name to the participants
-    updateGroupChat.participants.forEach(async (participant) => {
+    for (const participant of updateGroupChat.participants) {
       // emit event to all the participants with updated chat as a payload
-
       await pusherServer.trigger(
         participant.id,
         ChatEventEnum.UPDATE_GROUP_NAME_EVENT,
         updateGroupChat,
       );
-    });
+    }
 
     return NextResponse.json(
       new ApiResponse(

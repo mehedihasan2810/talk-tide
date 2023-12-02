@@ -24,6 +24,7 @@ import { RegisterSchema } from "@/utils/zod-schema/registerSchema";
 import { useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/use-toast";
 
 interface Props {
   updateIsLogin(): void;
@@ -36,6 +37,8 @@ export default function Register({ updateIsLogin }: Props) {
   const router = useRouter();
 
   const session = useSession();
+
+  const { toast } = useToast();
 
   // useForm
   const form = useForm<z.infer<typeof RegisterSchema>>({
@@ -74,6 +77,9 @@ export default function Register({ updateIsLogin }: Props) {
       setError(res?.error);
     } else {
       //  if the login successful then reset the form and redirect the user to chat page
+
+      toast({ title: "You have registered successfully", variant: "success" });
+
       form.reset();
       router.replace("/chat");
     }

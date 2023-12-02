@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useStore } from "@/lib/stores/useStore";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,14 +9,9 @@ import {
   XMarkIcon,
 } from "@heroicons/react/20/solid";
 import {
-  // CONNECTED_EVENT,
-  // DISCONNECT_EVENT,
-  // JOIN_CHAT_EVENT,
   LEAVE_CHAT_EVENT,
   MESSAGE_RECEIVED_EVENT,
   NEW_CHAT_EVENT,
-  // STOP_TYPING_EVENT,
-  // TYPING_EVENT,
   UPDATE_GROUP_NAME_EVENT,
 } from "./constants";
 import { ChatInterface, ChatMessageInterface } from "@/types/chat";
@@ -35,13 +30,11 @@ import { useCreateQueryString } from "./hooks/useCreateQueryString";
 import { useChats } from "./hooks/queries/useChats";
 import { useDeleteQueryString } from "./hooks/useDeleteQueryString";
 import MobileSidebar from "./components/MobileSidebar";
-// import { useSocket } from "@/contexts/SocketContext";
 import { useSendChatMessage } from "./hooks/event-handlers/useSendChatMessage";
-// import { useOnMessageChange } from "./hooks/event-handlers/useOnMessageChange";
-import { useOnMessageReceive } from "./hooks/socket-event-handlers/useOnMessageReceive";
-import { useOnNewChat } from "./hooks/socket-event-handlers/useOnNewChat";
-import { useOnChatLeave } from "./hooks/socket-event-handlers/useOnChatLeave";
-import { useOnGroupNameChange } from "./hooks/socket-event-handlers/useOnGroupNameChange";
+import { useOnMessageReceive } from "./hooks/pusher-event-handlers/useOnMessageReceive";
+import { useOnNewChat } from "./hooks/pusher-event-handlers/useOnNewChat";
+import { useOnChatLeave } from "./hooks/pusher-event-handlers/useOnChatLeave";
+import { useOnGroupNameChange } from "./hooks/pusher-event-handlers/useOnGroupNameChange";
 import MessageItemSkeleton from "./skeletons/MessageItemSkeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -56,8 +49,6 @@ const Chat = () => {
   const { toast } = useToast();
 
   const { toggleIsMobileSidebarOpen } = useStore(); //  get the `toggleIsMobileSidebarOpen` action from the global store
-
-  // const { socket: socketClient } = useSocket(); // get the socket instance from the context
 
   /**
    * access the auth session and
@@ -89,18 +80,9 @@ returned values from the hook into variables `data`, `isPending`, and `error`. *
   information related to chats. It is using object destructuring to assign default values to the
   `chats`, `isChatsLoading`, and `chatsError` variables. If the `useChats` hook returns `undefined`
   for any of these values, the default values will be used instead. */
-  const {
-    data: chats = { data: [] },
-    isPending: isChatsLoading,
-    // error: chatsError,
-  } = useChats();
+  const { data: chats = { data: [] }, isPending: isChatsLoading } = useChats();
 
   const chatMsgContainerRef = useRef<HTMLDivElement | null>(null); // for holding the ref of `chat message container`
-
-  // const [isConnected, setIsConnected] = useState(false); // For tracking socket connection
-
-  // const [isTyping, setIsTyping] = useState(false); // To track if someone is currently typing
-  // const [isSelfTyping, setIsSelfTyping] = useState(false); // To track if the current user is typing
 
   const [message, setMessage] = useState(""); // To store the currently typed message
   const [unreadMessages, setUnreadMessages] = useState<ChatMessageInterface[]>(
@@ -115,7 +97,6 @@ returned values from the hook into variables `data`, `isPending`, and `error`. *
  session, message, attached files, and functions to update the message and attached files. */
   const { sendChatMessage, isMessageSendPending } = useSendChatMessage(
     currentChatIdRef,
-    // socketClient,
     session,
     message,
     attachedFiles,
@@ -123,51 +104,6 @@ returned values from the hook into variables `data`, `isPending`, and `error`. *
     setAttachedFiles,
     chats,
   );
-
-  /* The below code is defining a function called `handleOnMessageChange` that is using the
- `useOnMessageChange` hook. This hook takes several parameters: `currentChatIdRef`, `socketClient`,
- `isConnected`, `isSelfTyping`, `setMessage`, and `setIsSelfTyping`. The purpose of this function is
- to handle changes in the message input field in a chat application. It updates the `message` state
- with the new value, and also updates the `isSelfTyping` state to indicate whether the user is
- currently typing a message. */
-  // const handleOnMessageChange = useOnMessageChange(
-  //   currentChatIdRef,
-  //   // socketClient,
-  //   // isConnected,
-  //   isSelfTyping,
-  //   setMessage,
-  //   setIsSelfTyping,
-  // );
-
-  // const onConnect = () => {
-  //   setIsConnected(true);
-  // };
-
-  // const onDisconnect = () => {
-  //   setIsConnected(false);
-  // };
-
-  /**
-   * Handles the "typing" event on the socket.
-   */
-  // const onSocketTyping = (chatId: string) => {
-  //   // Check if the typing event is for the currently active chat.
-  //   if (chatId !== currentChatIdRef.current) return;
-
-  //   // Set the typing state to true for the current chat.
-  //   setIsTyping(true);
-  // };
-
-  // /**
-  //  * Handles the "stop typing" event on the socket.
-  //  */
-  // const onSocketStopTyping = (chatId: string) => {
-  //   // Check if the stop typing event is for the currently active chat.
-  //   if (chatId !== currentChatIdRef.current) return;
-
-  //   // Set the typing state to false for the current chat.
-  //   setIsTyping(false);
-  // };
 
   /* The below code is using the `useOnMessageReceive` hook to handle the event of receiving a message
  in a chat. It takes the `currentChatIdRef`, `setUnreadMessages`, and `chats` as parameters. The
@@ -219,15 +155,6 @@ returned values from the hook into variables `data`, `isPending`, and `error`. *
     chat: ChatInterface,
     sidebarType?: "mobile" | "desktop",
   ) => {
-    // Check if socket is available, if not, show an alert
-    // if (!socketClient) {
-    //   toast({
-    //     description: "Socket not available! Try again by refreshing the page",
-    //     variant: "warning",
-    //   });
-    //   return;
-    // }
-
     if (sidebarType === "mobile") {
       toast({
         description:
@@ -258,17 +185,6 @@ returned values from the hook into variables `data`, `isPending`, and `error`. *
 
   // --------------------------------------------------------------
 
-  // automatically scroll down upon sending or receiving a message
-  const [recentDate, setRecentDate] = useState(0);
-  useLayoutEffect(() => {
-    if (chatMsgContainerRef.current) {
-      chatMsgContainerRef.current.scrollTop =
-        chatMsgContainerRef.current.scrollHeight;
-    }
-  }, [recentDate]);
-
-  // ----------------------------------------------------------------
-
   useEffect(() => {
     // If there's a current chat saved in local storage:
     if (searchParams.get("c")) {
@@ -281,44 +197,6 @@ returned values from the hook into variables `data`, `isPending`, and `error`. *
       );
     }
   }, [searchParams]);
-
-  // ----------------------------------------------------------------------
-
-  // useEffect(() => {
-  //   // If the socket isn't initialized, we don't set up listeners.
-  //   if (!socketClient) return;
-
-  //   // Listener for when the socket connects.
-  //   socketClient.on(CONNECTED_EVENT, onConnect);
-  //   // Listener for when the socket disconnects.
-  //   socketClient.on(DISCONNECT_EVENT, onDisconnect);
-  //   // Listener for when a user is typing.
-  //   socketClient.on(TYPING_EVENT, onSocketTyping);
-  //   // Listener for when a user stops typing.
-  //   socketClient.on(STOP_TYPING_EVENT, onSocketStopTyping);
-  //   // Listener for when a new message is received.
-  //   // socketClient.on(MESSAGE_RECEIVED_EVENT, onMessageReceive);
-  //   // Listener for the initiation of a new chat.
-  //   // socketClient.on(NEW_CHAT_EVENT, onNewChat);
-  //   // Listener for when a user leaves a chat.
-  //   // socketClient.on(LEAVE_CHAT_EVENT, onChatLeave);
-  //   // Listener for when a group's name is updated.
-  //   // socketClient.on(UPDATE_GROUP_NAME_EVENT, onGroupNameChange);
-
-  //   return () => {
-  //     // Remove all the event listeners we set up to avoid memory leaks and unintended behaviors.
-  //     socketClient.off(CONNECTED_EVENT, onConnect);
-  //     socketClient.off(DISCONNECT_EVENT, onDisconnect);
-  //     socketClient.off(TYPING_EVENT, onSocketTyping);
-  //     socketClient.off(STOP_TYPING_EVENT, onSocketStopTyping);
-  //     // socketClient.off(MESSAGE_RECEIVED_EVENT, onMessageReceive);
-  //     // socketClient.off(NEW_CHAT_EVENT, onNewChat);
-  //     // socketClient.off(LEAVE_CHAT_EVENT, onChatLeave);
-  //     // socketClient.off(UPDATE_GROUP_NAME_EVENT, onGroupNameChange);
-  //   };
-  // }, [socketClient, messages, chats]);
-
-  // ---------------------------------------------------------------------
 
   useEffect(() => {
     if (status === "loading") return;
@@ -337,19 +215,6 @@ returned values from the hook into variables `data`, `isPending`, and `error`. *
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status, messages, chats]);
-
-  // useEffect(() => {
-  //   if (status === "loading") return;
-  //   const chatChannel = pusherClient.subscribe(
-  //     (session.user as SessionUser).id,
-  //   );
-  //   chatChannel.bind(MESSAGE_RECEIVED_EVENT, onMessageReceive);
-
-  //   return () => {
-  //     pusherClient.unsubscribe((session.user as SessionUser).id);
-  //     chatChannel.unbind(MESSAGE_RECEIVED_EVENT, onMessageReceive);
-  //   };
-  // }, [status, messages, chats, unreadMessages, currentChatIdRef]);
 
   return (
     <>
@@ -494,7 +359,7 @@ returned values from the hook into variables `data`, `isPending`, and `error`. *
                 ) : currentChatIdRef.current ? (
                   <div className="flex items-center gap-2">
                     <Avatar className="h-10 w-10">
-                      <AvatarImage src="https://github.com/shadcn.png" />
+                      <AvatarImage src="" />
                       <AvatarFallback>M</AvatarFallback>
                     </Avatar>
                     <div>
@@ -629,12 +494,15 @@ returned values from the hook into variables `data`, `isPending`, and `error`. *
 
                   <Input
                     value={message}
-                    // onChange={handleOnMessageChange}
                     onChange={(e) => setMessage(e.target.value)}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
+                        if (chatMsgContainerRef.current) {
+                          chatMsgContainerRef.current.scrollTop =
+                            chatMsgContainerRef.current.scrollHeight;
+                        }
+
                         sendChatMessage();
-                        setRecentDate(Date.now());
                       }
                     }}
                     type="text"
@@ -644,12 +512,22 @@ returned values from the hook into variables `data`, `isPending`, and `error`. *
                   <button
                     className="m-0 cursor-pointer rounded-full bg-primary/5 p-3 text-primary hover:bg-primary/10"
                     onClick={() => {
+                      if (message.trim() === "" && attachedFiles.length === 0) {
+                        toast({
+                          title:
+                            "Either message or attachment file is required",
+                          variant: "warning",
+                        });
+                        return;
+                      }
+
+                      if (chatMsgContainerRef.current) {
+                        chatMsgContainerRef.current.scrollTop =
+                          chatMsgContainerRef.current.scrollHeight;
+                      }
+
                       sendChatMessage();
-                      setRecentDate(Date.now());
                     }}
-                    disabled={
-                      message.trim() === "" && attachedFiles.length <= 0
-                    }
                   >
                     <PaperAirplaneIcon className="h-6 w-6" />
                   </button>
@@ -657,7 +535,7 @@ returned values from the hook into variables `data`, `isPending`, and `error`. *
               </>
             ) : (
               <div className="flex h-full w-full flex-col items-center justify-center">
-                <div className="text-lg font-semibold text-primary">
+                <div className="text-lg font-semibold text-primary mb-2">
                   No chat selected
                 </div>
                 <p className="text-primary">

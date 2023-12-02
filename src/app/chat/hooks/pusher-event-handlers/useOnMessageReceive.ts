@@ -27,7 +27,6 @@ export const useOnMessageReceive: UserOnMessageReceive = (
   const updateChatLastMessage = useUpdateChatLastMessage(chats);
 
   const onMessageReceive = (message: ChatMessageInterface) => {
-    console.log(message)
     // Check if the received message belongs to the currently active chat
     if (message.chatId !== currentChatIdRef.current) {
       // If not, update the list of unread messages

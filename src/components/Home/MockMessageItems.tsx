@@ -22,7 +22,7 @@ const MockMessageItems = () => {
         </div>
       </div>
 
-      <div className="absolute left-[10%] top-[18%] flex items-end gap-1 lg:left-[15%] lg:top-[20%] xl:left-[20%]">
+      <div className="absolute left-[10%] top-[18%] flex items-end gap-1 lg:left-[15%] lg:top-[20%] xl:left-[20%] mt-1 sm:mt-0">
         <div className="flex flex-col items-end">
           <span className="mr-2 text-sm text-zinc-600">Rick</span>
           <div className=" rounded-3xl rounded-br-none bg-primary-foreground p-4 px-5 py-2 text-base text-black shadow">

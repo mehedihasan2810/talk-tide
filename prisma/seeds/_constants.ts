@@ -1,4 +1,4 @@
-export const USER_COUNT = 20;
+export const USER_COUNT = 10;
 export const AvailableUserRoles: ["USER", "ADMIN"] = ["USER", "ADMIN"];
 
 // chat app

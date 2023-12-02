@@ -1,35 +1,34 @@
 import { errorResponse } from "@/utils/error-helpers/errorResponse";
 import { NextRequest, NextResponse } from "next/server";
-import { v2 as cloudinary } from "cloudinary";
-// import { getUserFromToken } from "@/socket/getUserFromToken";
 import { ApiError } from "@/utils/error-helpers/ApiError";
-// import { zfd } from "zod-form-data";
-// import { z } from "zod";
 import { ApiResponse } from "@/utils/helpers/apiResponse";
-// import { handleFormData } from "@/socket/helpers/handleFormData";
 import prisma from "@/lib/prisma";
-// import fs from "fs";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import { SessionUser } from "@/types/session";
 import { pusherServer } from "@/lib/pusher";
-// import { emitSocketEvent } from "@/socket/socket-events/emitSocketEvent";
-import { ChatEventEnum } from "@/socket/constants";
+import { ChatEventEnum } from "@/utils/constants";
 import { z } from "zod";
 import { File } from "buffer";
-// import fs from "fs";
-import { join } from "path";
-import { writeFile } from "fs/promises";
-
-cloudinary.config({
-  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+import mime from "mime";
 
 interface Session {
   user: SessionUser;
 }
+
+const IMG_HOSTING_URL = `https://api.imgbb.com/1/upload?key=${process.env.IMGBB_API_KEY}`;
+
+const imgbbSupportedImg: Readonly<string[]> = [
+  "jpg",
+  "jpeg",
+  "png",
+  "bmp",
+  "gif",
+  "tiff",
+  "webp",
+  "heic",
+  "pdf",
+];
 
 export async function POST(
   req: NextRequest,
@@ -82,78 +81,58 @@ export async function POST(
     // if validation completes successfully then extract the data
     const { content, attachments } = fordResult.data;
 
-    const file = attachments[0];
-    console.log(file.name);
+    // make a list of image upload request
+    const imgUploadRequests = attachments.map((file) => {
+      const ext = mime.getExtension(file.type) as string;
 
-    // iterate over the `attachments` and create an array of promises of image
-    // upload request to cloudinary
-    // const imageUploadRequests = attachments.map(async (file) => {
-    // const arrayBuffer = await file.arrayBuffer();
+      if (!imgbbSupportedImg.includes(ext.toLocaleLowerCase())) {
+        throw new ApiError(
+          400,
+          `Image file is not supported. Supported images with extensions are jpg, png, bmp, gif, tiff, webp, heic, pdf`,
+        );
+      }
 
-    const arrayBuffer = await attachments[0].arrayBuffer();
+      const imgFormData = new FormData();
+      imgFormData.append("image", file as Blob);
 
-    const buffer = Buffer.from(arrayBuffer);
-
-    const path = join(process.cwd(), "public", "tmp", file.name);
-
-    await writeFile(path, buffer);
-
-    const localPath = "/" + path.slice(path.indexOf("tmp"));
-    console.log(localPath);
-
-    /*
-
-
-    // transform it to `Uint8Array` buffer
-    const buffer = new Uint8Array(arrayBuffer);
-    // create the promise of upload request and return it
-
-    const imageUploadResults = await new Promise((resolve, reject) => {
-      // const imageUploadResults: any = [];
-
-      cloudinary.uploader
-        .upload_stream(
-          {
-            tags: ["talk-tide-images"],
-            resource_type: "image",
-          },
-          function (error, result) {
-            if (error) {
-              reject(error);
-              throw new ApiError(500, error.message);
-              // return;
-            }
-
-            resolve([{ url: result?.secure_url, localPath: "" }]);
-            console.log("hey");
-            // imageUploadResults.push({ url: result?.secure_url, localPath: "" });
-          },
-        )
-        .end(buffer);
+      return fetch(IMG_HOSTING_URL, {
+        method: "POST",
+        body: imgFormData,
+      });
     });
-    // });
 
-    // pass the imageUploadRequests to `Promise.all` api in order that they resolves parallelly
-    // const imageUploadResults = (await Promise.all(imageUploadRequests)) as {
-    //   url: string;
-    //   localPath: string;
-    // }[];
+    // resolve the requests parallely
+    const imgUploadResponses = await Promise.all(imgUploadRequests);
 
-    console.log(imageUploadResults);
-    */
+    // now resolve the responses parallely as well
+    const imgUploadedResult = await Promise.all(
+      imgUploadResponses.map((res) => res.json()),
+    );
+
+    // extract our necessary field from the response
+    const fileAttachments = imgUploadedResult.map((imgResult) => {
+      if (!imgResult.success)
+        throw new ApiError(
+          500,
+          "Something went wrong while uploading image! Try again",
+        );
+
+      return {
+        url: imgResult.data.display_url,
+        localPath: "",
+      };
+    }) as {
+      url: string;
+      localPath: string;
+    }[];
 
     // Create a new message instance with appropriate metadata
     const message = await prisma.chatMessage.create({
       data: {
         senderId: session.user.id,
         content: content,
-        // content: "",
         chatId,
-        // attachments: imageUploadResults as {
-        //   url: string;
-        //   localPath: string;
-        // }[],
-        attachments: [{ url: "", localPath }],
+        attachments: fileAttachments,
       },
       include: {
         sender: {
@@ -171,13 +150,10 @@ export async function POST(
       },
     });
 
-    console.log(message.attachments);
-
     // logic to emit event about the new message created to the other participants
     for (const participantId of message.chat.participantIds) {
       // ignore the sender
       if (participantId === session.user.id) continue;
-      // -------
 
       await pusherServer.trigger(
         participantId,

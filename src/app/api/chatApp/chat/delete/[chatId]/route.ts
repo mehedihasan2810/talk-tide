@@ -1,7 +1,7 @@
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import prisma from "@/lib/prisma";
 import { pusherServer } from "@/lib/pusher";
-import { ChatEventEnum } from "@/socket/constants";
+import { ChatEventEnum } from "@/utils/constants";
 import { deleteCascadeChatMessages } from "@/socket/controllers/chat-controllers/deleteCascadeChatMessages";
 import { ServerSession } from "@/types/session";
 import { ApiError } from "@/utils/error-helpers/ApiError";
@@ -73,11 +73,9 @@ export async function DELETE(
     });
     // ----------------------------
 
-    chat.participants.forEach(async (participant) => {
+    for (const participant of chat.participants) {
       // no need for logged in user to be notified
-      if (participant.id === session.user.id) return;
-
-      console.log(participant.id);
+      if (participant.id === session.user.id) continue;
 
       // emit event to other participant with left chat as a payload
       await pusherServer.trigger(
@@ -85,7 +83,7 @@ export async function DELETE(
         ChatEventEnum.LEAVE_CHAT_EVENT,
         chat,
       );
-    });
+    }
 
     return NextResponse.json(
       new ApiResponse(200, {}, "Chat deleted successfully"),

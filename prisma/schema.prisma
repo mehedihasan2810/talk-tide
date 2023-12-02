@@ -85,7 +85,7 @@ enum UserRole {
 }
 
 type Avatar {
-  url       String @default("https://via.placeholder.com/200x200.png")
+  url       String @default("")
   localPath String @default("")
 }
 

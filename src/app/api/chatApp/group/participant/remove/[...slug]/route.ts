@@ -1,7 +1,7 @@
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import prisma from "@/lib/prisma";
 import { pusherServer } from "@/lib/pusher";
-import { ChatEventEnum } from "@/socket/constants";
+import { ChatEventEnum } from "@/utils/constants";
 import { ServerSession } from "@/types/session";
 import { ApiError } from "@/utils/error-helpers/ApiError";
 import { errorResponse } from "@/utils/error-helpers/errorResponse";
@@ -19,8 +19,6 @@ export async function PATCH(
     if (!session) {
       throw new ApiError(401, "Unauthorized request!");
     }
-
-    console.log(params)
 
     const chatId = params.slug[0];
     const participantId = params.slug[1];

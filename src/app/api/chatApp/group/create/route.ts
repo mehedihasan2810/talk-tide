@@ -7,8 +7,8 @@ import { ApiError } from "@/utils/error-helpers/ApiError";
 import prisma from "@/lib/prisma";
 import { ApiResponse } from "@/utils/helpers/apiResponse";
 import { pusherServer } from "@/lib/pusher";
-import { ChatEventEnum } from "@/socket/constants";
-import { createAGroupChatValidator } from "@/socket/validators/createAGroupChatValidator";
+import { ChatEventEnum } from "@/utils/constants";
+import { createAGroupChatValidator } from "@/utils/validators/createAGroupChatValidator";
 
 export async function POST(req: NextRequest) {
   try {
@@ -88,8 +88,8 @@ export async function POST(req: NextRequest) {
     });
 
     // logic to emit socket event about the new group chat added to the participants
-    chat.participants.forEach(async (participant) => {
-      if (participant.id === session.user.id) return; // don't emit the event for the logged in use as he is the one who is initiating the chat
+    for (const participant of chat.participants) {
+      if (participant.id === session.user.id) continue; // don't emit the event for the logged in use as he is the one who is initiating the chat
       // emit event to other participants with new chat as a payload
 
       await pusherServer.trigger(
@@ -97,15 +97,7 @@ export async function POST(req: NextRequest) {
         ChatEventEnum.NEW_CHAT_EVENT,
         chat,
       );
-
-      //   emitSocketEvent(
-      //     res.socket.server.io,
-      //     participant.id,
-      //     ChatEventEnum.NEW_CHAT_EVENT,
-      //     chat,
-      //   );
-    });
-    // ------------------------------------------------------------------
+    }
 
     return NextResponse.json(
       new ApiResponse(201, chat, "Group chat created successfully"),

@@ -25,6 +25,7 @@ import { signIn, useSession } from "next-auth/react";
 import { LoginSchema } from "@/utils/zod-schema/loginSchema";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/use-toast";
 
 interface Props {
   updateIsLogin(): void;
@@ -36,6 +37,7 @@ export default function Login({ updateIsLogin }: Props) {
 
   const router = useRouter();
   const session = useSession();
+  const { toast } = useToast();
 
   // useForm
   const form = useForm<z.infer<typeof LoginSchema>>({
@@ -47,7 +49,6 @@ export default function Login({ updateIsLogin }: Props) {
   });
 
   async function onSubmit(values: z.infer<typeof LoginSchema>) {
-
     // if user is already logged in then don't proceed. return with a message
     if (session.data) {
       setError("You are already logged in");
@@ -62,13 +63,14 @@ export default function Login({ updateIsLogin }: Props) {
       authType: "login",
       ...values,
     });
-    setIsLoading(false); 
+    setIsLoading(false);
 
     // if login is not successful then show a error message
     if (!res?.ok || res.error) {
       setError(res?.error);
     } else {
       //  if the login successful then reset the form and redirect the user to chat page
+      toast({ title: "You have logged in successfully", variant: "success" });
       form.reset();
       router.replace("/chat");
     }

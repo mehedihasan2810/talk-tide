@@ -211,7 +211,10 @@ const MobileSidebar: FC<Props> = ({
                 ))}
               </div>
             ) : chats.length === 0 ? (
-              <div>No chat found! Create a chat and start chatting</div>
+              <div className="mt-8 text-center text-primary">
+                <h6>No chat found!</h6>
+                <p> Create a chat and start chatting</p>
+              </div>
             ) : (
               chats
                 .filter((chat) =>

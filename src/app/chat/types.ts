@@ -7,5 +7,3 @@ export type OnHandleClickCreateChatType = (
   _setGroupParticipants: () => void,
   _setParticipant: () => void,
 ) => void;
-
-// ------------------------------------

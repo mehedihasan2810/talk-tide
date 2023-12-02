@@ -1,19 +1,15 @@
 import { SuccessResponse } from "@/types/api";
 import { ChatInterface, ChatMessageInterface } from "@/types/chat";
 import { SessionUser } from "@/types/session";
-// import { STOP_TYPING_EVENT } from "../../constants";
 import { queryClient } from "@/contexts/providers";
 import { useSendMessage } from "../mutations/useSendMessage";
 import { MutableRefObject } from "react";
-// import { Socket } from "socket.io-client";
 import { Session } from "next-auth";
-import { useUpdateChatLastMessage } from "../socket-event-handlers/useUpdateChatLastMessage";
+import { useUpdateChatLastMessage } from "../pusher-event-handlers/useUpdateChatLastMessage";
 import { useToast } from "@/components/ui/use-toast";
-
 
 type UseSendChatMessage = (
   _currentChatIdRef: MutableRefObject<string | null>,
-  // _socketClient: Socket | null,
   _session: Session | null,
   _message: string,
   _attachedFiles: any[],
@@ -31,7 +27,6 @@ type UseSendChatMessage = (
 
 export const useSendChatMessage: UseSendChatMessage = (
   currentChatIdRef,
-  // socketClient,
   session,
   message,
   attachedFiles,
@@ -47,14 +42,6 @@ export const useSendChatMessage: UseSendChatMessage = (
 
   // Function to send a chat message
   const sendChatMessage = async () => {
-    if (message.trim() === "" && attachedFiles.length === 0) {
-      toast({
-        title: "Either message or attachment file is required",
-        variant: "warning",
-      });
-      return;
-    }
-
     // If no current chat ID exists or there's no socket connection, exit the function
     if (!currentChatIdRef.current || !session) return;
 
@@ -62,7 +49,6 @@ export const useSendChatMessage: UseSendChatMessage = (
 
     const tempAttachments = attachedFiles.map((file) => ({
       url: URL.createObjectURL(file),
-      // url: "https://via.placeholder.com/200x200.png",
       localPath: "",
     }));
 
@@ -75,7 +61,7 @@ export const useSendChatMessage: UseSendChatMessage = (
         email: email as string,
         username: name as string,
         avatar: {
-          url: "https://via.placeholder.com/200x200.png",
+          url: "",
           localPath: "",
         },
       },
@@ -95,9 +81,6 @@ export const useSendChatMessage: UseSendChatMessage = (
       },
     );
 
-    // Emit a STOP_TYPING_EVENT to inform other users/participants that typing has stopped
-    // socketClient.emit(STOP_TYPING_EVENT, currentChatIdRef.current);
-
     const formData = new FormData();
 
     if (message) {
@@ -108,34 +91,6 @@ export const useSendChatMessage: UseSendChatMessage = (
       formData.append("attachments", file);
     });
 
-    console.log(formData.getAll("attachments"));
-
-    // const file: File = attachedFiles[0];
-    // // if (file) {
-    // const reader = new FileReader();
-
-    // reader.readAsDataURL(file);
-    // // reader.readAsArrayBuffer(file)
-    // console.log("hey");
-    // const imageUrl = await new Promise((resolve) => {
-    //   reader.onload = (event) => {
-    //     const dataUrl = `${event.target?.result}`;
-    //     // setSelectedImage(dataUrl);
-    //     // console.log(dataUrl)
-
-    //     resolve(dataUrl);
-    //     //  console.log(dataUrl.split(",")[1])
-    //     // console.log(dataUrl);
-    //     console.log("foo");
-    //   };
-    // });
-
-    // console.log(imageUrl);
-
-    // } else {
-    //     console.log("NO FILE");
-    // }
-
     setMessage(""); // Clear the message input
     setAttachedFiles([]); // Clear the list of attached files
 
@@ -145,7 +100,7 @@ export const useSendChatMessage: UseSendChatMessage = (
     sendMessageMutation(
       {
         chatId: currentChatIdRef.current,
-      formData
+        formData,
       },
 
       {
@@ -155,7 +110,6 @@ export const useSendChatMessage: UseSendChatMessage = (
           });
         },
         onError: (error) => {
-          console.log(error);
           toast({
             title: error.message,
             variant: "destructive",

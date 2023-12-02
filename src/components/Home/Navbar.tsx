@@ -1,10 +1,15 @@
 import { ChevronRightIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 import React from "react";
-import { buttonVariants } from "../ui/button";
+import { Button, buttonVariants } from "../ui/button";
 import { cn } from "@/lib/utils";
+import { signOut, useSession } from "next-auth/react";
+import { useToast } from "../ui/use-toast";
 
 const Navbar = () => {
+  const { data: session } = useSession();
+  const { toast } = useToast();
+
   return (
     <div className="fixed left-0 top-0 z-10  w-full border-b border-b-primary/40">
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-3 py-2 sm:py-4">
@@ -35,7 +40,16 @@ const Navbar = () => {
           >
             Home
           </Link>
-          <Link className="inline-flex items-center text-primary " href="#">
+          <Link
+            className="inline-flex items-center text-primary hover:underline"
+            href="/chat"
+          >
+            My Inbox
+          </Link>
+          <Link
+            className="hidden items-center text-primary hover:underline sm:inline-flex"
+            href="#"
+          >
             Features <ChevronRightIcon className="h-6 w-6" />
           </Link>
           <Link
@@ -44,18 +58,27 @@ const Navbar = () => {
           >
             Help Center
           </Link>
-          <Link
-            className="hidden text-primary hover:underline sm:inline-block"
-            href="#"
-          >
-            For Business
-          </Link>
-          <Link
-            href="/auth"
-            className={cn(buttonVariants({ variant: "outline" }))}
-          >
-            Login
-          </Link>
+          {session ? (
+            <Button
+              onClick={async () => {
+                await signOut();
+                toast({
+                  description: "Successfully logged out",
+                  variant: "success",
+                });
+              }}
+              variant="outline"
+            >
+              Log out
+            </Button>
+          ) : (
+            <Link
+              href="/auth"
+              className={cn(buttonVariants({ variant: "outline" }))}
+            >
+              Login
+            </Link>
+          )}
         </nav>
       </div>
     </div>

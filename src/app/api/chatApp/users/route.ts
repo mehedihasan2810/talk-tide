@@ -13,8 +13,6 @@ interface Session {
 
 export async function GET() {
   try {
-    // get user from auth token
-    //   const tokenUser = await getUserFromToken(req);
     const session = (await getServerSession(authOptions)) as Session | null;
 
     if (!session) {

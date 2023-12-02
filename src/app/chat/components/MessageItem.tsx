@@ -43,8 +43,11 @@ const MessageItem: FC<Props> = ({
           isRecentMessage && isOwnMessage ? "mb-5" : "",
         )}
       >
-        <AvatarImage alt="author image" src={message.sender.avatar.url} />
-        <AvatarFallback className="bg-zinc-200">
+        <AvatarImage alt="author image" 
+        src={message.sender.avatar.url}
+        // src=""
+         />
+        <AvatarFallback>
           {message.sender.username[0].toLocaleUpperCase()}
         </AvatarFallback>
       </Avatar>
@@ -89,8 +92,8 @@ const MessageItem: FC<Props> = ({
                 className={cn(
                   "ml-auto grid w-fit gap-2",
                   message.attachments?.length === 1 ? " grid-cols-1" : "",
-                  message.attachments?.length === 2 ? " grid-cols-2" : "",
-                  message.attachments?.length >= 3 ? " grid-cols-3" : "",
+                  message.attachments?.length >= 2 ? " grid-cols-2" : "",
+                  // message.attachments?.length >= 3 ? " grid-cols-3" : "",
                   message.content ? "mb-[1px]" : "",
                 )}
               >
@@ -130,12 +133,11 @@ const MessageItem: FC<Props> = ({
                         </Link>
                       </div>
                       <Image
-                        className="h-[200px] w-[200px] object-cover"
+                        className="h-[250px] w-[250px] object-cover"
                         src={file.url || file.localPath}
                         alt="msg_img"
-                        width={200}
-                        height={200}
-                        // fill
+                        width={250}
+                        height={250}
                       />
                     </div>
                   );

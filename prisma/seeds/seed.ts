@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import { seedUsers } from "./users.seed";
 import prisma from "../../src/lib/prisma";
-import { seedChatApp } from "./chatApp.seed";
+// import { seedChatApp } from "./chatApp.seed";
 
 const log = console.log;
 
@@ -14,7 +14,7 @@ export async function main() {
     // ---------------
 
     // ----------------
-    await seedChatApp();
+    // await seedChatApp();
     // -----------------
 
     log(chalk.bold.green("Seeding finished"));

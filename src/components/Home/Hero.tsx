@@ -5,7 +5,7 @@ import { buttonVariants } from "../ui/button";
 const Hero = () => {
   return (
     <div className="space-y-4 px-1 text-center sm:space-y-12">
-      <div className="relative text-2xl font-semibold text-primary-foreground">
+      <div className="relative text-3xl font-semibold text-primary-foreground">
         <svg
           className="absolute left-1/2 top-0 -z-10
          h-[120%] w-[130%] -translate-x-1/2"

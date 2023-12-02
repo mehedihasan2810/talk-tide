@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Command,
-  CommandEmpty,
+  // CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
@@ -55,13 +55,15 @@ const SelectUser: FC<Props> = ({ isGroupChat, onHandleSelect }) => {
           <XMarkIcon className="h-6 w-6" />
         </button>
         <Command>
-          <CommandInput placeholder="Search User..." className="h-9" />
-          <CommandEmpty>No User Found</CommandEmpty>
+          <CommandInput placeholder="Search user..." className="h-9" />
+          {/* <CommandEmpty>No User Found</CommandEmpty> */}
           <CommandGroup className="max-h-96 overflow-y-auto">
             {error ? (
               <div>Something went wrong! Try again by refreshing the page</div>
             ) : isPending ? (
               <div>Loading...</div>
+            ) : users.data.length === 0 ? (
+              <div className="text-center mt-2">No user found</div>
             ) : (
               users.data.map((user) => (
                 <CommandItem

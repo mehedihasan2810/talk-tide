@@ -24,8 +24,6 @@ export const loginUser = async ({
   // validate the incoming user credentials---------------
   validateUserCredentials({ authType, username, password });
 
-  console.log(username)
-
   // check if the user is logged in with the provided
   // username
   const loggedInUser = await prisma.user.findUnique({

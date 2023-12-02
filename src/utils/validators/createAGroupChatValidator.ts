@@ -38,18 +38,6 @@ const createAGroupChatValidator = (data: Record<string, unknown>) => {
 
     // throw the error along with the validation error
     throw new ApiError(422, extractedErrors.join(", "));
-    // -----
-
-    // const extractedErrors = result.error.issues.map(
-    //   (err: (typeof result.error.issues)[0]) => {
-    //     const path = err.path[0];
-    //     return { [path]: err.message };
-    //   },
-    // );
-
-    // // 422: Unprocessable Entity
-    // throw new ApiError(422, "Received data is not valid", extractedErrors);
-    // // ------------------------------------------
   }
   return result.data;
 };
