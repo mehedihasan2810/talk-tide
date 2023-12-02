@@ -24,8 +24,8 @@ import {
 import { signIn, useSession } from "next-auth/react";
 import { LoginSchema } from "@/utils/zod-schema/loginSchema";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useToast } from "@/components/ui/use-toast";
+import Link from "next/link";
+import { Separator } from "@/components/ui/separator";
 
 interface Props {
   updateIsLogin(): void;
@@ -34,10 +34,9 @@ interface Props {
 export default function Login({ updateIsLogin }: Props) {
   const [error, setError] = useState<string | null | undefined>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoginSuccess, setIsLoginSuccess] = useState(false);
 
-  const router = useRouter();
   const session = useSession();
-  const { toast } = useToast();
 
   // useForm
   const form = useForm<z.infer<typeof LoginSchema>>({
@@ -69,10 +68,8 @@ export default function Login({ updateIsLogin }: Props) {
     if (!res?.ok || res.error) {
       setError(res?.error);
     } else {
-      //  if the login successful then reset the form and redirect the user to chat page
-      toast({ title: "You have logged in successfully", variant: "success" });
       form.reset();
-      router.replace("/chat");
+      setIsLoginSuccess(true);
     }
   }
 
@@ -169,14 +166,51 @@ export default function Login({ updateIsLogin }: Props) {
             )}{" "}
             Login
           </Button>
-          {/* <button
-            type="button"
-            onClick={() => {
-              signOut();
-            }}
-          >
-            logout
-          </button> */}
+
+          {/* Login success alert start */}
+
+          {isLoginSuccess && (
+            <Alert
+              variant="default"
+              className="relative border border-teal-400 text-teal-500"
+            >
+              <button
+                onClick={() => setIsLoginSuccess(false)}
+                className="absolute right-2 top-1 rounded-full bg-teal-50 p-1 hover:opacity-50"
+                type="button"
+              >
+                <XMarkIcon className="h-5 w-5" />
+              </button>
+              <ExclamationTriangleIcon className="h-4 w-4" />
+              <AlertTitle>Logged in successfully!</AlertTitle>
+              <AlertDescription>
+                <div>You have logged in successfully</div>
+                <div className="flex h-4 gap-2">
+                  <div>
+                    Go{" "}
+                    <Link
+                      href="/"
+                      className="font-semibold underline hover:opacity-50"
+                    >
+                      Home
+                    </Link>
+                  </div>
+                  <Separator color="teal" orientation="vertical" />
+                  <div>
+                    Go to{" "}
+                    <Link
+                      href="/chat"
+                      className="font-semibold underline hover:opacity-50"
+                    >
+                      My Inbox
+                    </Link>
+                  </div>
+                </div>
+              </AlertDescription>
+            </Alert>
+          )}
+
+          {/* Login success alert start */}
         </form>
       </Form>
     </div>
