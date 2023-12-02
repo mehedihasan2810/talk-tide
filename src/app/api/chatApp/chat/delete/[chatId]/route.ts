@@ -2,13 +2,13 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import prisma from "@/lib/prisma";
 import { pusherServer } from "@/lib/pusher";
 import { ChatEventEnum } from "@/utils/constants";
-import { deleteCascadeChatMessages } from "@/socket/controllers/chat-controllers/deleteCascadeChatMessages";
 import { ServerSession } from "@/types/session";
 import { ApiError } from "@/utils/error-helpers/ApiError";
 import { errorResponse } from "@/utils/error-helpers/errorResponse";
 import { ApiResponse } from "@/utils/helpers/apiResponse";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
+import { deleteCascadeChatMessages } from "./deleteCascadeChatMessages";
 
 export async function DELETE(
   _req: NextRequest,
