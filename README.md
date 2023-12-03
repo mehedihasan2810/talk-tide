@@ -25,8 +25,8 @@
 
 ## [Home page](https://talktide.vercel.app)
 
-[![Talk tide chat application's home page image](https://i.ibb.co/wY3R57y/talk-tide-home-page.png)](https://talktide.vercel.app)
+[![Talk tide chat application's home page image](/public/talk-tide-home-page.png)](https://talktide.vercel.app)
 
 ## [Chat page](https://talktide.vercel.app/chat)
 
-[![Talk tide chat application's chat page image](https://i.ibb.co/kM9cLNr/talk-tide-chat-page.png)](https://talktide.vercel.app/chat)
+[![Talk tide chat application's chat page image](/public/talk-tide-chat-page.png)](https://talktide.vercel.app/chat)
