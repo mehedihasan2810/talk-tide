@@ -7,7 +7,7 @@ export const useDeleteGroupChat = () => {
   return useMutation({
     mutationFn: (chatId: string) =>
       requestHandler<ChatInterface>(() =>
-        apiClient.delete(`/chat/group/${chatId}`),
+        apiClient.delete(`/chatApp/group/delete/${chatId}`),
       )(),
   });
 };
