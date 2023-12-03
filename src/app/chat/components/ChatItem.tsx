@@ -8,7 +8,6 @@ import {
   PaperClipIcon,
   TrashIcon,
 } from "@heroicons/react/20/solid";
-import Image from "next/image";
 import { FC } from "react";
 import moment from "moment";
 import { useStore } from "@/lib/stores/useStore";
@@ -31,6 +30,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface Props {
   chat: ChatInterface;
@@ -75,16 +75,13 @@ const ChatItem: FC<Props> = ({
     >
       <div className="flex flex-shrink-0 items-center justify-center">
         {chat.isGroupChat ? (
-          <div className="relative flex h-12 w-12 flex-shrink-0 flex-nowrap items-center justify-start">
+          <div className="relative mr-4 flex h-12 w-12 flex-shrink-0 flex-nowrap items-center justify-start">
             {chat.participants.slice(0, 3).map((participant, i) => {
               return (
-                <Image
+                <Avatar
                   key={participant.id}
-                  src={participant.avatar.url}
-                  width={48}
-                  height={48}
                   className={cn(
-                    "outline-dark absolute h-7 w-7 rounded-full border-[1px] border-white outline outline-4 group-hover:outline-secondary",
+                    "absolute h-12 w-12 rounded-full border border-zinc-400",
                     i === 0
                       ? "left-0 z-[3]"
                       : i === 1
@@ -93,19 +90,32 @@ const ChatItem: FC<Props> = ({
                       ? "left-[18px] z-[1]"
                       : "",
                   )}
-                  alt="chat participant image"
-                />
+                >
+                  <AvatarImage
+                    src={participant.avatar.url}
+                    alt="chat participant image"
+                  />
+                  <AvatarFallback>
+                    {getChatObjectMetadata(chat, user)
+                      .title?.slice(0, 1)
+                      ?.toLocaleUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
               );
             })}
           </div>
         ) : (
-          <Image
-            src={getChatObjectMetadata(chat, user).avatar as string}
-            width={48}
-            height={48}
-            className="h-12 w-12 rounded-full"
-            alt="chat participant image"
-          />
+          <Avatar className="h-12 w-12">
+            <AvatarImage
+              src={getChatObjectMetadata(chat, user).avatar as string}
+              alt="chat participant image"
+            />
+            <AvatarFallback>
+              {getChatObjectMetadata(chat, user)
+                .title?.slice(0, 1)
+                ?.toLocaleUpperCase()}
+            </AvatarFallback>
+          </Avatar>
         )}
       </div>
 
@@ -195,7 +205,7 @@ const ChatItem: FC<Props> = ({
                       deleteChatMutation(chat.id, {
                         onError: (error) => {
                           toast({
-                           title: error.message,
+                            title: error.message,
                             variant: "destructive",
                           });
                         },

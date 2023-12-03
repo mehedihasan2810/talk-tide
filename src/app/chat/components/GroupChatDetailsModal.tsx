@@ -14,7 +14,6 @@ import {
   XMarkIcon,
 } from "@heroicons/react/20/solid";
 import { useSession } from "next-auth/react";
-import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { FC, useEffect, useState } from "react";
 import SelectUser from "./SelectUser";
@@ -41,6 +40,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { useLeaveGroupChat } from "../hooks/mutations/useLeaveGroupChat";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface Props {
   onGroupDelete(_chatId: string): void;
@@ -98,12 +98,12 @@ const GroupChatDetailsModal: FC<Props> = ({ onGroupDelete }) => {
   // delete a specific query then return the remaining
   const deleteQueryString = useDeleteQueryString();
 
+  // ---------------------------------------------------------
+
   const handleRemoveGroupParticipant = (
     participantId: string,
     groupChatId: string,
   ) => {
-    // e.stopPropagation();
-
     setParticipantToBeRemoved(participantId);
 
     removeParticipantMutation(
@@ -131,6 +131,8 @@ const GroupChatDetailsModal: FC<Props> = ({ onGroupDelete }) => {
       },
     );
   };
+
+  // -------------------------------------------------------
 
   const handleLeaveGroupChat = (groupChatId: string) => {
     onGroupDelete(groupChatId);
@@ -209,16 +211,24 @@ const GroupChatDetailsModal: FC<Props> = ({ onGroupDelete }) => {
           <div className="relative flex-1">
             <div className="flex flex-col items-start justify-center">
               <div className="relative flex h-max w-full items-center justify-center gap-3 pl-16">
+                {/* ---------------------------------------------------
+                  Group participant avatar and rename group action start
+                  -----------------------------------------------------*/}
+
                 {groupInfo.data.participants.slice(0, 3).map((p) => {
                   return (
-                    <Image
-                      className="-ml-14 h-16 w-16 rounded-full outline outline-4 outline-secondary sm:-ml-16 sm:h-24 sm:w-24"
+                    <Avatar
                       key={p.id}
-                      src={p.avatar.url}
-                      alt="avatar"
-                      width={96}
-                      height={96}
-                    />
+                      className="-ml-14 h-16 w-16 rounded-full border border-zinc-400 sm:-ml-16 sm:h-24 sm:w-24"
+                    >
+                      <AvatarImage
+                        src={p.avatar.url}
+                        alt="chat participant avatar"
+                      />
+                      <AvatarFallback>
+                        {p.username.slice(0, 1).toLocaleUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
                   );
                 })}
                 {groupInfo.data.participants &&
@@ -301,6 +311,11 @@ const GroupChatDetailsModal: FC<Props> = ({ onGroupDelete }) => {
                   Group · {groupInfo.data.participants.length} participants
                 </p>
               </div>
+
+              {/* -----------------------------------------------------
+                  Group participant avatar and rename group action end
+                  -----------------------------------------------------*/}
+
               <Separator className="my-5" />
               <div className="w-full">
                 <p className="inline-flex items-center">
@@ -308,19 +323,28 @@ const GroupChatDetailsModal: FC<Props> = ({ onGroupDelete }) => {
                   {groupInfo.data.participants.length} Participants
                 </p>
                 <div className="w-full">
+                  {/* --------------------------
+                   Show group participants start
+                  ------------------------------*/}
+
                   <div className="max-h-[40vh] overflow-y-auto pr-2">
                     {groupInfo.data.participants?.map((part) => {
                       return (
                         <React.Fragment key={part.id}>
                           <div className="flex w-full items-center justify-between py-4">
                             <div className="flex w-full items-start justify-start gap-3">
-                              <Image
-                                className="h-12 w-12 rounded-full"
-                                src={part.avatar.url}
-                                alt=""
-                                width={48}
-                                height={48}
-                              />
+                              <Avatar className="h-12 w-12 rounded-full">
+                                <AvatarImage
+                                  src={part.avatar.url}
+                                  alt="chat participant image"
+                                />
+                                <AvatarFallback>
+                                  {part.username
+                                    .slice(0, 1)
+                                    .toLocaleUpperCase()}
+                                </AvatarFallback>
+                              </Avatar>
+
                               <div>
                                 <div className="inline-flex w-full items-center text-sm font-semibold">
                                   {part.username}{" "}
@@ -446,6 +470,15 @@ const GroupChatDetailsModal: FC<Props> = ({ onGroupDelete }) => {
                       );
                     })}
                   </div>
+
+                  {/* --------------------------
+                   Show group participants end
+                  ------------------------------*/}
+
+                  {/* --------------------------------------------
+                    Add participant and Delete group action start
+                  ------------------------------------------------ */}
+
                   {groupInfo.data.adminId ===
                   (session?.user as SessionUser)?.id ? (
                     <div
@@ -623,6 +656,10 @@ const GroupChatDetailsModal: FC<Props> = ({ onGroupDelete }) => {
                       </Dialog>
                     </div>
                   ) : null}
+
+                  {/* --------------------------------------------
+                    Add participant and Delete group action end
+                  ------------------------------------------------ */}
                 </div>
               </div>
             </div>

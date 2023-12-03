@@ -238,7 +238,10 @@ const Sidebar: FC<Readonly<Props>> = ({
                 chats
                   .filter((chat) =>
                     chatSearchTerm.trim() !== ""
-                      ? getChatObjectMetadata(chat, session?.user as SessionUser)
+                      ? getChatObjectMetadata(
+                          chat,
+                          session?.user as SessionUser,
+                        )
                           .title?.toLocaleLowerCase()
                           ?.includes(chatSearchTerm.toLocaleLowerCase())
                       : true,

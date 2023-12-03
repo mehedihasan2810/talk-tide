@@ -292,28 +292,37 @@ returned values from the hook into variables `data`, `isPending`, and `error`. *
                 {currentChat ? (
                   <>
                     {currentChat.isGroupChat ? (
-                      <div className="relative flex h-12 w-12 flex-shrink-0 flex-nowrap items-center justify-start">
+                      <div className="relative mr-4 flex h-12 w-12 flex-shrink-0 flex-nowrap items-center justify-start">
                         {currentChat.participants
                           .slice(0, 3)
                           .map((participant, i) => {
                             return (
-                              <Image
+                              <Avatar
                                 key={participant.id}
-                                src={participant.avatar.url}
-                                alt="chat participant image"
-                                width={48}
-                                height={48}
                                 className={cn(
-                                  "outline-dark absolute h-9 w-9 rounded-full border-[1px] border-white outline outline-4",
+                                  "absolute h-12 w-12 rounded-full border border-zinc-400",
                                   i === 0
-                                    ? "left-0 z-30"
+                                    ? "left-0 z-[3]"
                                     : i === 1
-                                    ? "left-2 z-20"
+                                    ? "left-2.5 z-[2]"
                                     : i === 2
-                                    ? "left-4 z-10"
+                                    ? "left-[18px] z-[1]"
                                     : "",
                                 )}
-                              />
+                              >
+                                <AvatarImage
+                                  src={participant.avatar.url}
+                                  alt="chat participant image"
+                                />
+                                <AvatarFallback>
+                                  {getChatObjectMetadata(
+                                    currentChat,
+                                    session?.user as SessionUser,
+                                  )
+                                    .title?.slice(0, 1)
+                                    ?.toLocaleUpperCase()}
+                                </AvatarFallback>
+                              </Avatar>
                             );
                           })}
                       </div>
