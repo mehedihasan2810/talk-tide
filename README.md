@@ -1,6 +1,6 @@
-# Talk Tide - A full stack realtime messaging chat web application
+# [Talk Tide - A full stack realtime messaging chat web application](https://talktide.vercel.app)
 
-Talk tide is a chatting platform similar to messenger and whatsapp. Here you can chat with any one from anywhere. You can create one on one and group chat and start chatting right away. You can send images and emoji as well. So what is stopping you just create an account and tell your friends to create account start chatting from anywhere.
+[Talk tide](https://talktide.vercel.app) is a chatting platform similar to messenger and whatsapp. Here you can chat with any one from anywhere. You can create one on one and group chat and start chatting right away. You can send images and emoji as well. So what is stopping you just create an account and tell your friends to create account start chatting from anywhere.
 
 ## Kew Features
 
@@ -23,10 +23,10 @@ Talk tide is a chatting platform similar to messenger and whatsapp. Here you can
 - Realtime - `Pusher Channel(feature/pusher-channel branch)` `Socketio(feature/socket branch`
 - Auth - `Next Auth`
 
-## Home page
+## [Home page](https://talktide.vercel.app)
 
 [![Talk tide chat application's home page image](https://i.ibb.co/wY3R57y/talk-tide-home-page.png)](https://talktide.vercel.app)
 
-## Chat page
+## [Chat page](https://talktide.vercel.app/chat)
 
 [![Talk tide chat application's chat page image](https://i.ibb.co/kM9cLNr/talk-tide-chat-page.png)](https://talktide.vercel.app/chat)
