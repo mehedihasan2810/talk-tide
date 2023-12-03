@@ -1,36 +1,32 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Talk Tide - A full stack realtime messaging chat web application
 
-## Getting Started
+Talk tide is a chatting platform similar to messenger and whatsapp. Here you can chat with any one from anywhere. You can create one on one and group chat and start chatting right away. You can send images and emoji as well. So what is stopping you just create an account and tell your friends to create account start chatting from anywhere.
 
-First, run the development server:
+## Kew Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. Realtime messaging with Pusher-channel(code in feature/pusher-channel branch) and with Socketio(code in feature/socket branch)
+2. Register and login authentication system
+3. You can create one on one chat
+4. You can also create group chat
+5. You can delete chat anytime
+6. You can add participant remove participant as well
+7. Renaming group is also possible
+8. You can leave from a group chat anytime
+9. Most importantly you can send images as well
+10. Responsive UI built with TailwindCSS and Shadcn ui
+11. Protection of sensitive routes
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Technologies used
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Front-End - `NextJS` `TypeScript` `React Query` `Axios` `TailwindCSS` `Shadcn ui` `Zustand` `Zod`
+- Back-End - `Prisma` `Mongodb` `Zod`
+- Realtime - `Pusher Channel(feature/pusher-channel branch)` `Socketio(feature/socket branch`
+- Auth - `Next Auth`
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Home page
 
-## Learn More
+[![Talk tide chat application's home page image](https://i.ibb.co/wY3R57y/talk-tide-home-page.png)](https://talktide.vercel.app)
 
-To learn more about Next.js, take a look at the following resources:
+## Chat page
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+[![Talk tide chat application's chat page image](https://i.ibb.co/kM9cLNr/talk-tide-chat-page.png)](https://talktide.vercel.app/chat)
