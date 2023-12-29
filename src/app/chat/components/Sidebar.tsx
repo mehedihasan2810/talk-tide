@@ -108,10 +108,16 @@ const Sidebar: FC<Readonly<Props>> = ({
           <Link
             href="/"
             className="h-7 w-7 text-primary opacity-70 hover:opacity-100"
+            title="Home"
+            aria-label="Home page button. Click to go to the home page"
           >
             <HomeIcon className="h-full w-full" />
           </Link>
-          <button className="h-7 w-7 text-primary opacity-70 hover:opacity-100">
+          <button
+            aria-label="Settings button. Click to go to the settings page."
+            title="Settings"
+            className="h-7 w-7 text-primary opacity-70 hover:opacity-100"
+          >
             <Cog6ToothIcon className="h-full w-full" />
           </button>
         </div>
@@ -132,8 +138,11 @@ const Sidebar: FC<Readonly<Props>> = ({
                 checked={isGroupChat}
                 onCheckedChange={setIsGroupChat}
                 id="group-chat"
+                aria-labelledby="group-chat-label"
               />
-              <Label htmlFor="group-chat">Is it a group chat?</Label>
+              <Label htmlFor="group-chat" id="group-chat-label">
+                Is it a group chat?
+              </Label>
             </div>
             {/* ----------------------------------------------------- */}
 
@@ -231,7 +240,7 @@ const Sidebar: FC<Readonly<Props>> = ({
                 </div>
               ) : chats.length === 0 ? (
                 <div className="mt-8 text-center text-primary">
-                  <h6>No chat found!</h6>
+                  <p className="font-semibold">No chat found!</p>
                   <p> Create a chat and start chatting</p>
                 </div>
               ) : (

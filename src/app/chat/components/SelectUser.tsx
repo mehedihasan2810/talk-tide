@@ -34,7 +34,8 @@ const SelectUser: FC<Props> = ({ isGroupChat, onHandleSelect }) => {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button
+        <Button 
+         aria-label="Select participants to create a chat"
           variant="outline"
           role="combobox"
           aria-expanded={open}
