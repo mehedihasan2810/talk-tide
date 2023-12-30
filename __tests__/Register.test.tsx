@@ -1,4 +1,4 @@
-import Login from "@/app/(login-register)/auth/components/Login";
+import Register from "@/app/(login-register)/auth/components/Register";
 import { useToast } from "@/components/ui/use-toast";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -6,7 +6,7 @@ import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 jest.mock("next-auth/react", () => ({
-  ...jest.requireActual("next-auth/react"), // Use the actual module for other exports
+  ...jest.requireActual("next-auth/react"),
   useSession: jest.fn().mockReturnValue({
     status: "unauthenticated",
     data: null,
@@ -27,37 +27,36 @@ jest.mock("next/navigation", () => ({
   }),
 }));
 
-describe("Login Component", () => {
+describe("Register Component", () => {
   test("Should render perfectly", () => {
-    // MOCK
-    // (useSession as jest.Mock).mockReturnValueOnce({
-    //   status: "unauthenticated",
-    //   data: null,
-    // });
-
     // ARRANGE
-    const { asFragment } = render(<Login updateIsLogin={() => {}} />);
+    const { asFragment } = render(<Register updateIsLogin={() => {}} />);
 
     // ASSERT
     expect(
-      screen.getByRole("heading", { level: 2, name: "Login" }),
+      screen.getByRole("heading", { level: 2, name: "Register" }),
     ).toBeInTheDocument();
-    expect(screen.getByTestId("login-form")).toBeInTheDocument();
+    expect(screen.getByTestId("register-form")).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText("Enter your email..."),
+    ).toBeInTheDocument();
     expect(
       screen.getByPlaceholderText("Enter your username..."),
     ).toBeInTheDocument();
     expect(
       screen.getByPlaceholderText("Enter your password..."),
     ).toBeInTheDocument();
-    expect(screen.getByTestId("register-link")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Login" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Login" })).toBeEnabled();
+    expect(screen.getByTestId("login-link")).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Register" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Register" })).toBeEnabled();
     expect(asFragment()).toMatchSnapshot();
   });
 
-  test("Password input should have type password ", () => {
+  test("Password input should have type password", () => {
     // ARRANGE
-    render(<Login updateIsLogin={() => {}} />);
+    render(<Register updateIsLogin={() => {}} />);
 
     // ASSERT
     const password = screen.getByPlaceholderText("Enter your password...");
@@ -69,35 +68,41 @@ describe("Login Component", () => {
     const user = userEvent.setup();
 
     // ARRANGE
-    render(<Login updateIsLogin={() => {}} />);
+    render(<Register updateIsLogin={() => {}} />);
 
     // ACT
-    const username = screen.getByTestId("login-username");
-    const password = screen.getByTestId("login-password");
-    await user.type(username, "mehedi");
-    await user.type(password, "123456");
+    const email = screen.getByTestId("register-email");
+    const username = screen.getByTestId("register-username");
+    const password = screen.getByTestId("register-password");
+    await user.type(email, "test@example.com");
+    await user.type(username, "testuser");
+    await user.type(password, "testpassword");
 
     // ASSERT
-    expect(username).toHaveValue("mehedi");
-    expect(password).toHaveValue("123456");
+    expect(email).toHaveValue("test@example.com");
+    expect(username).toHaveValue("testuser");
+    expect(password).toHaveValue("testpassword");
   });
 
-  test("Validation: username & password validation should work properly", async () => {
+  test("Validation: email, username & password validation should work properly", async () => {
     // EVENT
     const user = userEvent.setup();
 
     // ARRANGE
-    render(<Login updateIsLogin={() => {}} />);
+    render(<Register updateIsLogin={() => {}} />);
 
     // ACT
-    const username = screen.getByTestId("login-username");
-    const password = screen.getByTestId("login-password");
-    const submitBtn = screen.getByRole("button", { name: "Login" });
+    const email = screen.getByTestId("register-email");
+    const username = screen.getByTestId("register-username");
+    const password = screen.getByTestId("register-password");
+    const submitBtn = screen.getByRole("button", { name: "Register" });
+    await user.type(email, "email");
     await user.type(username, "m");
     await user.type(password, "12345");
     await user.click(submitBtn);
 
     // ASSERT
+    expect(screen.getByText("Invalid email address")).toBeInTheDocument();
     expect(
       screen.getByText("Username must be at least 2 characters."),
     ).toBeInTheDocument();
@@ -117,12 +122,14 @@ describe("Login Component", () => {
     // EVENT
     const user = userEvent.setup();
 
-    render(<Login updateIsLogin={() => {}} />);
+    render(<Register updateIsLogin={() => {}} />);
 
     // ACT
-    const username = screen.getByTestId("login-username");
-    const password = screen.getByTestId("login-password");
-    const submitBtn = screen.getByRole("button", { name: "Login" });
+    const email = screen.getByTestId("register-email");
+    const username = screen.getByTestId("register-username");
+    const password = screen.getByTestId("register-password");
+    const submitBtn = screen.getByRole("button", { name: "Register" });
+    await user.type(email, "test@example.com");
     await user.type(username, "testuser");
     await user.type(password, "testpassword");
     await user.click(submitBtn);
@@ -133,7 +140,7 @@ describe("Login Component", () => {
     expect(replace).toHaveBeenCalled();
   });
 
-  test("Displays error message on unsuccessful login", async () => {
+  test("Displays error message on unsuccessful registration", async () => {
     //  MOCK
     (signIn as jest.Mock).mockResolvedValue({
       ok: false,
@@ -144,12 +151,14 @@ describe("Login Component", () => {
     const user = userEvent.setup();
 
     // ARRANGE
-    render(<Login updateIsLogin={() => {}} />);
+    render(<Register updateIsLogin={() => {}} />);
 
     // ACT
-    const username = screen.getByTestId("login-username");
-    const password = screen.getByTestId("login-password");
-    const submitBtn = screen.getByRole("button", { name: "Login" });
+    const email = screen.getByTestId("register-email");
+    const username = screen.getByTestId("register-username");
+    const password = screen.getByTestId("register-password");
+    const submitBtn = screen.getByRole("button", { name: "Register" });
+    await user.type(email, "test@example.com");
     await user.type(username, "testuser");
     await user.type(password, "testpassword");
     await user.click(submitBtn);
@@ -175,18 +184,24 @@ describe("Login Component", () => {
     const user = userEvent.setup();
 
     // ARRANGE
-    render(<Login updateIsLogin={() => {}} />);
+    render(<Register updateIsLogin={() => {}} />);
 
     // ACT
-    const username = screen.getByTestId("login-username");
-    const password = screen.getByTestId("login-password");
-    const submitBtn = screen.getByRole("button", { name: "Login" });
+    const email = screen.getByTestId("register-email");
+    const username = screen.getByTestId("register-username");
+    const password = screen.getByTestId("register-password");
+    const submitBtn = screen.getByRole("button", { name: "Register" });
+    await user.type(email, "test@example.com");
     await user.type(username, "testuser");
     await user.type(password, "testpassword");
     await user.click(submitBtn);
 
     // ASSERT
     expect(screen.getByText("Error!")).toBeInTheDocument();
-    expect(screen.getByText("You are already logged in")).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "You are already logged in! If you want to create new account then logout first",
+      ),
+    ).toBeInTheDocument();
   });
 });

@@ -1,0 +1,99 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Register Component Should render perfectly 1`] = `
+<DocumentFragment>
+  <div
+    class="grid h-screen w-screen place-items-center"
+  >
+    <form
+      class="w-80 space-y-5"
+      data-testid="register-form"
+    >
+      <div
+        class="mb-8 flex items-center justify-center gap-1 text-primary"
+      >
+        <h2
+          class="scroll-m-20 text-3xl font-semibold tracking-tight"
+        >
+          Register
+        </h2>
+        <svg
+          aria-hidden="true"
+          class="h-8 w-8"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            clip-rule="evenodd"
+            d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z"
+            fill-rule="evenodd"
+          />
+        </svg>
+      </div>
+      <div
+        class="space-y-2"
+      >
+        <input
+          aria-describedby=":r0:-form-item-description"
+          aria-invalid="false"
+          class="flex w-full rounded-md border bg-background px-3 py-2 ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 h-11 border-primary/40 text-base focus-visible:ring-primary"
+          data-testid="register-email"
+          id=":r0:-form-item"
+          name="email"
+          placeholder="Enter your email..."
+          value=""
+        />
+      </div>
+      <div
+        class="space-y-2"
+      >
+        <input
+          aria-describedby=":r1:-form-item-description"
+          aria-invalid="false"
+          class="flex w-full rounded-md border bg-background px-3 py-2 ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 h-11 border-primary/40 text-base focus-visible:ring-primary"
+          data-testid="register-username"
+          id=":r1:-form-item"
+          name="username"
+          placeholder="Enter your username..."
+          value=""
+        />
+      </div>
+      <div
+        class="space-y-2"
+      >
+        <input
+          aria-describedby=":r2:-form-item-description"
+          aria-invalid="false"
+          class="flex w-full rounded-md border bg-background px-3 py-2 ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 h-11 border-primary/40 text-base focus-visible:ring-primary"
+          data-testid="register-password"
+          id=":r2:-form-item"
+          name="password"
+          placeholder="Enter your password..."
+          type="password"
+          value=""
+        />
+        <p
+          class="text-sm text-muted-foreground text-center"
+          id=":r2:-form-item-description"
+        >
+          Already have an account? 
+          <button
+            class="text-primary underline hover:text-primary/70"
+            data-testid="login-link"
+            type="button"
+          >
+            Login
+          </button>
+        </p>
+      </div>
+      <button
+        class="inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-white hover:opacity-80 px-4 py-2 h-11 w-full text-base"
+        type="submit"
+      >
+         Register
+      </button>
+    </form>
+  </div>
+</DocumentFragment>
+`;

@@ -121,7 +121,8 @@ export default function Register({ updateIsLogin }: Props) {
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Input
+                  <Input 
+                  data-testid="register-email"
                     placeholder="Enter your email..."
                     {...field}
                     className="h-11 border-primary/40 text-base focus-visible:ring-primary"
@@ -138,7 +139,8 @@ export default function Register({ updateIsLogin }: Props) {
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Input
+                  <Input 
+                  data-testid="register-username"
                     placeholder="Enter your username..."
                     {...field}
                     className="h-11 border-primary/40 text-base focus-visible:ring-primary"
@@ -155,7 +157,8 @@ export default function Register({ updateIsLogin }: Props) {
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Input
+                  <Input 
+                  data-testid="register-password"
                     type="password"
                     placeholder="Enter your password..."
                     {...field}
@@ -166,7 +169,8 @@ export default function Register({ updateIsLogin }: Props) {
                 <FormMessage />
                 <FormDescription className="text-center">
                   Already have an account?{" "}
-                  <button
+                  <button 
+                    data-testid="login-link"
                     type="button"
                     disabled={isLoading}
                     onClick={updateIsLogin}
