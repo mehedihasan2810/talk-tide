@@ -1,0 +1,281 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Home Component Should render properly 1`] = `
+<DocumentFragment>
+  <section
+    class="relative isolate grid h-screen w-screen place-items-center overflow-hidden"
+  >
+    <div
+      class="space-y-4 px-1 text-center sm:space-y-12"
+    >
+      <div
+        class="relative text-3xl font-semibold text-primary-foreground"
+      >
+        <svg
+          class="absolute left-1/2 top-0 -z-10   h-[120%] w-[130%] -translate-x-1/2"
+          fill="none"
+          height="100"
+          viewBox="0 0 390 100"
+          width="390"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M15.7313 23.391C109.247 17.6251 202.879 17.179 296.54 16.1553C297.212 16.148 331.206 14.1268 312.8 17.3748C288.651 21.6365 264.284 24.06 239.956 27.0495C165.808 36.1608 92.1668 51.1955 17.3573 51.1955C-61.7473 51.1955 175.566 51.1955 254.671 51.1955C276.866 51.1955 299.061 51.1955 321.255 51.1955C337.706 51.1955 354.07 50.2428 370.279 53.3093C385.217 56.1353 356.375 57.2669 353.288 57.6995C329.843 60.9835 306.503 64.7998 282.801 65.5855C259.326 66.3637 235.932 65.9662 212.476 67.618C173.892 70.3352 135.291 74.5097 96.7871 78.187C76.3725 80.1367 55.5268 79.0182 35.4871 83.4715C32.8341 84.061 40.8187 84.7132 43.5358 84.7722C63.5749 85.2079 83.6547 84.8535 103.698 84.8535C142.017 84.8535 180.336 84.8535 218.655 84.8535C262.079 84.8535 306.333 83.3902 349.385 83.3902"
+            stroke="#008080"
+            stroke-linecap="round"
+            stroke-width="30"
+          />
+        </svg>
+        Talk Tide
+      </div>
+      <h1
+        class="text-4xl font-bold leading-normal text-primary sm:text-5xl sm:leading-none"
+      >
+        <span
+          class="relative isolate inline-block align-baseline"
+        >
+          <svg
+            class="absolute left-1/2 top-[70%] -z-10 w-full -translate-x-1/2"
+            fill="none"
+            height="40"
+            viewBox="0 0 253 40"
+            width="253"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M15.2446 24.7346C13.0311 20.7503 37.0529 17.4177 40.1223 17.4177C49.6272 17.4177 58.4559 15.9543 67.9268 15.9543C85.4875 15.9543 103.048 15.9543 120.609 15.9543C160.142 15.9543 198.154 20.3445 237.68 20.3445"
+              stroke="#008080"
+              stroke-linecap="round"
+              stroke-width="20"
+            />
+          </svg>
+          <span
+            class=""
+          >
+             Connect 
+          </span>
+        </span>
+         With Your Favorite Ones
+      </h1>
+      <a
+        class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-white hover:opacity-80 h-11 rounded-md px-8 text-[18px] "
+        href="/chat"
+      >
+        Connect Now
+      </a>
+    </div>
+    <div
+      class="absolute -top-40 left-1/2 -z-10 flex -translate-x-1/2 gap-24 "
+    >
+      <div
+        class="h-[900px] w-40 rotate-45 rounded-full bg-gradient-to-r from-cyan-300 to-blue-300 opacity-20  blur-[30px]"
+      />
+      <div
+        class="h-[900px] w-40 rotate-45 rounded-full bg-gradient-to-r from-violet-300 to-fuchsia-300 opacity-20  blur-[30px]"
+      />
+      <div
+        class="h-[900px] w-40 rotate-45 rounded-full bg-gradient-to-r from-sky-300 to-indigo-300 opacity-20  blur-[30px]"
+      />
+      <div
+        class="h-[900px] w-40 rotate-45 rounded-full bg-gradient-to-r from-purple-300 to-pink-300 opacity-20  blur-[30px]"
+      />
+    </div>
+    <div
+      aria-hidden="true"
+      class="absolute inset-0 -z-[9] mx-auto max-w-[1920px]"
+    >
+      <div
+        class="absolute left-[3%] top-[11%] flex items-end gap-1  lg:left-[8%] lg:top-[13%] xl:left-[15%]"
+      >
+        <span
+          class="relative flex shrink-0 overflow-hidden rounded-full h-7 w-7"
+        >
+          <span
+            class="flex h-full w-full items-center justify-center rounded-full bg-zinc-200"
+          >
+            M
+          </span>
+        </span>
+        <div
+          class="flex flex-col items-start"
+        >
+          <span
+            class="ml-2 text-sm text-zinc-600"
+          >
+            Morty
+          </span>
+          <div
+            class="rounded-3xl rounded-bl-none bg-primary p-4 px-5 py-2 text-base text-primary-foreground shadow"
+          >
+            Hola! 👋
+          </div>
+        </div>
+      </div>
+      <div
+        class="absolute left-[10%] top-[18%] mt-1 flex items-end gap-1 sm:mt-0 lg:left-[15%] lg:top-[20%] xl:left-[20%]"
+      >
+        <div
+          class="flex flex-col items-end"
+        >
+          <span
+            class="mr-2 text-sm text-zinc-600"
+          >
+            Rick
+          </span>
+          <div
+            class=" rounded-3xl rounded-br-none bg-primary-foreground p-4 px-5 py-2 text-base text-black shadow"
+          >
+            Hello! 👍
+          </div>
+        </div>
+        <span
+          class="relative flex shrink-0 overflow-hidden rounded-full h-7 w-7"
+        >
+          <span
+            class="flex h-full w-full items-center justify-center rounded-full bg-zinc-200"
+          >
+            M
+          </span>
+        </span>
+      </div>
+      <div
+        class="absolute hidden items-end gap-1 lg:left-[13%] lg:top-[28%]  lg:flex xl:left-[19%]"
+      >
+        <div
+          class="flex flex-col items-end"
+        >
+          <span
+            class="mr-2 text-sm text-zinc-600"
+          >
+            Norty
+          </span>
+          <div
+            class="rounded-3xl rounded-br-none bg-primary-foreground p-4 px-5 py-2 text-base text-black shadow"
+          >
+            Bonjour! 👋
+          </div>
+        </div>
+        <span
+          class="relative flex shrink-0 overflow-hidden rounded-full h-7 w-7"
+        >
+          <span
+            class="flex h-full w-full items-center justify-center rounded-full bg-zinc-200"
+          >
+            M
+          </span>
+        </span>
+      </div>
+      <div
+        class="absolute hidden items-end gap-1 md:bottom-[21%] md:left-[3%] md:flex  xl:bottom-[26%] xl:left-[13%]"
+      >
+        <span
+          class="relative flex shrink-0 overflow-hidden rounded-full h-7 w-7"
+        >
+          <span
+            class="flex h-full w-full items-center justify-center rounded-full bg-zinc-200"
+          >
+            M
+          </span>
+        </span>
+        <div
+          class="rounded-3xl rounded-bl-none bg-primary p-4 px-5 py-2 text-base text-primary-foreground shadow"
+        >
+          Knock, knock. 😁
+        </div>
+      </div>
+      <div
+        class="absolute hidden items-end gap-1 md:bottom-[15%] md:left-[10%] md:flex xl:bottom-[20%] xl:left-[20%]"
+      >
+        <div
+          class="rounded-3xl rounded-br-none bg-primary-foreground p-4 px-5 py-2 text-base text-black shadow"
+        >
+          Who's there? 😒
+        </div>
+        <span
+          class="relative flex shrink-0 overflow-hidden rounded-full h-7 w-7"
+        >
+          <span
+            class="flex h-full w-full items-center justify-center rounded-full bg-zinc-200"
+          >
+            M
+          </span>
+        </span>
+      </div>
+      <div
+        class="absolute  hidden items-end gap-1 md:right-[10%] md:top-[15%] md:flex  xl:right-[20%] xl:top-[25%]"
+      >
+        <span
+          class="relative flex shrink-0 overflow-hidden rounded-full h-7 w-7"
+        >
+          <span
+            class="flex h-full w-full items-center justify-center rounded-full bg-zinc-200"
+          >
+            M
+          </span>
+        </span>
+        <div
+          class="rounded-3xl rounded-bl-none bg-primary p-4 px-5 py-2 text-base text-primary-foreground shadow"
+        >
+          How you doing? 😏
+        </div>
+      </div>
+      <div
+        class="absolute hidden items-end gap-1 md:right-[3%] md:top-[21%] md:flex  xl:right-[15%] xl:top-[32%]"
+      >
+        <div
+          class="rounded-3xl rounded-br-none bg-primary-foreground p-4 px-5 py-2 text-base text-black shadow"
+        >
+          That's what she said 🤣
+        </div>
+        <span
+          class="relative flex shrink-0 overflow-hidden rounded-full h-7 w-7"
+        >
+          <span
+            class="flex h-full w-full items-center justify-center rounded-full bg-zinc-200"
+          >
+            M
+          </span>
+        </span>
+      </div>
+      <div
+        class="absolute bottom-[21%] right-[5%] flex items-end gap-1 xl:bottom-[21%] xl:right-[15%]"
+      >
+        <span
+          class="relative flex shrink-0 overflow-hidden rounded-full h-7 w-7"
+        >
+          <span
+            class="flex h-full w-full items-center justify-center rounded-full bg-zinc-200"
+          >
+            M
+          </span>
+        </span>
+        <div
+          class="rounded-3xl rounded-bl-none bg-primary p-4 px-5 py-2 text-base text-primary-foreground shadow"
+        >
+          Take care of yourself mom❤ 
+          <br />
+           bye👋
+        </div>
+      </div>
+      <div
+        class="absolute bottom-[15%] right-[2%] flex items-end gap-1  lg:right-[3%] xl:right-[12%]"
+      >
+        <div
+          class="rounded-3xl rounded-br-none bg-primary-foreground p-4 px-5 py-2 text-base text-black shadow"
+        >
+          You too son bye❤
+        </div>
+        <span
+          class="relative flex shrink-0 overflow-hidden rounded-full h-7 w-7"
+        >
+          <span
+            class="flex h-full w-full items-center justify-center rounded-full bg-zinc-200"
+          >
+            M
+          </span>
+        </span>
+      </div>
+    </div>
+  </section>
+</DocumentFragment>
+`;
