@@ -40,7 +40,7 @@ export default function Login({ updateIsLogin }: Props) {
 
   const session = useSession();
   const router = useRouter();
-  const {toast} = useToast()
+  const { toast } = useToast();
 
   // useForm
   const form = useForm<z.infer<typeof LoginSchema>>({
@@ -73,11 +73,10 @@ export default function Login({ updateIsLogin }: Props) {
       setError(res?.error);
     } else {
       form.reset();
-      toast({title:"Logged in successfully", variant: "success" })
-      router.refresh()
+      toast({ title: "Logged in successfully", variant: "success" });
+      router.refresh();
       router.replace("/chat");
       // setIsLoginSuccess(true);
-      
     }
   }
 
@@ -155,7 +154,7 @@ export default function Login({ updateIsLogin }: Props) {
                     type="button"
                     disabled={isLoading}
                     onClick={updateIsLogin}
-                    data-testid="login-link"
+                    data-testid="register-link"
                     className="text-primary underline hover:text-primary/70"
                   >
                     Register
