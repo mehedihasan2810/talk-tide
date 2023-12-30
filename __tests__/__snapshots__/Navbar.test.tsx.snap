@@ -1,0 +1,81 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Navbar Component Should render properly & links with text content 'Home', 'My Inbox', 'Features', 'Help Center', 'Login' should be visible 1`] = `
+<DocumentFragment>
+  <div
+    class="fixed left-0 top-0 z-10  w-full border-b border-b-primary/40"
+  >
+    <div
+      class="mx-auto flex w-full max-w-7xl items-center justify-between px-3 py-2 sm:py-4"
+    >
+      <div
+        class="relative text-2xl font-semibold text-primary-foreground"
+      >
+        <svg
+          class="absolute left-1/2 top-0 -z-10   h-[120%] w-[130%] -translate-x-1/2"
+          fill="none"
+          height="100"
+          viewBox="0 0 390 100"
+          width="390"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M15.7313 23.391C109.247 17.6251 202.879 17.179 296.54 16.1553C297.212 16.148 331.206 14.1268 312.8 17.3748C288.651 21.6365 264.284 24.06 239.956 27.0495C165.808 36.1608 92.1668 51.1955 17.3573 51.1955C-61.7473 51.1955 175.566 51.1955 254.671 51.1955C276.866 51.1955 299.061 51.1955 321.255 51.1955C337.706 51.1955 354.07 50.2428 370.279 53.3093C385.217 56.1353 356.375 57.2669 353.288 57.6995C329.843 60.9835 306.503 64.7998 282.801 65.5855C259.326 66.3637 235.932 65.9662 212.476 67.618C173.892 70.3352 135.291 74.5097 96.7871 78.187C76.3725 80.1367 55.5268 79.0182 35.4871 83.4715C32.8341 84.061 40.8187 84.7132 43.5358 84.7722C63.5749 85.2079 83.6547 84.8535 103.698 84.8535C142.017 84.8535 180.336 84.8535 218.655 84.8535C262.079 84.8535 306.333 83.3902 349.385 83.3902"
+            stroke="#008080"
+            stroke-linecap="round"
+            stroke-width="30"
+          />
+        </svg>
+        Talk Tide
+      </div>
+      <nav
+        class="relative inline-flex items-center gap-6"
+      >
+        <a
+          class="inline-flex items-center text-primary hover:underline"
+          href="/"
+        >
+          Home
+        </a>
+        <a
+          class="inline-flex items-center text-primary hover:underline"
+          href="/chat"
+        >
+          My Inbox
+        </a>
+        <a
+          class="hidden items-center text-primary hover:underline sm:inline-flex"
+          href="#"
+        >
+          Features 
+          <svg
+            aria-hidden="true"
+            class="h-6 w-6"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              clip-rule="evenodd"
+              d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+              fill-rule="evenodd"
+            />
+          </svg>
+        </a>
+        <a
+          class="hidden text-primary hover:underline sm:inline-block"
+          href="#"
+        >
+          Help Center
+        </a>
+        <a
+          class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-primary bg-transparent text-primary hover:bg-primary hover:text-white h-10 px-4 py-2"
+          href="/auth"
+        >
+          Login
+        </a>
+      </nav>
+    </div>
+  </div>
+</DocumentFragment>
+`;

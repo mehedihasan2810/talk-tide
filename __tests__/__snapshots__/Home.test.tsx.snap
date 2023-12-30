@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Home Component Should render properly 1`] = `
+exports[`Home Component Should render properly & have heading and button link 1`] = `
 <DocumentFragment>
   <section
     class="relative isolate grid h-screen w-screen place-items-center overflow-hidden"
