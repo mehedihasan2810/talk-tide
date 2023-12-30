@@ -25,15 +25,21 @@ describe("Navbar Component", () => {
     const { asFragment } = render(<Navbar />);
 
     // ASSERT
+    // Ensure that each navigation link and the brand name is present
     ["Home", "My Inbox", "Features", "Help Center", "Login"].forEach((name) => {
       expect(screen.getByRole("link", { name })).toBeInTheDocument();
     });
     expect(screen.getByText("Talk Tide")).toBeInTheDocument();
+
+    // Take a snapshot of the rendered component
     expect(asFragment()).toMatchSnapshot();
   });
 
-  test("Should show the 'Log out' button when user is logged in", () => {
+  // ------------------------------------------------------------------
+
+  test("Should show the 'Log out' button when the user is logged in", () => {
     // MOCK
+    // Simulate an authenticated session
     (useSession as jest.Mock).mockReturnValue({
       status: "authenticated",
       data: {
@@ -48,8 +54,11 @@ describe("Navbar Component", () => {
     render(<Navbar />);
 
     // ASSERT
+    // Ensure that the logout button is present
     expect(screen.getByRole("button", { name: "Log out" })).toBeInTheDocument();
   });
+
+  // ------------------------------------------------------------------
 
   test("User should be logged out after clicking on the 'Log out' button", async () => {
     // MOCK
@@ -62,9 +71,11 @@ describe("Navbar Component", () => {
     render(<Navbar />);
 
     // ACT
+    // Simulate a click on the logout button
     await user.click(screen.getByRole("button", { name: "Log out" }));
 
     // ASSERT
+    // Ensure that the signOut function and toast notification are called
     expect(signOut).toHaveBeenCalled();
     expect(toast).toHaveBeenCalled();
   });

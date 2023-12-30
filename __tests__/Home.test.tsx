@@ -7,6 +7,7 @@ describe("Home Component", () => {
     const { asFragment } = render(<Home />);
 
     // ACT
+    // Find heading, button, and title elements
     const heading = screen.getByRole("heading", {
       level: 1,
       name: "Connect With Your Favorite Ones",
@@ -15,9 +16,12 @@ describe("Home Component", () => {
     const title = screen.getByText("Talk Tide");
 
     // ASSERT
+    // Ensure that heading, button, and title elements are present
     expect(heading).toBeInTheDocument();
     expect(btn).toBeInTheDocument();
     expect(title).toBeInTheDocument();
+
+    // Take a snapshot of the rendered component
     expect(asFragment()).toMatchSnapshot();
   });
 });

@@ -33,6 +33,7 @@ describe("Register Component", () => {
     const { asFragment } = render(<Register updateIsLogin={() => {}} />);
 
     // ASSERT
+    // Ensure that each element of the registration form is present
     expect(
       screen.getByRole("heading", { level: 2, name: "Register" }),
     ).toBeInTheDocument();
@@ -51,17 +52,24 @@ describe("Register Component", () => {
       screen.getByRole("button", { name: "Register" }),
     ).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Register" })).toBeEnabled();
+
+    // Take a snapshot of the rendered component
     expect(asFragment()).toMatchSnapshot();
   });
+
+  // ----------------------------------------------------------
 
   test("Password input should have type password", () => {
     // ARRANGE
     render(<Register updateIsLogin={() => {}} />);
 
     // ASSERT
+    // Ensure that the password input has the correct type
     const password = screen.getByPlaceholderText("Enter your password...");
     expect(password).toHaveAttribute("type", "password");
   });
+
+  // ----------------------------------------------------------
 
   test("Input fields should work", async () => {
     // EVENT
@@ -71,6 +79,7 @@ describe("Register Component", () => {
     render(<Register updateIsLogin={() => {}} />);
 
     // ACT
+    // Simulate typing into each input field of the registration form
     const email = screen.getByTestId("register-email");
     const username = screen.getByTestId("register-username");
     const password = screen.getByTestId("register-password");
@@ -79,10 +88,13 @@ describe("Register Component", () => {
     await user.type(password, "testpassword");
 
     // ASSERT
+    // Ensure that each input field contains the expected value
     expect(email).toHaveValue("test@example.com");
     expect(username).toHaveValue("testuser");
     expect(password).toHaveValue("testpassword");
   });
+
+  // ----------------------------------------------------------
 
   test("Validation: email, username & password validation should work properly", async () => {
     // EVENT
@@ -92,6 +104,7 @@ describe("Register Component", () => {
     render(<Register updateIsLogin={() => {}} />);
 
     // ACT
+    // Simulate typing invalid values and clicking the register button
     const email = screen.getByTestId("register-email");
     const username = screen.getByTestId("register-username");
     const password = screen.getByTestId("register-password");
@@ -102,6 +115,7 @@ describe("Register Component", () => {
     await user.click(submitBtn);
 
     // ASSERT
+    // Ensure that the error messages are displayed
     expect(screen.getByText("Invalid email address")).toBeInTheDocument();
     expect(
       screen.getByText("Username must be at least 2 characters."),
@@ -110,6 +124,8 @@ describe("Register Component", () => {
       screen.getByText("Password must be at least 6 characters."),
     ).toBeInTheDocument();
   });
+
+  // ----------------------------------------------------------
 
   test("Submits the form successfully", async () => {
     //  MOCK
@@ -125,6 +141,7 @@ describe("Register Component", () => {
     render(<Register updateIsLogin={() => {}} />);
 
     // ACT
+    // Simulate filling in the form and clicking the register button
     const email = screen.getByTestId("register-email");
     const username = screen.getByTestId("register-username");
     const password = screen.getByTestId("register-password");
@@ -135,10 +152,13 @@ describe("Register Component", () => {
     await user.click(submitBtn);
 
     // ASSERT
+    // Ensure that the toast notification and router functions are called
     expect(toast).toHaveBeenCalled();
     expect(refresh).toHaveBeenCalled();
     expect(replace).toHaveBeenCalled();
   });
+
+  // ----------------------------------------------------------
 
   test("Displays error message on unsuccessful registration", async () => {
     //  MOCK
@@ -154,6 +174,7 @@ describe("Register Component", () => {
     render(<Register updateIsLogin={() => {}} />);
 
     // ACT
+    // Simulate filling in the form and clicking the register button
     const email = screen.getByTestId("register-email");
     const username = screen.getByTestId("register-username");
     const password = screen.getByTestId("register-password");
@@ -164,12 +185,16 @@ describe("Register Component", () => {
     await user.click(submitBtn);
 
     // ASSERT
+    // Ensure that the error message is displayed
     expect(screen.getByText("Error!")).toBeInTheDocument();
     expect(screen.getByText("Error message")).toBeInTheDocument();
   });
 
+  // ----------------------------------------------------------
+
   test("Displays error/warning message if user is already logged in", async () => {
     // MOCK
+    // Simulate an authenticated session
     (useSession as jest.Mock).mockReturnValue({
       status: "authenticated",
       data: {
@@ -187,6 +212,7 @@ describe("Register Component", () => {
     render(<Register updateIsLogin={() => {}} />);
 
     // ACT
+    // Simulate filling in the form and clicking the register button
     const email = screen.getByTestId("register-email");
     const username = screen.getByTestId("register-username");
     const password = screen.getByTestId("register-password");
@@ -197,6 +223,7 @@ describe("Register Component", () => {
     await user.click(submitBtn);
 
     // ASSERT
+    // Ensure that the error message is displayed
     expect(screen.getByText("Error!")).toBeInTheDocument();
     expect(
       screen.getByText(

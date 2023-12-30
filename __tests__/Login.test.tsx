@@ -39,6 +39,7 @@ describe("Login Component", () => {
     const { asFragment } = render(<Login updateIsLogin={() => {}} />);
 
     // ASSERT
+    // Ensure that the heading, form, input fields, button, and link are present
     expect(
       screen.getByRole("heading", { level: 2, name: "Login" }),
     ).toBeInTheDocument();
@@ -52,10 +53,12 @@ describe("Login Component", () => {
     expect(screen.getByTestId("register-link")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Login" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Login" })).toBeEnabled();
+
+    // Take a snapshot of the rendered component
     expect(asFragment()).toMatchSnapshot();
   });
 
-  test("Password input should have type password ", () => {
+  test("Password input should have type password", () => {
     // ARRANGE
     render(<Login updateIsLogin={() => {}} />);
 
@@ -63,6 +66,8 @@ describe("Login Component", () => {
     const password = screen.getByPlaceholderText("Enter your password...");
     expect(password).toHaveAttribute("type", "password");
   });
+
+  // ------------------------------------------------------------------
 
   test("Input fields should work", async () => {
     // EVENT
@@ -78,9 +83,12 @@ describe("Login Component", () => {
     await user.type(password, "123456");
 
     // ASSERT
+    // Ensure that the input fields have the correct values
     expect(username).toHaveValue("mehedi");
     expect(password).toHaveValue("123456");
   });
+
+  // -------------------------------------------------------------------
 
   test("Validation: username & password validation should work properly", async () => {
     // EVENT
@@ -98,6 +106,7 @@ describe("Login Component", () => {
     await user.click(submitBtn);
 
     // ASSERT
+    // Ensure that validation error messages are displayed
     expect(
       screen.getByText("Username must be at least 2 characters."),
     ).toBeInTheDocument();
@@ -105,6 +114,8 @@ describe("Login Component", () => {
       screen.getByText("Password must be at least 6 characters."),
     ).toBeInTheDocument();
   });
+
+  // ------------------------------------------------------------------
 
   test("Submits the form successfully", async () => {
     //  MOCK
@@ -128,10 +139,13 @@ describe("Login Component", () => {
     await user.click(submitBtn);
 
     // ASSERT
+    // Ensure that toast notification is called, router functions are called
     expect(toast).toHaveBeenCalled();
     expect(refresh).toHaveBeenCalled();
     expect(replace).toHaveBeenCalled();
   });
+
+  // -----------------------------------------------------------------
 
   test("Displays error message on unsuccessful login", async () => {
     //  MOCK
@@ -155,11 +169,14 @@ describe("Login Component", () => {
     await user.click(submitBtn);
 
     // ASSERT
+    // Ensure that error message is displayed
     expect(screen.getByText("Error!")).toBeInTheDocument();
     expect(screen.getByText("Error message")).toBeInTheDocument();
   });
 
-  test("Displays error/warning message if user is already logged in", async () => {
+  // -----------------------------------------------------------------
+
+  test("Displays error/warning message if the user is already logged in", async () => {
     // MOCK
     (useSession as jest.Mock).mockReturnValue({
       status: "authenticated",
@@ -186,6 +203,7 @@ describe("Login Component", () => {
     await user.click(submitBtn);
 
     // ASSERT
+    // Ensure that error message is displayed
     expect(screen.getByText("Error!")).toBeInTheDocument();
     expect(screen.getByText("You are already logged in")).toBeInTheDocument();
   });
