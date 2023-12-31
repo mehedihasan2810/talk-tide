@@ -4,7 +4,7 @@
 
 ## Kew Features
 
-1. Realtime messaging with Pusher-channel(code in feature/pusher-channel branch) and with Socketio(code in feature/socket branch)
+1. Realtime messaging with `Pusher-channel(code in feature/pusher-channel branch)` and with `Socketio(code in feature/socket branch)`
 2. Register and login authentication system
 3. You can create one on one chat
 4. You can also create group chat
@@ -15,6 +15,7 @@
 9. Most importantly you can send images as well
 10. Responsive UI built with TailwindCSS and Shadcn ui
 11. Protection of sensitive routes
+12. Unit test with Jest and React Testing Library
 
 ## Technologies used
 
@@ -22,6 +23,7 @@
 - Back-End - `Prisma` `Mongodb` `Zod`
 - Realtime - `Pusher Channel(feature/pusher-channel branch)` `Socketio(feature/socket branch`
 - Auth - `Next Auth`
+- Unit Test - `Jest` `React Testing Library`
 
 ## [Home page](https://talktide.vercel.app)
 
