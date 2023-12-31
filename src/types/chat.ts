@@ -3,7 +3,7 @@ import { UserInterface } from "./user";
 export interface ChatInterface {
   id: string;
   adminId: string;
-  isGroupChat: true;
+  isGroupChat: boolean;
   chatMessages: ChatMessageInterface[];
   name: string;
   participantIds: string[];

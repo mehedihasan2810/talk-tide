@@ -1,0 +1,71 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ChatItem Component should render properly & match snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="group relative isolate my-2 flex cursor-pointer items-start justify-between gap-3 overflow-hidden rounded-3xl border p-4 hover:bg-primary/5"
+    data-testid="chatItem-container"
+    role="button"
+  >
+    <div
+      class="flex flex-shrink-0 items-center justify-center"
+    >
+      <span
+        class="relative flex shrink-0 overflow-hidden rounded-full h-12 w-12"
+      >
+        <span
+          class="flex h-full w-full items-center justify-center rounded-full bg-zinc-200"
+        />
+      </span>
+    </div>
+    <div
+      class="w-full"
+    >
+      <div
+        class="flex gap-2"
+      >
+        <p
+          class="max-w-[200px] truncate"
+        >
+           
+        </p>
+      </div>
+      <div
+        class="inline-flex w-full items-center text-left"
+      >
+        <small
+          class="max-w-[150px] truncate text-sm text-zinc-500"
+        >
+          You: Hello!
+        </small>
+        <small
+          class="ml-2 w-max font-semibold"
+        >
+          2 years
+        </small>
+      </div>
+    </div>
+    <button
+      aria-controls="radix-:r0:"
+      aria-expanded="false"
+      aria-haspopup="dialog"
+      class="absolute right-4 top-1/2 z-20 h-9 w-9 -translate-y-1/2 rounded-full border border-primary/30  p-1 text-primary group-hover:opacity-100 md:opacity-0"
+      data-state="closed"
+      data-testid="pop-trigger"
+      type="button"
+    >
+      <svg
+        aria-hidden="true"
+        class=" h-6 w-6"
+        fill="currentColor"
+        viewBox="0 0 20 20"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M10 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM10 8.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM11.5 15.5a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0z"
+        />
+      </svg>
+    </button>
+  </div>
+</DocumentFragment>
+`;

@@ -65,6 +65,7 @@ const ChatItem: FC<Props> = ({
 
   return (
     <div
+      data-testid="chatItem-container"
       role="button"
       onClick={() => onClick(chat)}
       className={cn(
@@ -79,6 +80,7 @@ const ChatItem: FC<Props> = ({
             {chat.participants.slice(0, 3).map((participant, i) => {
               return (
                 <Avatar
+                  data-testid="grp-part-avatar"
                   key={participant.id}
                   className={cn(
                     "absolute h-12 w-12 rounded-full border border-zinc-400",
@@ -152,6 +154,7 @@ const ChatItem: FC<Props> = ({
 
       <Popover>
         <PopoverTrigger
+          data-testid="pop-trigger"
           onClick={(e) => {
             e.stopPropagation();
           }}
