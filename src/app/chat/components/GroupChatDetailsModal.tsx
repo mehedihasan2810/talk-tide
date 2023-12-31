@@ -188,6 +188,7 @@ const GroupChatDetailsModal: FC<Props> = ({ onGroupDelete }) => {
         side="left"
       >
         <button
+          aria-label="Close"
           className="absolute right-3 top-3 z-10 ml-auto h-9 w-9 rounded-full border border-gray-300 p-1 text-gray-500 hover:border-gray-400 hover:text-gray-600"
           onClick={() => {
             toggleGroupDetailsModal(false);
@@ -204,7 +205,10 @@ const GroupChatDetailsModal: FC<Props> = ({ onGroupDelete }) => {
             Something went wrong! Try again by refreshing the page
           </div>
         ) : !chatId || !groupInfo ? (
-          <div className="flex h-full w-full items-center justify-center ">
+          <div
+            aria-label="Loading spinner"
+            className="flex h-full w-full items-center justify-center "
+          >
             <ArrowPathIcon className="mr-2 inline-flex h-6 w-6 animate-spin items-center" />
           </div>
         ) : (
@@ -298,7 +302,8 @@ const GroupChatDetailsModal: FC<Props> = ({ onGroupDelete }) => {
                     {groupInfo.data.adminId ===
                     (session?.user as SessionUser)?.id ? (
                       <Button
-                        className="ml-2 h-10 w-10 rounded-full bg-transparent p-2 text-black hover:bg-zinc-200 "
+                        aria-label="Rename group"
+                        className="ml-2 h-10 w-10 rounded-full bg-transparent p-2 text-black hover:bg-zinc-200"
                         onClick={() => setRenamingGroup(true)}
                       >
                         <PencilIcon className="h-full w-full" />
