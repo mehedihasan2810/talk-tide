@@ -3,7 +3,7 @@ import React from "react";
 
 const Footer = () => {
   return (
-    <footer className="fixed bottom-0 left-0 flex w-full flex-wrap items-center justify-center gap-4 border-t border-t-primary/20 p-2 text-primary/50 sm:gap-6 sm:p-4">
+    <footer className="fixed bottom-0 left-0 flex w-full flex-wrap items-center justify-center gap-4 border-t border-t-primary/20 p-2 text-primary sm:gap-6 sm:p-4">
       <Link className="hover:text-primary" href="#">
         Privacy Policy
       </Link>

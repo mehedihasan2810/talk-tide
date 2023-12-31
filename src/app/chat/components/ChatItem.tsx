@@ -154,6 +154,7 @@ const ChatItem: FC<Props> = ({
 
       <Popover>
         <PopoverTrigger
+          aria-label="Click to open a popover of delete chat button"
           data-testid="pop-trigger"
           onClick={(e) => {
             e.stopPropagation();

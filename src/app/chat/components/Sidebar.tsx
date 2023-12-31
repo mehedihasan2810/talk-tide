@@ -284,7 +284,7 @@ const Sidebar: FC<Readonly<Props>> = ({
           </div>
         </div>
 
-        <div className="sticky bottom-0 left-0 flex h-[73px] items-center justify-between gap-2 border-t border-t-primary/20 bg-zinc-100 px-3 py-2">
+        <div className="sticky bottom-0 left-0 flex h-[73px] items-center justify-between gap-2 border-t border-t-primary/20 bg-zinc-50 px-3 py-2">
           <div className="flex items-center gap-2">
             <Avatar className="h-9 w-9">
               <AvatarImage src="" />
@@ -305,7 +305,7 @@ const Sidebar: FC<Readonly<Props>> = ({
                 )}
               </div>
 
-              <div className="text-sm text-zinc-500">
+              <div className="text-sm text-zinc-600">
                 {status === "loading" ? (
                   <Skeleton className="h-4 w-40" />
                 ) : (
@@ -315,6 +315,7 @@ const Sidebar: FC<Readonly<Props>> = ({
             </div>
           </div>
           <button
+            aria-label="Log out"
             onClick={async () => {
               await signOut();
               toast({
@@ -324,7 +325,10 @@ const Sidebar: FC<Readonly<Props>> = ({
             }}
             className="w-h-10 group relative h-10 rounded-full border p-[6px] text-gray-500 hover:text-gray-400"
           >
-            <div className="absolute bottom-[110%] right-0 w-max rounded-sm bg-gray-800 px-3 py-1 text-sm text-gray-300 opacity-0 group-hover:opacity-100">
+            <div
+              aria-hidden={true}
+              className="absolute bottom-[110%] right-0 w-max rounded-sm bg-gray-800 px-3 py-1 text-sm text-gray-300 opacity-0 group-hover:opacity-100"
+            >
               Log out
             </div>
             <ArrowRightOnRectangleIcon className="h-full w-full " />
