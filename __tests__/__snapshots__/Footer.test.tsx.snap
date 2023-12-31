@@ -3,7 +3,7 @@
 exports[`Footer Component Should render properly 1`] = `
 <DocumentFragment>
   <footer
-    class="fixed bottom-0 left-0 flex w-full flex-wrap items-center justify-center gap-4 border-t border-t-primary/20 p-2 text-primary/50 sm:gap-6 sm:p-4"
+    class="fixed bottom-0 left-0 flex w-full flex-wrap items-center justify-center gap-4 border-t border-t-primary/20 p-2 text-primary sm:gap-6 sm:p-4"
   >
     <a
       class="hover:text-primary"
