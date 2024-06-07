@@ -32,3 +32,51 @@
 ## [Chat page](https://talktide.vercel.app/chat)
 
 [![Talk tide chat application's chat page image](/public/talk-tide-chat-page.png)](https://talktide.vercel.app/chat)
+
+## Installation
+
+1. Clone the repo
+
+```bash
+git clone https://github.com/mehedihasan2810/talk-tide.git
+cd talk-tide
+```
+
+2. Install the dependencies
+```bash
+npm install
+```
+
+## Configuration
+
+Create a .env file with the following environment variables:
+
+```bash
+# DATABASE
+DATABASE_URL=
+
+# AUTH
+NEXTAUTH_URL=
+NEXTAUTH_SECRET=
+
+# CLOUDINARY
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
+
+PUSHER_APP_ID=
+NEXT_PUBLIC_PUSHER_APP_KEY=
+PUSHER_APP_SECRET=
+NEXT_PUBLIC_PUSHER_APP_CLUSTER=
+
+# IMGBB
+IMGBB_API_KEY=
+```
+
+## Running the application
+
+```bash
+npm run dev
+```
+
+Open your browser and go to http://localhost:3000.
